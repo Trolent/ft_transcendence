@@ -1,4 +1,4 @@
-# ft_transcendence
+# Typerun
 42's transcendence project
 
 ## Instructions
