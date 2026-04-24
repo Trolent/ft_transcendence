@@ -2,6 +2,8 @@
 .env
 .env.local
 .env.*.local
+srcs/.env
+srcs/.env.local
 
 # Dependencies
 node_modules/
@@ -28,6 +30,10 @@ pnpm-debug.log*
 # Database
 *.sqlite
 *.db
+
+# OS
+.DS_Store
+Thumbs.db
 
 # OS
 .DS_Store

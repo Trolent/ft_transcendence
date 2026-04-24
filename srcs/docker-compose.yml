@@ -1,13 +1,28 @@
 services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - transcendence
+    restart: always
+    depends_on:
+      - frontend
+      - backend
+
   frontend:
     container_name: frontend
     build: 
-      context: ./frontend
+      context: ./requirements/frontend
       dockerfile: Dockerfile
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app
+      - ./requirements/frontend:/app
       - /app/node_modules
     networks:
       - transcendence
@@ -18,12 +33,12 @@ services:
   backend:
     container_name: backend
     build: 
-      context: ./backend
+      context: ./requirements/backend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - ./backend:/app
+      - ./requirements/backend:/app
       - /app/node_modules
     networks:
       - transcendence
@@ -35,7 +50,7 @@ services:
   postgresql:
     container_name: postgresql
     build: 
-      context: ./postgresql
+      context: ./requirements/postgresql
       dockerfile: Dockerfile
     ports: 
       - "5432:5432"
