@@ -4,6 +4,8 @@ services:
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
+    environment:
+      DOMAIN: ${DOMAIN}
     ports:
       - "80:80"
       - "443:443"
@@ -13,6 +15,11 @@ services:
     depends_on:
       - frontend
       - backend
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   frontend:
     container_name: frontend
@@ -29,6 +36,11 @@ services:
     restart: always
     env_file:
       - .env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   backend:
     container_name: backend
@@ -45,7 +57,11 @@ services:
     restart: always
     env_file:
       - .env
-    
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   postgresql:
     container_name: postgresql
@@ -61,6 +77,11 @@ services:
     restart: always
     env_file:
       - .env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     
 #volumes:
 #  postgresql_data:
