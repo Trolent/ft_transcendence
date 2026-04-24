@@ -1,0 +1,48 @@
+import { type HTMLAttributes } from "react";
+
+type TextVariant = "default" | "dim" | "muted" | "accent" | "error" | "prompt";
+type TextSize    = "xs" | "sm" | "base";
+
+interface TextProps extends HTMLAttributes<HTMLElement> {
+  variant?: TextVariant;
+  size?: TextSize;
+  as?: "p" | "span" | "label" | "li";
+}
+
+const textVariantClasses: Record<TextVariant, string> = {
+  default: "text-terminal-text",
+  dim:     "text-terminal-green-dim",
+  muted:   "text-terminal-text-muted",
+  accent:  "text-terminal-cyan",
+  error:   "text-terminal-red",
+  prompt:  "text-terminal-green before:content-['>_']",
+};
+
+const textSizeClasses: Record<TextSize, string> = {
+  xs:   "text-xs",
+  sm:   "text-sm",
+  base: "text-base",
+};
+
+export function Text({
+  variant = "default",
+  size = "sm",
+  as: Tag = "p",
+  className = "",
+  children,
+  ...props
+}: TextProps) {
+  return (
+    <Tag
+      className={[
+        "font-mono",
+        textVariantClasses[variant],
+        textSizeClasses[size],
+        className,
+      ].join(" ")}
+      {...props}
+    >
+      {children}
+    </Tag>
+  );
+}
