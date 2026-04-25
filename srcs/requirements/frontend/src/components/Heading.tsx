@@ -1,5 +1,16 @@
 import { type HTMLAttributes } from "react";
 
+/*
+
+Examples:
+
+<Heading level={1}>Heading h1</Heading>
+<Heading level={2}>Heading h2</Heading>
+<Heading level={3}>Heading h3</Heading>
+<Heading level={4}>Heading h4</Heading>
+
+*/
+
 type HeadingLevel = 1 | 2 | 3 | 4;
 
 interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {

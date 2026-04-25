@@ -1,15 +1,21 @@
 import { useState } from "react";
-import {Alert, Btn, Container, Heading, Input, Label, Text} from "../components";
+import { Alert, Btn, Container, Heading, Input, Label, Text } from "../components";
+import { PageWithSidebar, Sidebar } from "../layout";
 
 export default function Demo() {
   const [value, setValue] = useState("");
 
   return (
-    <div className="flex flex-1 gap-6">
-      <div className="flex-1 flex flex-col gap-10">
+    <PageWithSidebar
+      sidebar={
+        <Sidebar>
+          <Text>Sidebar</Text>
+        </Sidebar>
+      }
+    >
 
         {/* Headings */}
-        <Container label="Headings" className="p-4">
+        <Container label="Headings">
           <div className="flex flex-col gap-3">
             <Heading level={1}>Heading h1</Heading>
             <Heading level={2}>Heading h2</Heading>
@@ -19,7 +25,7 @@ export default function Demo() {
         </Container>
 
         {/* Texts + Label */}
-        <Container label="Texts" className="p-4">
+        <Container label="Texts">
           <div className="flex flex-col gap-2">
             <Text variant="default">default</Text>
             <Text variant="dim">dim</Text>
@@ -34,29 +40,29 @@ export default function Demo() {
         </Container>
 
         {/* Buttons */}
-        <Container label="Buttons" className="p-4">
+        <Container label="Buttons">
           <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap gap-3">
-            <Btn variant="primary">primary</Btn>
-            <Btn variant="secondary">secondary</Btn>
-            <Btn variant="ghost">ghost</Btn>
-            <Btn variant="danger">danger</Btn>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Btn size="sm">small</Btn>
-            <Btn size="md">medium</Btn>
-            <Btn size="lg">large</Btn>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Btn variant="primary" disabled>disabled primary</Btn>
-            <Btn variant="secondary" disabled>disabled secondary</Btn>
-            <Btn variant="danger" disabled>disabled danger</Btn>
-          </div>
+            <div className="flex flex-wrap gap-3">
+              <Btn variant="primary">primary</Btn>
+              <Btn variant="secondary">secondary</Btn>
+              <Btn variant="ghost">ghost</Btn>
+              <Btn variant="danger">danger</Btn>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Btn size="sm">small</Btn>
+              <Btn size="md">medium</Btn>
+              <Btn size="lg">large</Btn>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Btn variant="primary" disabled>disabled primary</Btn>
+              <Btn variant="secondary" disabled>disabled secondary</Btn>
+              <Btn variant="danger" disabled>disabled danger</Btn>
+            </div>
           </div>
         </Container>
 
         {/* Input */}
-        <Container label="Input" className="p-4">
+        <Container label="Input">
           <div className="flex flex-col gap-4 max-w-sm">
             <Input
               label="Default"
@@ -80,7 +86,7 @@ export default function Demo() {
         </Container>
 
         {/* Alerts */}
-        <Container label="Alerts" className="p-4">
+        <Container label="Alerts">
           <div className="flex flex-col gap-3">
             <Alert variant="info">An information</Alert>
             <Alert variant="success">Congratulations!</Alert>
@@ -92,29 +98,21 @@ export default function Demo() {
         </Container>
 
         {/* Containers */}
-        <Container label="Containers" className="p-4">
+        <Container label="Containers">
           <div className="flex flex-col gap-6">
-            <Container variant="default" label="default" className="p-4">
+            <Container variant="default" label="default">
               <Text variant="muted">variant default</Text>
             </Container>
-            <Container variant="panel" label="panel" className="p-4">
+            <Container variant="panel" label="panel">
               <Text variant="dim">variant panel</Text>
             </Container>
-            <Container variant="terminal" label="terminal" className="p-4">
+            <Container variant="terminal" label="terminal">
               <Text variant="prompt">variant terminal</Text>
             </Container>
           </div>
         </Container>
 
-      </div>
-
-      <aside className="w-64 shrink-0">
-        <Container variant="panel" label="sidebar" className="p-4 h-full">
-          <Text size="base">Sidebar</Text>
-        </Container>
-      </aside>
-
-    </div>
+    </PageWithSidebar>
   );
 }
 

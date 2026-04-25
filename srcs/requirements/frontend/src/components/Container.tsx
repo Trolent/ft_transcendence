@@ -1,5 +1,21 @@
 import { type HTMLAttributes } from "react";
 
+/*
+
+Examples:
+
+<Container variant="default" label="default">
+  <Text variant="muted">variant default</Text>
+</Container>
+<Container variant="panel" label="panel">
+  <Text variant="dim">variant panel</Text>
+</Container>
+<Container variant="terminal" label="terminal">
+  <Text variant="prompt">variant terminal</Text>
+</Container>
+
+*/
+
 type ContainerVariant = "default" | "panel" | "terminal";
 
 interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
@@ -29,7 +45,7 @@ export default function Container({
   return (
     <div
       className={[
-        "relative font-mono",
+        "relative font-mono p-4",
         variantClasses[variant],
         className,
       ].join(" ")}

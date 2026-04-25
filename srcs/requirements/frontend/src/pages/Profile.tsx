@@ -1,9 +1,23 @@
-import { Container, Text } from "../components";
+import { Btn, Container, Heading, Text } from "../components";
+import { PageLayout } from "../layout";
 
 export default function Profile() {
   return (
-    <Container label="profile" className="p-6">
-      <Text>Mon profil</Text>
-    </Container>
+    <PageLayout>
+      <Heading>Username</Heading>
+      <Btn>+ Add as friend</Btn>
+      <Btn>- Remove friend</Btn>
+
+      <Text>Bio</Text>
+
+      Leaderboard rank ?
+      Average WPM ?
+      Account created on ??
+      Level??
+
+
+      <Container label="history"></Container>
+
+    </PageLayout>
   );
 }
