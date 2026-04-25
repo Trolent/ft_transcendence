@@ -6,3 +6,4 @@ export { Heading }              from "./Heading";
 export { Text }                 from "./Text";
 export { Label }                from "./Label";
 export { AuthForm }             from "./AuthForm";
+export { List }                 from "./List";
