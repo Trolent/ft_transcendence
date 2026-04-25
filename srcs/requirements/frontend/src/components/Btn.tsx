@@ -1,5 +1,27 @@
 import { type ButtonHTMLAttributes } from "react";
 
+/*
+
+Examples:
+
+// Colors
+<Btn variant="primary">primary</Btn>
+<Btn variant="secondary">secondary</Btn>
+<Btn variant="ghost">ghost</Btn>
+<Btn variant="danger">danger</Btn>
+
+// Size
+<Btn size="sm">small</Btn>
+<Btn size="md">medium</Btn>
+<Btn size="lg">large</Btn>
+
+// disabled
+<Btn variant="primary" disabled>disabled primary</Btn>
+<Btn variant="secondary" disabled>disabled secondary</Btn>
+<Btn variant="danger" disabled>disabled danger</Btn>
+
+*/
+
 type BtnVariant = "primary" | "secondary" | "ghost" | "danger";
 type BtnSize    = "sm" | "md" | "lg";
 

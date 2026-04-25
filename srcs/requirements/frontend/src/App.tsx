@@ -1,4 +1,3 @@
-//import { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Play from "./pages/Play";
@@ -6,9 +5,8 @@ import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import Navbar from "./layout/Navbar";
-import Footer from "./layout/Footer";
 import Demo from "./pages/Demo";
+import { Navbar, Footer } from "./layout";
 
 
 const NAV_ITEMS = [
@@ -27,7 +25,7 @@ function App() {
   return (
     <div className="min-h-screen bg-terminal-bg flex flex-col font-mono">
       <Navbar items={navItems} />
-      <main className="flex-1 p-6">
+      <main className="flex-1">
         <Routes>
           <Route path="/play" element={<Play />} />
           <Route path="/demo" element={<Demo />} />

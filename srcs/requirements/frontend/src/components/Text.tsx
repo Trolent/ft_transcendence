@@ -1,5 +1,20 @@
 import { type HTMLAttributes } from "react";
 
+/*
+
+Examples:
+
+<Text variant="default">default</Text>
+<Text variant="dim">dim</Text>
+<Text variant="muted">muted</Text>
+<Text variant="accent">accent</Text>
+<Text variant="error">error</Text>
+<Text variant="prompt">prompt</Text>
+<Text size="xs">Extra small</Text>
+<Text size="sm">small</Text>
+
+*/
+
 type TextVariant = "default" | "dim" | "muted" | "accent" | "error" | "prompt";
 type TextSize    = "xs" | "sm" | "base";
 

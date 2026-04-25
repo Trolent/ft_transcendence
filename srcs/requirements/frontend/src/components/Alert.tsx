@@ -1,5 +1,19 @@
 import { type HTMLAttributes, useState } from "react";
 
+/*
+
+Examples:
+
+<Alert variant="info">An information</Alert>
+<Alert variant="success">Congratulations!</Alert>
+<Alert variant="warning">Be careful!</Alert>
+<Alert variant="error">It's broken!</Alert>
+<Alert variant="info" hidable>Can be hidden</Alert>
+<Alert variant="success" tag="CUSTOM">Custom tag.</Alert>
+
+*/
+
+
 export type AlertVariant = "info" | "success" | "warning" | "error";
 
 interface AlertProps extends HTMLAttributes<HTMLDivElement> {

@@ -1,5 +1,13 @@
 import { type HTMLAttributes } from "react";
 
+/*
+
+Examples:
+
+<Label>Je suis un label</Label>
+
+*/
+
 interface LabelProps extends HTMLAttributes<HTMLSpanElement> {
   htmlFor?: string;
 }

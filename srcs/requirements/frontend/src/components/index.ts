@@ -5,3 +5,4 @@ export { default as Alert }     from "./Alert";
 export { Heading }              from "./Heading";
 export { Text }                 from "./Text";
 export { Label }                from "./Label";
+export { AuthForm }             from "./AuthForm";

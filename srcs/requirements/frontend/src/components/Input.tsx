@@ -1,5 +1,16 @@
 import { type InputHTMLAttributes, forwardRef } from "react";
 
+/*
+
+Examples:
+
+<Input label="Default" placeholder="type something here" value="value"/>
+<Input variant="ghost" label="Ghost" placeholder="ghost" />
+<Input label="error" placeholder="error" defaultValue="error" error="This field is required"/>
+<Input label="Disabled" placeholder="disabled" disabled />
+
+*/
+
 type InputVariant = "default" | "ghost";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
