@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ENUMS
+
+enum Language {
+    EN
+    FR
+    ES
+}
+
+enum UserStatus {
+    ONLINE
+    IN_GAME
+    OFFLINE
+}
+
+enum FriendshipStatus {
+    PENDING
+    ACCEPTED
+    BLOCKED
+}
+
+enum MatchStatus {
+    WAITING
+    IN_PROGRESS
+    FINISHED
+    CANCELLED
+}
+
+enum OauthProviders {
+    GOOGLE
+    QuaranteDeux
+    GITHUB
+}
+
+//models
+
+model User {
+    id                  Int                 @id @default(autoincrement())
+    username            String              @unique
+    email               String              @unique
+    passwordHash        String?
+    avatarUrl           String?
+    language            Language            @default(EN)
+    status              UserStatus          @default(OFFLINE)
+    createdAt           DateTime            @default(now())
+    updatedAt           DateTime            @updatedAt
+    oauthAccounts       OAuthAccount[]
+    sentFriendships     Friendship[]        @relation("FriendshipInitiator")
+    receivedFriendships Friendship[]        @relation("FriendshipReceiver")
+    message             Message[]
+    matchResult         MatchResult[]
+    userAchievement     UserAchievement[]
+}
+
+model OAuthAccount {
+    id			        Int                 @id @default(autoincrement())
+    provider            OauthProviders      @default(GOOGLE)
+    providerId          String
+    userId              Int
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerId])
+}
+
+model Friendship {
+    id                  Int                 @id @default(autoincrement())
+    initiatorId         Int
+    receiverId          Int
+    status              FriendshipStatus    @default(PENDING)
+    createdAt           DateTime            @default(now())
+    initiator           User                @relation("FriendshipInitiator", fields: [initiatorId], references: [id], onDelete: Cascade)
+    receiver            User                @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+    @@unique([initiatorId, receiverId])
+}
+
+model Message {
+    id                  Int                 @id @default(autoincrement())
+    content             String
+    senderId            Int
+    receiverId          Int
+    user                User                @relation(fields: [senderId], references: [id], onDelete: Cascade)
+    sentAt              DateTime            @default(now())
+}
+
+model Match {
+    id                  Int                 @id @default(autoincrement())
+    textSnippet         String
+    startedAt           DateTime            @default(now())
+    endedAt             DateTime?
+    status              MatchStatus         @default(WAITING)
+    matchResult         MatchResult[]
+}
+
+model MatchResult {
+    id                  Int                 @id @default(autoincrement())
+    matchId             Int
+    match               Match               @relation(fields: [matchId], references: [id], onDelete: Cascade)
+    userId              Int
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+    wpm                 Float?
+    accuracy            Float?
+    position            Int?
+    finishedAt          DateTime?
+
+    @@unique([matchId, userId])
+}
+
+model Achievement {
+    id                  Int                 @id @default(autoincrement())
+    key                 String
+    label               String
+    description         String
+    iconUrl             String?
+    userAchievement     UserAchievement[]
+
+    @@unique([key])
+}
+
+model UserAchievement {
+    id                  Int                 @id @default(autoincrement())
+    userId              Int
+    user                User                @relation(fields:[userId], references: [id], onDelete: Cascade)
+    achievementId       Int
+    achievement         Achievement         @relation(fields:[achievementId], references: [id], onDelete: Cascade)
+    unlockedAt          DateTime            @default(now())
+    @@unique([userId, achievementId])
+}
