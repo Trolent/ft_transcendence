@@ -1,4 +1,6 @@
-import { Text, AuthForm } from "../components";
+import { Link } from "react-router-dom";
+
+import { Text, Btn } from "../components";
 import { PageWithSidebar, Sidebar } from "../layout";
 
 export default function Play() {
@@ -6,12 +8,10 @@ export default function Play() {
     <PageWithSidebar
       sidebar={
         <Sidebar>
-          <Text>The sidebar</Text>
+          <Text>Sidebar</Text>
         </Sidebar>
-      }
-    >
-        <AuthForm mode="register" />
-      <Text>Hello World!</Text>
+      }>
+      <Link to="/demo"><Btn>Check Demo</Btn></Link>
     </PageWithSidebar>
   );
 }
