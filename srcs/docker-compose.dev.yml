@@ -1,0 +1,13 @@
+services:
+  frontend:
+    ports:
+      - "5173:5173"
+
+  backend:
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+
+  postgresql:
+    ports:
+      - "5432:5432"
