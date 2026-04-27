@@ -1,10 +1,14 @@
-import { Heading, List, Text } from "../components";
+import { Link } from "react-router-dom";
+
+import { Avatar, Heading, List, Text } from "../components";
 import { PageLayout } from "../layout";
 
 const players: { id: number; rank: number; username: string }[] = [
-  { id: 1, rank: 1, username: "Jean" },
-  { id: 2, rank: 2, username: "Jacques" },
-  { id: 3, rank: 3, username: "Pierre" },
+  { id: 1, rank: 1, username: "jean" },
+  { id: 2, rank: 2, username: "claire" },
+  { id: 3, rank: 3, username: "pierre" },
+  { id: 4, rank: 4, username: "emma" },
+  { id: 6, rank: 6, username: "samuel" },
 ];
 
 export default function Leaderboard() {
@@ -14,10 +18,14 @@ export default function Leaderboard() {
       <List
         items={players}
         renderItem={(item: { id: number; rank: number; username: string }) => (
-          <div className="flex items-center gap-4">
+          <Link
+            to={`/profile/${item.username}`}
+            className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terminal-green"
+          >
             <Heading level={4}>#{item.rank}</Heading>
+            <Avatar username={item.username} size="sm" />
             <Text>{item.username}</Text>
-          </div>
+          </Link>
         )}
       />
     </PageLayout>

@@ -1,20 +1,26 @@
+import { useParams } from "react-router-dom";
+
 import { Btn, Container, Heading, Text, Avatar } from "../components";
 import { PageLayout } from "../layout";
 import { StatCard, StatItem, StatDivider } from "../components";
 //import bobImg from "../assets/bob.png";
 
 export default function Profile() {
+  {/* TODO juste pour le test */}
+  const { username } = useParams<{ username?: string }>();
+  const displayName = username ?? "username";
+
   return (
     <PageLayout>
       <div className="flex flex-col gap-6">
 
         <div className="flex flex-col sm:flex-row items-start gap-5">
-          <Avatar username="username" size="xl" />
+          <Avatar username={displayName} size="xl" />
           {/*<Avatar username="username" src={bobImg} size="xl" />*/}
 
           <div className="flex flex-col gap-4 flex-1">
             <div>
-              <Heading level={1}>username</Heading>
+              <Heading level={1}>{displayName}</Heading>
               <Text variant="muted" size="xs">created on 2026/01/01</Text>
             </div>
             <div className="flex flex-wrap gap-2">

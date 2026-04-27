@@ -1,19 +1,12 @@
 import { useState } from "react";
 import { Alert, Btn, Container, Heading, Input, Label, Text } from "../components";
-import { PageWithSidebar, Sidebar } from "../layout";
+import { PageLayout } from "../layout";
 
 export default function Demo() {
   const [value, setValue] = useState("");
 
   return (
-    <PageWithSidebar
-      sidebar={
-        <Sidebar>
-          <Text>Sidebar</Text>
-        </Sidebar>
-      }
-    >
-
+    <PageLayout>
         {/* Headings */}
         <Container label="Headings">
           <div className="flex flex-col gap-3">
@@ -42,18 +35,18 @@ export default function Demo() {
         {/* Buttons */}
         <Container label="Buttons">
           <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-start gap-3">
               <Btn variant="primary">primary</Btn>
               <Btn variant="secondary">secondary</Btn>
               <Btn variant="ghost">ghost</Btn>
               <Btn variant="danger">danger</Btn>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-start gap-3">
               <Btn size="sm">small</Btn>
               <Btn size="md">medium</Btn>
               <Btn size="lg">large</Btn>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-start gap-3">
               <Btn variant="primary" disabled>disabled primary</Btn>
               <Btn variant="secondary" disabled>disabled secondary</Btn>
               <Btn variant="danger" disabled>disabled danger</Btn>
@@ -112,7 +105,7 @@ export default function Demo() {
           </div>
         </Container>
 
-    </PageWithSidebar>
+    </PageLayout>
   );
 }
 
