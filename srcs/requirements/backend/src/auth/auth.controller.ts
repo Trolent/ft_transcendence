@@ -40,6 +40,7 @@ export class AuthController {
   // WARN Ajoutez la suppression du token dans le local storage coter front apres !!
   @Throttle({ auth: THROTTLE_LIMIT_AUTH })
   @Post('logout')
+  @HttpCode(200)
   logout(){
     return { message: 'LOGOUT_SUCCESS' };
   }
