@@ -45,6 +45,12 @@ hosts:
 home:
 	@xdg-open https://$(DOMAIN) 2>/dev/null || open https://$(DOMAIN) 2>/dev/null || echo "Open: https://$(DOMAIN)"
 
+prisma:
+	@docker exec backend pkill -f "prisma studio" 2>/dev/null || true
+	@docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec -d backend npx prisma studio --port 5555
+	@sleep 2
+	@xdg-open http://localhost:5555 2>/dev/null || open http://localhost:5555 2>/dev/null || echo "Open: http://localhost:5555"
+
 trust-cert:
 	@if [ "$(DOMAIN)" = "localhost" ]; then exit 0; fi
 	@until docker exec nginx test -f /etc/nginx/ssl/cert.pem 2>/dev/null; do sleep 1; done
