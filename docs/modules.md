@@ -19,10 +19,11 @@
     - Système d'amis et affichage du statut (en ligne/hors ligne).
     - Page de profil publique.
 - [ ] **Authentification OAuth 2.0** (1pt) : Connexion via Google, GitHub ou 42.
-- [ ] **Statistiques TypeRacer** (1pt) :
-    - Tracking des performances (Mots par minute - WPM, précision).
-    - Historique des courses 1v1.
-    - Système de paliers et classement général (Leaderboard).
+- [ ] **Statistiques & Historique TypeRacer** (1pt) *(nécessite un module de jeu)* :
+    - Tracking des performances (WPM, précision) — calculé côté serveur depuis `MatchResult`.
+    - Historique des courses avec dates, résultats et adversaires.
+    - Succès (achievements) et progression par paliers.
+    - Classement général (Leaderboard) calculé dynamiquement.
 
 ## 💬 Module 3 : Interaction & Temps Réel (4 pts)
 - [ ] **Moteur Temps Réel (WebSockets via NestJS)** (2pts) :
@@ -48,4 +49,8 @@
 
 ---
 
-### 📊 Objectif Total : 21 pts
+### 📊 Objectif Total : 22 pts
+
+---
+
+> **Note :** Les stats (wins, losses, WPM moyen, ranking) ne sont jamais stockées dans `User` — elles sont calculées dynamiquement depuis `MatchResult`. Les achievements sont persistés via `Achievement` + `UserAchievement`.
