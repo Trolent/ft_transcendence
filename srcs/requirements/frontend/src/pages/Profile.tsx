@@ -11,7 +11,7 @@ export default function Profile() {
   const displayName = username ?? "username";
 
   return (
-    <PageLayout>
+    <PageLayout maxWidth="max-w-lg">
       <div className="flex flex-col gap-6">
 
         <div className="flex flex-col sm:flex-row items-start gap-5">
