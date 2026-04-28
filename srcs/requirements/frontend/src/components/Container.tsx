@@ -25,13 +25,13 @@ interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
 
 const variantClasses: Record<ContainerVariant, string> = {
   default:
-    "bg-terminal-bg border border-terminal-border-dim",
+    "bg-black border border-dim",
 
   panel:
-    "bg-terminal-surface border border-terminal-green",
+    "bg-muted border border-default",
 
   terminal:
-    "bg-terminal-void border border-terminal-green " +
+    "bg-black border border-default " +
     "shadow-[0_0_12px_0_rgba(0,255,65,0.15)]",
 };
 
@@ -52,7 +52,7 @@ export default function Container({
       {...props}
     >
       {label && (
-        <span className="absolute -top-px left-3 -translate-y-1/2 bg-terminal-bg px-1 text-xs text-terminal-green-dim uppercase tracking-widest">
+        <span className="absolute -top-px left-3 -translate-y-1/2 bg-black px-1 text-xs text-dim uppercase tracking-widest">
           {label}
         </span>
       )}
