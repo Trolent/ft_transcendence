@@ -36,9 +36,9 @@ export function Avatar({ username, src, size = "md", className = "" }: AvatarPro
   return (
     <div
       className={[
-        "shrink-0 border-2 border-terminal-green overflow-hidden",
+        "shrink-0 border-2 border-default overflow-hidden",
         "flex items-center justify-center font-mono font-bold",
-        "text-terminal-green bg-terminal-bg",
+        "text-default bg-black",
         sizeClasses[size],
         className,
       ].join(" ")}

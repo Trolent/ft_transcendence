@@ -21,7 +21,7 @@ export default function Leaderboard() {
         renderItem={(item: { id: number; rank: number; username: string }) => (
           <Link
             to={`/profile/${item.username}`}
-            className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terminal-green"
+            className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
           >
             <Heading level={4}>#{item.rank}</Heading>
             <Avatar username={item.username} size="sm" />
