@@ -16,7 +16,7 @@ export function Label({ className = "", children, htmlFor, ...props }: LabelProp
   return (
     <label
       htmlFor={htmlFor}
-      className={["font-mono text-xs uppercase tracking-[0.3em] text-terminal-green-dim", className].join(" ")}
+      className={["font-mono text-xs uppercase tracking-[0.3em] text-dim", className].join(" ")}
       {...props}
     >
       {children}

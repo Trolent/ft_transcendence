@@ -34,7 +34,7 @@ export function Heading({
   return (
     <Tag
       className={[
-        "font-mono font-bold text-terminal-green",
+        "font-mono font-bold text-default",
         headingClasses[level],
         className,
       ].join(" ")}

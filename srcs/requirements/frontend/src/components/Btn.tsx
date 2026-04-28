@@ -32,26 +32,26 @@ interface BtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<BtnVariant, string> = {
   primary:
-    "bg-terminal-green text-terminal-void border border-terminal-green " +
-    "hover:bg-terminal-green-glow hover:border-terminal-green-glow " +
-    "active:bg-terminal-green-dim " +
-    "disabled:bg-terminal-green-deep disabled:text-terminal-text-muted disabled:border-terminal-green-deep disabled:cursor-not-allowed",
+    "bg-default text-black border border-default " +
+    "hover:bg-glow hover:border-glow " +
+    "active:bg-dim " +
+    "disabled:bg-muted disabled:text-muted disabled:border-muted disabled:cursor-not-allowed",
 
   secondary:
-    "bg-transparent text-terminal-green border border-terminal-green " +
-    "hover:bg-terminal-surface " +
-    "active:bg-terminal-raised " +
-    "disabled:text-terminal-text-muted disabled:border-terminal-border-dim disabled:cursor-not-allowed",
+    "bg-transparent text-default border border-default " +
+    "hover:bg-muted " +
+    "active:bg-dim " +
+    "disabled:text-muted disabled:border-dim disabled:cursor-not-allowed",
 
   ghost:
-    "bg-transparent text-terminal-green border border-transparent " +
-    "hover:border-terminal-border-dim hover:bg-terminal-surface " +
-    "active:bg-terminal-raised " +
-    "disabled:text-terminal-text-muted disabled:cursor-not-allowed",
+    "bg-transparent text-default border border-transparent " +
+    "hover:border-dim hover:bg-muted " +
+    "active:bg-dim " +
+    "disabled:text-muted disabled:cursor-not-allowed",
 
   danger:
-    "bg-transparent text-terminal-red border border-terminal-red " +
-    "hover:bg-terminal-red hover:text-terminal-void " +
+    "bg-transparent text-danger border border-danger " +
+    "hover:bg-danger hover:text-black " +
     "active:opacity-80 " +
     "disabled:opacity-30 disabled:cursor-not-allowed",
 };
