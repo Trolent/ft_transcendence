@@ -31,8 +31,8 @@ export default function Profile() {
           </div>
         </div>
 
-        <Container label="bio">
-          <Text variant="muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+        <Container label="bio" variant="panel">
+          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
         </Container>
 
         <StatCard label="statistics">
