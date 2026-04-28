@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { getMeApi, loginApi, registerApi, type SafeUser } from './api';
 
-const TOKEN_KEY = 'token'; // TODO change this
+const TOKEN_KEY = 'transcendence';
 
 interface AuthContextValue {
   user: SafeUser | null;
