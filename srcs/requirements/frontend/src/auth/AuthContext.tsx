@@ -1,0 +1,63 @@
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react';
+import { getMeApi, loginApi, registerApi, type SafeUser } from './api';
+
+const TOKEN_KEY = 'token'; // TODO change this
+
+interface AuthContextValue {
+  user: SafeUser | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (username: string, email: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+export const AuthContext = createContext<AuthContextValue | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<SafeUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    getMeApi(token)
+      .then(setUser)
+      .catch(() => localStorage.removeItem(TOKEN_KEY))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const login = useCallback(async (email: string, password: string) => {
+    const { access_token } = await loginApi(email, password);
+    localStorage.setItem(TOKEN_KEY, access_token);
+    const me = await getMeApi(access_token);
+    setUser(me);
+  }, []);
+
+  const register = useCallback(
+    async (username: string, email: string, password: string) => {
+      await registerApi(username, email, password);
+      await login(email, password);
+    },
+    [login],
+  );
+
+  const logout = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY);
+    setUser(null);
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
