@@ -25,12 +25,12 @@ interface TextProps extends HTMLAttributes<HTMLElement> {
 }
 
 const textVariantClasses: Record<TextVariant, string> = {
-  default: "text-terminal-text",
-  dim:     "text-terminal-green-dim",
-  muted:   "text-terminal-text-muted",
-  accent:  "text-terminal-cyan",
-  error:   "text-terminal-red",
-  prompt:  "text-terminal-green before:content-['>_']",
+  default: "text-default",
+  dim:     "text-dim",
+  muted:   "text-muted",
+  accent:  "text-accent",
+  error:   "text-danger",
+  prompt:  "text-default before:content-['>_']",
 };
 
 const textSizeClasses: Record<TextSize, string> = {

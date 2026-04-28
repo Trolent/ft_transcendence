@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, HttpCode } from '@nestjs/common';
 
 //API LIMIT
 import { Throttle } from '@nestjs/throttler';
@@ -25,6 +25,7 @@ export class AuthController {
 
   @Throttle({ auth: THROTTLE_LIMIT_AUTH })
   @Post('login')
+  @HttpCode(200)
   login(@Body() body: LoginDto) {
     return this.authService.login(body.email, body.password);
   }
@@ -39,6 +40,7 @@ export class AuthController {
   // WARN Ajoutez la suppression du token dans le local storage coter front apres !!
   @Throttle({ auth: THROTTLE_LIMIT_AUTH })
   @Post('logout')
+  @HttpCode(200)
   logout(){
     return { message: 'LOGOUT_SUCCESS' };
   }

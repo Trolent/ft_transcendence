@@ -42,12 +42,12 @@ export interface StatItemProps {
 export function StatItem({ label, value, accent = false }: StatItemProps) {
   return (
     <div className="flex items-center justify-between gap-2 @[14rem]:flex-col @[14rem]:items-center @[14rem]:gap-0.5 @[14rem]:min-w-[5rem]">
-      <span className="text-terminal-green-dark text-xs uppercase tracking-widest font-mono">
+      <span className="text-dim text-xs uppercase tracking-widest font-mono">
         {label}
       </span>
       <span
         className={`font-mono text-xl font-bold tabular-nums ${
-          accent ? "text-terminal-cyan" : "text-terminal-green"}`}>
+          accent ? "text-accent" : "text-default"}`}>
         {value}
       </span>
     </div>
@@ -56,6 +56,6 @@ export function StatItem({ label, value, accent = false }: StatItemProps) {
 
 export function StatDivider() {
   return (
-    <div className="h-px w-full bg-terminal-border-dim @[14rem]:h-8 @[14rem]:w-px" />
+    <div className="h-px w-full bg-dim @[14rem]:h-8 @[14rem]:w-px" />
   );
 }

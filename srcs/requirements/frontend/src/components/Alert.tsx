@@ -27,22 +27,22 @@ const config: Record<AlertVariant, { tag: string; classes: string }> = {
   info: {
     tag: "INFO",
     classes:
-      "border-terminal-border-dim text-terminal-green bg-terminal-surface",
+      "border-dim text-default bg-muted",
   },
   success: {
     tag: "OK",
     classes:
-      "border-terminal-green text-terminal-green bg-terminal-surface",
+      "border-default text-default bg-muted",
   },
   warning: {
     tag: "WARN",
     classes:
-      "border-terminal-amber text-terminal-amber bg-[#1a1200]",
+      "border-accent text-accent bg-black",
   },
   error: {
     tag: "ERR",
     classes:
-      "border-terminal-red text-terminal-red bg-[#1a0000]",
+      "border-danger text-danger bg-[#1a0000]",
   },
 };
 
