@@ -1,9 +1,16 @@
 NAME		= Typerun
 COMPOSE		= srcs/docker-compose.yml
 COMPOSE_DEV	= srcs/docker-compose.dev.yml
-DOMAIN		:= $(shell grep '^DOMAIN=' srcs/.env | cut -d= -f2)
+DOMAIN		:= $(shell grep '^DOMAIN=' srcs/.env 2>/dev/null | cut -d= -f2)
 
-all: hosts up
+all: check-env hosts up
+
+check-env:
+	@if [ ! -f srcs/.env ]; then \
+		echo "ERROR: srcs/.env not found."; \
+		echo "Run: cp srcs/.env.example srcs/.env and fill in the values."; \
+		exit 1; \
+	fi
 
 up:
 	docker compose -f $(COMPOSE) up --build -d
@@ -12,7 +19,7 @@ up:
 	@printf "\033[1;36m  │\033[0m  https://$(DOMAIN)                        \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  └───────────────────────────────────────────┘\033[0m\n\n"
 
-dev: hosts
+dev: check-env hosts
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) up --build -d
 	@printf "\n\033[1;33m  [DEV] $(NAME) is up in dev mode!\033[0m\n\n"
 	@printf "\033[1;36m  ┌───────────────────────────────────────────┐\033[0m\n"
