@@ -1,14 +1,15 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Play from "./pages/Play";
-import Demo from "./pages/Demo";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import { Navbar, Footer } from "./layout";
 import Signin from "./pages/Signin";
-
+import Register from "./pages/Register";
+import { Navbar, Footer } from "./layout";
+import { ProtectedRoute } from "./auth";
+import Settings from "./pages/Settings";
 
 const NAV_ITEMS = [
   { label: "Play", href: "/" },
@@ -34,10 +35,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Play />} />
           <Route path="/play" element={<Play />} />
-          <Route path="/demo" element={<Demo />} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/signin" element={<Signin />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/profile" element={<Profile />} /> {/* opens user profile, if not logged it should redirect to /signin*/}
+          <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
