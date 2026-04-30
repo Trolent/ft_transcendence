@@ -12,7 +12,7 @@ check-env:
 		exit 1; \
 	fi
 
-up:
+up: 
 	docker compose -f $(COMPOSE) up --build -d
 	@printf "\n\033[1;32m  [OK] $(NAME) is up and running!\033[0m\n\n"
 	@printf "\033[1;36m  ┌───────────────────────────────────────────┐\033[0m\n"
@@ -21,11 +21,13 @@ up:
 
 dev: check-env hosts
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) up --build -d
+	@$(MAKE) prisma
 	@printf "\n\033[1;33m  [DEV] $(NAME) is up in dev mode!\033[0m\n\n"
 	@printf "\033[1;36m  ┌───────────────────────────────────────────┐\033[0m\n"
 	@printf "\033[1;36m  │\033[0m  Frontend  ->  http://$(DOMAIN):5173      \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  │\033[0m  Backend   ->  http://$(DOMAIN):3000      \033[1;36m│\033[0m\n"
-	@printf "\033[1;36m  │\033[0m  Database  ->  $(DOMAIN):5432             \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  Database  ->  http://$(DOMAIN):5432      \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  Prisma.   ->  http://$(DOMAIN):5555      \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  └───────────────────────────────────────────┘\033[0m\n\n"
 
 down:
@@ -55,8 +57,6 @@ home:
 prisma:
 	@docker exec backend pkill -f "prisma studio" 2>/dev/null || true
 	@docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec -d backend npx prisma studio --port 5555
-	@sleep 2
-	@xdg-open http://localhost:5555 2>/dev/null || open http://localhost:5555 2>/dev/null || echo "Open: http://localhost:5555"
 
 trust-cert:
 	@if [ "$(DOMAIN)" = "localhost" ]; then exit 0; fi
