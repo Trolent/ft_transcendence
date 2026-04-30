@@ -13,7 +13,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
       <div className="flex items-center justify-between px-4 h-12">
 
         <span className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none">
-          🚗 TRANSCENDENCE
+          <a href="/">🚗 TRANSCENDENCE</a>
         </span>
 
         <ul className="hidden sm:flex items-center gap-1">
