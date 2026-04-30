@@ -8,7 +8,7 @@ import Terms from "./pages/Terms";
 import Signin from "./pages/Signin";
 import Register from "./pages/Register";
 import { Navbar, Footer } from "./layout";
-import { ProtectedRoute } from "./auth";
+import { ProtectedRoute, GuestRoute } from "./auth";
 import Settings from "./pages/Settings";
 
 function App() {
@@ -20,8 +20,8 @@ function App() {
           <Route path="/" element={<Play />} />
           <Route path="/play" element={<Play />} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/signin" element={<GuestRoute><Signin /></GuestRoute>} />
+          <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:username" element={<Profile />} />
