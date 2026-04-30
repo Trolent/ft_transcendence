@@ -8,7 +8,16 @@ interface NavItem {
   active?: boolean;
 }
 
-export default function Navbar({ items }: { items: NavItem[] }) {
+const NAV_ITEMS: NavItem[] = [
+  { label: "Play", href: "/play" },
+  { label: "Leaderboard", href: "/leaderboard" },
+  { label: "Profile", href: "/profile" },
+  { label: "Settings", href: "/settings" },
+  { label: "Sign in", href: "/signin" },
+];
+
+export default function Navbar() {
+  const items = NAV_ITEMS;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { pathname } = useLocation();
 
