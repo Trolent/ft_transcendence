@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Play from "./pages/Play";
 import Leaderboard from "./pages/Leaderboard";
@@ -11,27 +11,11 @@ import { Navbar, Footer } from "./layout";
 import { ProtectedRoute } from "./auth";
 import Settings from "./pages/Settings";
 
-const NAV_ITEMS = [
-  { label: "Play", href: "/" },
-  { label: "Leaderboard", href: "/leaderboard" },
-  { label: "Profile", href: "/profile" },
-  { label: "Signin", href: "/signin" },
-];
-
 function App() {
-  const { pathname } = useLocation();
-
-  const navItems = NAV_ITEMS.map((i) => ({
-    ...i,
-    active:
-      i.href === "/" ? pathname === "/" || pathname === "/play"
-        : pathname === i.href,
-  }));
-
   return (
-    <div className="min-h-screen bg-terminal-bg flex flex-col font-mono">
-      <Navbar items={navItems} />
-      <main className="flex-1">
+    <div className="min-h-screen bg-bg flex flex-col font-mono">
+      <Navbar />
+      <main>
         <Routes>
           <Route path="/" element={<Play />} />
           <Route path="/play" element={<Play />} />
