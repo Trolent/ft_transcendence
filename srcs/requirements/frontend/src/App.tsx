@@ -8,13 +8,15 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import { Navbar, Footer } from "./layout";
 import Signin from "./pages/Signin";
+import Settings from "./pages/Settings";
 
 
 const NAV_ITEMS = [
   { label: "Play", href: "/" },
   { label: "Leaderboard", href: "/leaderboard" },
   { label: "Profile", href: "/profile" },
-  { label: "Signin", href: "/signin" },
+  { label: "Sign in", href: "/signin" },
+/*{ label: "Settings", href: "/settings" },   */
 ];
 
 function App() {
@@ -39,6 +41,7 @@ function App() {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} /> {/* opens user profile, if not logged it should redirect to /signin*/}
           <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<Play />} />
