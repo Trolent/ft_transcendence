@@ -13,7 +13,7 @@ import Settings from "./pages/Settings";
 
 function App() {
   return (
-    <div className="min-h-screen bg-bg flex flex-col font-mono">
+    <div className="min-h-screen bg-black flex flex-col font-mono">
       <Navbar />
       <main>
         <Routes>
