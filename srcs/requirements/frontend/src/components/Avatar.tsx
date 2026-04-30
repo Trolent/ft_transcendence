@@ -10,7 +10,7 @@ Sizes:
 - sm (6x6) -> used for navbar avatar
 - md (10*10, default)
 - lg (12*12) -> used for /leaderboard
-- xl (16*16) -> used for /profile
+- xl (24*24) -> used for /profile
 */
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
@@ -26,7 +26,7 @@ const sizeClasses: Record<AvatarSize, string> = {
   sm: "w-6 h-6 text-xs",
   md: "w-10 h-10",
   lg: "w-12 h-12 text-xl",
-  xl: "w-16 h-16 text-2xl",
+  xl: "w-24 h-24 text-2xl",
 };
 
 export function Avatar({ username, src, size = "md", className = "" }: AvatarProps) {
