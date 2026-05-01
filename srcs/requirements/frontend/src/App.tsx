@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { label: "Leaderboard", href: "/leaderboard" },
   { label: "Profile", href: "/profile" },
   { label: "Sign in", href: "/signin" },
-/*{ label: "Settings", href: "/settings" },   */
+  { label: "Settings", href: "/settings" },
 ];
 
 function App() {
