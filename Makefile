@@ -66,4 +66,7 @@ trust-cert:
 	@sudo update-ca-certificates > /dev/null 2>&1
 	@which certutil > /dev/null 2>&1 && certutil -d sql:$$HOME/.pki/nssdb -A -n $(DOMAIN) -t "CT,C,C" -i /tmp/$(DOMAIN).crt 2>/dev/null || true
 
-.PHONY: all up dev down re clean fclean logs ps hosts home trust-cert
+seed:
+	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run seed
+
+.PHONY: all up dev down re clean fclean logs ps hosts home trust-cert seed
