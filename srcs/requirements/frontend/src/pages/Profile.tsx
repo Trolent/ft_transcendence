@@ -5,6 +5,8 @@ import { PageLayout } from "../layout";
 import { StatCard, StatItem, StatDivider } from "../components";
 //import bobImg from "../assets/bob.png";
 
+export let user_bio = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+
 export default function Profile() {
   {/* TODO juste pour le test */}
   const { username } = useParams<{ username?: string }>();
@@ -32,7 +34,7 @@ export default function Profile() {
         </div>
 
         <Container label="bio" variant="panel">
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+          <Text>{user_bio}</Text>
         </Container>
 
         <StatCard label="statistics">

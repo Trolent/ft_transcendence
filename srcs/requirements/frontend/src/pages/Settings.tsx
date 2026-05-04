@@ -1,6 +1,7 @@
 import { Heading, Text } from "../components";
 import Container from "../components/Container";
 import { PageLayout } from "../layout";
+import { user_bio } from "./Profile";
 
 export default function Settings() {
   return (
@@ -11,8 +12,8 @@ export default function Settings() {
             <Text>Edit bio</Text>
             <div class="edit-bio">
               <Container variant="default">
-              Bonjour
-            </Container>
+                {user_bio}
+              </Container>
             </div>
           </Container>
         </div>
