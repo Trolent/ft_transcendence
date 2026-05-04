@@ -24,6 +24,10 @@
     font-family: "Courier New", Courier, monospace;
   }
 
+  .edit-bio {
+    margin-top: 12px;
+  }
+
   ::selection {
     background-color: var(--color-default);
     color: var(--color-black);
