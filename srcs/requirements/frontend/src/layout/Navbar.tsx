@@ -17,7 +17,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
         </span>
 
         <ul className="hidden sm:flex items-center gap-1">
-          {items.map((item) => (
+          {items?.map((item) => (
             <li key={item.label}>
               <Link
                 to={item.href}
