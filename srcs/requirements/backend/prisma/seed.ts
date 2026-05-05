@@ -1,0 +1,176 @@
+import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
+const prisma = new PrismaClient();
+
+const usersData = [
+  { username: 'alice_martin',    email: 'alice.martin@typerun.dev'    },
+  { username: 'thomas_dupont',   email: 'thomas.dupont@typerun.dev'   },
+  { username: 'chloe_bernard',   email: 'chloe.bernard@typerun.dev'   },
+  { username: 'lucas_moreau',    email: 'lucas.moreau@typerun.dev'    },
+  { username: 'emma_petit',      email: 'emma.petit@typerun.dev'      },
+  { username: 'hugo_lambert',    email: 'hugo.lambert@typerun.dev'    },
+  { username: 'lea_dubois',      email: 'lea.dubois@typerun.dev'      },
+  { username: 'maxime_garcia',   email: 'maxime.garcia@typerun.dev'   },
+  { username: 'sofia_roux',      email: 'sofia.roux@typerun.dev'      },
+  { username: 'nathan_leroy',    email: 'nathan.leroy@typerun.dev'    },
+  { username: 'camille_simon',   email: 'camille.simon@typerun.dev'   },
+  { username: 'theo_michel',     email: 'theo.michel@typerun.dev'     },
+  { username: 'pauline_lefevre', email: 'pauline.lefevre@typerun.dev' },
+  { username: 'romain_david',    email: 'romain.david@typerun.dev'    },
+  { username: 'jade_bertrand',   email: 'jade.bertrand@typerun.dev'   },
+  { username: 'akhmed_dovletov', email: 'akhmed.dovletov@typerun.dev' },
+  { username: 'kevin_pires',     email: 'kevin.pires@typerun.dev'     },
+  { username: 'axel_audrillart', email: 'axel.audrillart@typerun.dev' },
+  { username: 'jerome_bergeron', email: 'jerome.bergeron@typerun.dev' },
+  { username: 'timothee_rolland',email: 'timothee.rolland@typerun.dev'},
+];
+
+
+const textSnippets = [
+  'size_t ft_strlen(const char *s) returns the number of characters before the null terminator.',
+  'char *ft_strdup(const char *s1) allocates a new string and copies the full source buffer into it.',
+  'void *ft_memset(void *b, int c, size_t len) fills the memory area with the same byte value.',
+  'void *ft_memcpy(void *dest, const void *src, size_t n) copies n bytes from src to dest without overlap checks.',
+  'int ft_strncmp(const char *s1, const char *s2, size_t n) compares two strings up to the requested length.',
+  'char *ft_strjoin(const char *s1, const char *s2) allocates a fresh string containing both inputs end to end.',
+  'char **ft_split(const char *s, char c) separates a string into an array of tokens using the delimiter character.',
+  'char *ft_substr(const char *s, unsigned int start, size_t len) extracts a substring from the chosen offset.',
+  'char *ft_strtrim(const char *s1, const char *set) removes all matching characters from both ends of the string.',
+  'void ft_bzero(void *s, size_t n) clears a block of memory by writing zero across the full range.',
+];
+
+const achievementsData = [
+  { key: 'first_match',     label: 'First Blood',       description: 'Complete your first match',        iconUrl: null },
+  { key: 'speed_demon',     label: 'Speed Demon',        description: 'Reach 100 WPM in a match',         iconUrl: null },
+  { key: 'perfectionist',   label: 'Perfectionist',      description: 'Finish a match with 100% accuracy', iconUrl: null },
+  { key: 'social_butterfly',label: 'Social Butterfly',   description: 'Add 5 friends',                    iconUrl: null },
+  { key: 'veteran',         label: 'Veteran',             description: 'Complete 50 matches',              iconUrl: null },
+  { key: 'win_streak_5',    label: 'On Fire',             description: 'Win 5 matches in a row',           iconUrl: null },
+];
+
+function randInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randFloat(min: number, max: number): number {
+  return parseFloat((Math.random() * (max - min) + min).toFixed(2));
+}
+
+function randFrom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function daysAgo(n: number): Date {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d;
+}
+
+async function main() {
+  const passwordHash = await bcrypt.hash('Password123!', 10);
+  const languages = [Language.EN, Language.FR, Language.ES];
+  const statuses  = [UserStatus.ONLINE, UserStatus.OFFLINE, UserStatus.IN_GAME];
+  const friendshipStatuses = [FriendshipStatus.ACCEPTED, FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING];
+
+  const achievements = await Promise.all(
+    achievementsData.map((a) =>
+      prisma.achievement.upsert({
+        where:  { key: a.key },
+        update: {},
+        create: { key: a.key, label: a.label, description: a.description, iconUrl: a.iconUrl },
+      }),
+    ),
+  );
+
+  const users = await Promise.all(
+    usersData.map((u, i) =>
+      prisma.user.upsert({
+        where:  { username: u.username },
+        update: {},
+        create: {
+          username:     u.username,
+          email:        u.email,
+          passwordHash,
+          avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
+          language:     randFrom(languages),
+          status:       randFrom(statuses),
+          createdAt:    daysAgo(randInt(1, 60)),
+        },
+      }),
+    ),
+  );
+
+  const friendshipPairs: Set<string> = new Set();
+  for (let i = 0; i < 25; i++) {
+    const a = randFrom(users);
+    const b = randFrom(users);
+    if (a.id === b.id) continue;
+
+    const key = `${Math.min(a.id, b.id)}-${Math.max(a.id, b.id)}`;
+    if (friendshipPairs.has(key)) continue;
+    friendshipPairs.add(key);
+
+    await prisma.friendship.upsert({
+      where:  { initiatorId_receiverId: { initiatorId: a.id, receiverId: b.id } },
+      update: {},
+      create: {
+        initiatorId: a.id,
+        receiverId:  b.id,
+        status:      randFrom(friendshipStatuses),
+        createdAt:   daysAgo(randInt(1, 30)),
+      },
+    });
+  }
+
+  for (let i = 0; i < 30; i++) {
+    const startedAt = daysAgo(randInt(0, 30));
+    const endedAt   = new Date(startedAt.getTime() + randInt(30, 180) * 1000);
+
+    const match = await prisma.match.create({
+      data: {
+        textSnippet: randFrom(textSnippets),
+        startedAt,
+        endedAt,
+        status: MatchStatus.FINISHED,
+      },
+    });
+
+    const playerCount = randInt(2, 4);
+    const players = [...users].sort(() => Math.random() - 0.5).slice(0, playerCount);
+
+    const results = players
+      .map((user) => ({
+        matchId:    match.id,
+        userId:     user.id,
+        wpm:        randFloat(40, 140),
+        accuracy:   randFloat(85, 100),
+        position:   0,
+        finishedAt: endedAt,
+      }))
+      .sort((a, b) => b.wpm - a.wpm)
+      .map((r, idx) => ({ ...r, position: idx + 1 }));
+
+    await prisma.matchResult.createMany({ data: results, skipDuplicates: true });
+  }
+
+  for (const user of users) {
+    const count = randInt(0, 3);
+    const selected = [...achievements].sort(() => Math.random() - 0.5).slice(0, count);
+    for (const achievement of selected) {
+      await prisma.userAchievement.upsert({
+        where:  { userId_achievementId: { userId: user.id, achievementId: achievement.id } },
+        update: {},
+        create: {
+          userId:        user.id,
+          achievementId: achievement.id,
+          unlockedAt:    daysAgo(randInt(0, 30)),
+        },
+      });
+    }
+  }
+}
+
+main()
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(() => prisma.$disconnect());
