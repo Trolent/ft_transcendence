@@ -5,7 +5,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { getMeApi, loginApi, registerApi, type SafeUser } from './api';
+import { type SafeUser } from "@backend/common/types";
+import { getMeApi, loginApi, registerApi } from './api';
 
 const TOKEN_KEY = 'transcendence';
 
