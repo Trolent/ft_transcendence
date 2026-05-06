@@ -18,31 +18,31 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     me(@CurrentUser() user: SafeUser) {
-        return this.UsersService.getProfile(user.id, true);
+        return this.UsersService.getProfile(user.username, true);
     }
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
-    @Get(':id')
-    getProfile(@Param('id', ParseIntPipe) id: number) {
-        return this.UsersService.getProfile(id, false);
+    @Get(':username')
+    getProfile(@Param('username') username: string) {
+        return this.UsersService.getProfile(username, false);
     }
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
-    @Get(':id/stats')
-    getStats(@Param('id', ParseIntPipe) id: number) {
-        return this.UsersService.calculateStats(id);
+    @Get(':username/stats')
+    getStats(@Param('username') username: string) {
+        return this.UsersService.calculateStats(username);
     }
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get()
-    getProfiles(@Query('ids') ids: string) {
-    const idList = ids.split(',').map(Number).filter(Boolean);
+    getProfiles(@Query('users') users: string) {
+    const idList = users.split(',').map(Number).filter(Boolean);
     return this.UsersService.getProfiles(idList);
     }
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
-    @Get(':id/history')
-    getHistory(@Param('id', ParseIntPipe) id: number) {
-        return this.UsersService.getHistory(id);
+    @Get(':username/history')
+    getHistory(@Param('username') username: string) {
+        return this.UsersService.getHistory(username);
   }
 }
