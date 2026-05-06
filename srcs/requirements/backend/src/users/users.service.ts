@@ -46,9 +46,20 @@ export class UsersService {
     });
   }
 
-  async calculateStats(userId: number) {
+  async findByUsername(username: string) {
+    return this.prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true, username: true, email: true,
+        avatarUrl: true, bio: true, language: true,
+        status: true, createdAt: true, updatedAt: true,
+      },
+    });
+  }
+
+  async calculateStats(username: string) {
     const results = await this.prisma.matchResult.findMany({
-      where: { userId, wpm: { not: null } },
+      where: { username, wpm: { not: null } },
       select: { wpm: true },
     });
 
@@ -58,7 +69,7 @@ export class UsersService {
     const level       = Math.floor(gamesPlayed / 3) + 1;
 
     const usersWithHigherWpm = await this.prisma.matchResult.groupBy({
-      by: ['userId'],
+      by: ['username'],
       _avg: { wpm: true },
       having: { wpm: { _avg: { gt: avgWpm } } },
     });
@@ -68,9 +79,9 @@ export class UsersService {
   }
 
 
-  async getProfile(id: number, isOwner = false) {
+  async getProfile(username: string, isOwner = false) {
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { username },
       select: {
         id: true, username: true, avatarUrl: true,
         bio: true, status: true, createdAt: isOwner,
@@ -79,12 +90,7 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
 
-    const results = await this.prisma.matchResult.findMany({
-      where: { userId: id, wpm: { not: null } },
-      select: { wpm: true },
-    });
-
-    const stats = await this.calculateStats(id)
+    const stats = await this.calculateStats(username);
 
     return { ...user, stats };
   }
@@ -100,12 +106,12 @@ export class UsersService {
     });
   }
 
-  async getHistory(id: number) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+  async getHistory(username: string) {
+    const user = await this.prisma.user.findUnique({ where: { username } });
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
 
     return this.prisma.matchResult.findMany({
-      where: { userId: id },
+      where: { username: username },
       select: {
         wpm: true, accuracy: true, position: true, finishedAt: true,
         match: { select: { id: true, startedAt: true, textSnippet: true } },
