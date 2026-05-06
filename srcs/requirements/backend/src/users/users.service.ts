@@ -95,13 +95,13 @@ export class UsersService {
     return { ...user, stats };
   }
 
-  async getProfiles(ids : number[]){
+  async getProfiles(usernames: string[]) {
     return this.prisma.user.findMany({
-      where: { id: { in: ids } },
+      where: { username: { in: usernames } },
       select: {
         id: true, username: true, avatarUrl: true,
-        bio: true, status: true, language : true,
-        email : false, createdAt : false
+        bio: true, status: true, language: true,
+        email: false, createdAt: false,
       },
     });
   }

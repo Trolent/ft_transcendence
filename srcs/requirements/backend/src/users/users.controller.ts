@@ -36,8 +36,8 @@ export class UsersController {
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get()
     getProfiles(@Query('users') users: string) {
-    const idList = users.split(',').map(Number).filter(Boolean);
-    return this.UsersService.getProfiles(idList);
+        const usernameList = users.split(',').map(s => s.trim()).filter(Boolean);
+        return this.UsersService.getProfiles(usernameList);
     }
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
