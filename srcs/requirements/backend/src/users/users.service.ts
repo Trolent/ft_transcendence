@@ -58,6 +58,9 @@ export class UsersService {
   }
 
   async calculateStats(username: string) {
+    const exists = await this.prisma.user.findUnique({ where: { username }, select: { id: true } });
+    if (!exists) throw new NotFoundException('USER_NOT_FOUND');
+
     const results = await this.prisma.matchResult.findMany({
       where: { username, wpm: { not: null } },
       select: { wpm: true },
