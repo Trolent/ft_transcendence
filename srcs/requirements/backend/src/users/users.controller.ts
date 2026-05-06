@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, UseGuards, Param, ParseIntPipe, Query, BadRequestException } from '@nestjs/common';
 
 //API LIMIT
 import { Throttle } from '@nestjs/throttler';
@@ -9,6 +9,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { CurrentUser } from '../common/current-user.decorator';
 import { SafeUser } from '../common/types';
+
+const MAX_PROFILES_REQUEST = 70;
 
 @Controller('users')
 export class UsersController {
@@ -35,10 +37,12 @@ export class UsersController {
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get()
-    getProfiles(@Query('users') users: string) {
-        const usernameList = users.split(',').map(s => s.trim()).filter(Boolean);
+        getProfiles(@Query('users') users: string) {
+        if (!users) throw new BadRequestException('MISSING_USERS_PARAM');
+        const usernameList = users.split(',').map(s => s.trim()).filter(Boolean).slice(0, MAX_PROFILES_REQUEST);
         return this.UsersService.getProfiles(usernameList);
     }
+
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get(':username/history')
