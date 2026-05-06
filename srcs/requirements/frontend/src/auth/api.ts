@@ -1,15 +1,6 @@
-const API_BASE = '/api/auth'
+import { type SafeUser } from "@backend/common/types";
 
-export type SafeUser = {
-  id: number;
-  username: string;
-  email: string;
-  avatarUrl: string | null;
-  language: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-};
+const API_BASE = '/api/auth'
 
 async function handleResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
