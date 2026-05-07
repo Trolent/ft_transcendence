@@ -3,12 +3,10 @@ import { createContext, useState } from "react";
 export const BioContext = createContext({ bio: "", setBio: (_: string) => {} });
 
 import Play from "./pages/Play";
-import Demo from "./pages/Demo";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import { Navbar, Footer } from "./layout";
 import Signin from "./pages/Signin";
 import Settings from "./pages/Settings";
 
@@ -39,10 +37,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Play />} />
           <Route path="/play" element={<Play />} />
-          <Route path="/demo" element={<Demo />} />
-          <Route path="/signin" element={<Signin />} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/signin" element={<GuestRoute><Signin /></GuestRoute>} />
+          <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/profile" element={<Profile />} /> {/* opens user profile, if not logged it should redirect to /signin*/}
+          <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/privacy" element={<Privacy />} />
