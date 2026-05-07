@@ -16,7 +16,7 @@ Examples:
 
 */
 
-type ContainerVariant = "default" | "panel" | "terminal";
+export type ContainerVariant = "default" | "panel" | "terminal";
 
 interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ContainerVariant;
