@@ -26,16 +26,19 @@ export default function Settings() {
         </div>
         <div className="mt-3 flex-col hover:opacity-80">
           <Container variant="panel">
-            <Text>Game mode</Text>
+            <label className="flex justify-between items-center">
+              <Text>Game mode</Text>
+              <button /*onClick=""*/ className="bg-black border border-default px-4">Normal</button>
+            </label>
           </Container>
         </div>
         <div className="mt-3 flex-col hover:opacity-80">
           <Container variant="panel">
-            <label>
-              <Text>Language</Text> {' '}
-              <select>
-                <option value="Français">Français</option>
+            <label className="flex justify-between items-center">
+              <Text>Language</Text>
+              <select className="bg-black border border-default text-default font-mono text-sm px-2 py-1 outline-none cursor-pointer">
                 <option value="English">English</option>
+                <option value="Français">Français</option>
               </select>
             </label>
           </Container>
