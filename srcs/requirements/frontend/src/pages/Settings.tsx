@@ -24,7 +24,13 @@ export default function Settings() {
         </div>
         <div className="mt-3 flex-col hover:opacity-80">
           <Container variant="panel">
-            <Text>Language</Text>
+            <label>
+              <Text>Language</Text> {' '}
+              <Select>
+                <option value="Français">Français</option>
+                <option value="English">English</option>
+              </Select>
+            </label>
           </Container>
         </div>
     </PageLayout>
