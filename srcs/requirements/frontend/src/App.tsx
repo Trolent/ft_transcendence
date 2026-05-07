@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-//import { createContext, useContext } from "react";
+import { createContext, useState } from "react";
+export const BioContext = createContext({ bio: "", setBio: (_: string) => {} });
 
 import Play from "./pages/Play";
 import Demo from "./pages/Demo";
@@ -29,8 +30,9 @@ function App() {
       i.href === "/" ? pathname === "/" || pathname === "/play"
         : pathname === i.href,
   }));
-
+  const [bio, setBio] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
   return (
+    <BioContext.Provider value={{ bio, setBio }}>
     <div className="min-h-screen bg-terminal-bg flex flex-col font-mono">
       <Navbar items={navItems} />
       <main className="flex-1">
@@ -50,6 +52,7 @@ function App() {
       </main>
       <Footer />
     </div>
+    </BioContext.Provider>
   );
 }
 
