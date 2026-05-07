@@ -58,11 +58,11 @@ export class UsersService {
   }
 
   async calculateStats(username: string) {
-    const exists = await this.prisma.user.findUnique({ where: { username }, select: { id: true } });
-    if (!exists) throw new NotFoundException('USER_NOT_FOUND');
+    const user = await this.prisma.user.findUnique({ where: { username }, select: { id: true } });
+    if (!user) throw new NotFoundException('USER_NOT_FOUND');
 
     const results = await this.prisma.matchResult.findMany({
-      where: { username, wpm: { not: null } },
+      where: { userId: user.id, wpm: { not: null } },
       select: { wpm: true },
     });
 
@@ -72,7 +72,7 @@ export class UsersService {
     const level       = Math.floor(gamesPlayed / 3) + 1;
 
     const usersWithHigherWpm = await this.prisma.matchResult.groupBy({
-      by: ['username'],
+      by: ['userId'],
       _avg: { wpm: true },
       having: { wpm: { _avg: { gt: avgWpm } } },
     });
@@ -114,7 +114,7 @@ export class UsersService {
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
 
     return this.prisma.matchResult.findMany({
-      where: { username: username },
+      where: { userId: user.id },
       select: {
         wpm: true, accuracy: true, position: true, finishedAt: true,
         match: { select: { id: true, startedAt: true, textSnippet: true } },
