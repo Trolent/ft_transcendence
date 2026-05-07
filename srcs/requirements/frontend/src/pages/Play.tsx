@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-
 import { Text, Btn } from "../components";
 import { PageWithSidebar, Sidebar } from "../layout";
 
 export default function Play() {
+
   return (
     <PageWithSidebar
       sidebar={
@@ -11,7 +11,7 @@ export default function Play() {
           <Text>Sidebar</Text>
         </Sidebar>
       }>
-      <Link to="/demo"><Btn>Check Demo</Btn></Link>
+        <Text>Welcome</Text>
     </PageWithSidebar>
   );
 }
