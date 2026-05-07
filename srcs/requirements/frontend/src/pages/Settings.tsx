@@ -26,10 +26,10 @@ export default function Settings() {
           <Container variant="panel">
             <label>
               <Text>Language</Text> {' '}
-              <Select>
+              <select>
                 <option value="Français">Français</option>
                 <option value="English">English</option>
-              </Select>
+              </select>
             </label>
           </Container>
         </div>
