@@ -87,10 +87,14 @@ async function main() {
     usersData.map((u, i) =>
       prisma.user.upsert({
         where:  { username: u.username },
-        update: {},
+        update: {
+          bio:      `Hello, I'm ${u.username}! I love typing and gaming!`,
+          avatarUrl: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
+        },
         create: {
           username:     u.username,
           email:        u.email,
+          bio:          `Hello, I'm ${u.username}! I love typing and gaming!`,
           passwordHash,
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
           language:     randFrom(languages),
