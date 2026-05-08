@@ -3,9 +3,11 @@ import Container from "../components/Container";
 import { PageLayout } from "../layout";
 import { useContext, useState } from "react";
 import { BioContext } from "../App";
+import { AuthContext } from "../auth/AuthContext";
 
 export default function Settings() {
   const { bio, setBio } = useContext(BioContext);
+  const { logout } = useContext(AuthContext)!;
   const [editing, setEditing] = useState(false);
 
   return (
@@ -41,6 +43,13 @@ export default function Settings() {
                 <option value="Français">Français</option>
               </select>
             </label>
+          </Container>
+        </div>
+        <div className="mt-5 flex-col">
+          <Container variant="panel" className="w-fit py-1 hover:opacity-80">
+            <button onClick={logout}>
+              <Text>Logout</Text>
+            </button>
           </Container>
         </div>
     </PageLayout>
