@@ -21,7 +21,7 @@ function App() {
         { label: "Settings", href: "/settings" },
         { label: "Sign in", href: "/signin" }
       ]} />
-      <main>
+      <main className="flex-1 flex flex-col justify-center">
         <Routes>
           <Route path="/" element={<Play />} />
           <Route path="/play" element={<Play />} />

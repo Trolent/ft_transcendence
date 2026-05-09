@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Text, Btn } from "../components";
+import { Text, Btn, GameArena } from "../components";
 import { PageWithSidebar, Sidebar } from "../layout";
 
 export default function Play() {
@@ -11,7 +11,7 @@ export default function Play() {
           <Text>Sidebar</Text>
         </Sidebar>
       }>
-        <Text>Welcome</Text>
+        <GameArena />
     </PageWithSidebar>
   );
 }
