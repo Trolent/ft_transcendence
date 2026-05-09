@@ -1,6 +1,4 @@
 import { useParams } from "react-router-dom";
-import { useContext } from "react";
-import { BioContext } from "../App";
 
 import { Btn, Container, Heading, Text, Avatar } from "../components";
 import { PageLayout } from "../layout";
@@ -9,7 +7,6 @@ import { StatCard, StatItem, StatDivider } from "../components";
 
 export default function Profile() {
   {/* TODO juste pour le test */}
-  const { bio } = useContext(BioContext);
   const { username } = useParams<{ username?: string }>();
   const displayName = username ?? "username";
 
@@ -35,7 +32,7 @@ export default function Profile() {
         </div>
 
         <Container label="bio" variant="panel">
-          <Text>{bio}</Text>
+          <Text>Ma bio lol</Text>
         </Container>
 
         <StatCard label="statistics">
