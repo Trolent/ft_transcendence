@@ -32,7 +32,7 @@ export default function Profile() {
         </div>
 
         <Container label="bio" variant="panel">
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+          <Text>Ma bio lol</Text>
         </Container>
 
         <StatCard label="statistics">

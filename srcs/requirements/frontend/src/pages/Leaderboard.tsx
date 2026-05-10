@@ -8,7 +8,7 @@ const players: { id: number; rank: number; username: string }[] = [
   { id: 2, rank: 2, username: "claire" },
   { id: 3, rank: 3, username: "pierre" },
   { id: 4, rank: 4, username: "emma" },
-  { id: 6, rank: 6, username: "samuel" },
+  { id: 5, rank: 5, username: "samuel" },
 ];
 
 export default function Leaderboard() {

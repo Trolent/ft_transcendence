@@ -13,7 +13,7 @@
 1. Clone the repository
 2. Copy the environment file and fill in your values:
    ```bash
-   cp .env.example .env
+   cp srcs/.env.example srcs/.env
    ```
 3. Generate SSL certificates:
    ```bash
