@@ -12,5 +12,6 @@
     "baseUrl": "./",
     "strict": false,
     "skipLibCheck": true
-  }
+  },
+  "exclude": ["node_modules", "dist", "prisma/seed.ts", "prisma/seedv2.ts"]
 }
