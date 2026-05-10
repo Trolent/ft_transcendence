@@ -32,7 +32,8 @@ export function useGameState(active: boolean, forcedEnd = false) {
   const progress = passage.length > 0 ? totalCorrect / passage.length : 0;
   const finished = wordIndex >= words.length;
   const timedOut = active && elapsed >= maxTime && !finished;
-  const effectivelyDone = finished || forcedEnd || timedOut;
+  const playerDone = finished || forcedEnd || timedOut;
+  const raceOver = forcedEnd || timedOut; // timer keeps going when player merely finishes first
   const timeLeft = Math.max(0, maxTime - elapsed);
   const minutes = elapsed / 60;
   const wpm = lockedWpm ?? (minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
@@ -57,11 +58,11 @@ export function useGameState(active: boolean, forcedEnd = false) {
 
   // Lock WPM and elapsed when the race is over
   useEffect(() => {
-    if (effectivelyDone && lockedWpm === null) {
+    if (playerDone && lockedWpm === null) {
       setLockedWpm(minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
       setLockedElapsed(elapsed);
     }
-  }, [effectivelyDone, lockedWpm, totalCorrect, minutes, elapsed]);
+  }, [playerDone, lockedWpm, totalCorrect, minutes, elapsed]);
 
   useEffect(() => {
     if (active && startedAt.current === null) {
@@ -70,19 +71,19 @@ export function useGameState(active: boolean, forcedEnd = false) {
   }, [active]);
 
   useEffect(() => {
-    if (!active || effectivelyDone) return;
+    if (!active || raceOver) return;
     const id = setInterval(() => {
       if (startedAt.current !== null) {
         setElapsed(Math.floor((Date.now() - startedAt.current) / 1000));
       }
     }, 500);
     return () => clearInterval(id);
-  }, [active, effectivelyDone]);
+  }, [active, raceOver]);
 
   return {
     passage, words, wordIndex, typed,
     handleType, completeWord,
-    elapsed, timeLeft, wpm, progress, finished,
+    elapsed, timeLeft, wpm, progress, finished, playerDone,
     finishTime: lockedElapsed,
     accuracy,
   };
