@@ -47,7 +47,7 @@ function interpolate(curve: Waypoint[], elapsed: number): number
   return 1;
 }
 
-function segmentWpm(curve: Waypoint[], elapsed: number, passageLength: number): number 
+function segmentWpm(curve: Waypoint[], elapsed: number, passageLength: number): number
 {
   for (let i = 1; i < curve.length; i++) {
     if (elapsed <= curve[i].t) {
@@ -57,6 +57,12 @@ function segmentWpm(curve: Waypoint[], elapsed: number, passageLength: number): 
     }
   }
   return 0;
+}
+
+function finishedWpm(curve: Waypoint[], passageLength: number): number
+{
+  const t = curve[curve.length - 1].t;
+  return t > 0 ? Math.round((passageLength / 5) / (t / 60)) : 0;
 }
 
 type Props = 
@@ -89,7 +95,7 @@ export default function RaceTrack(
   const wpmForLane = (idx: number): number => {
     if (idx === 0) return playerWpm;
     if (!active || elapsed < 1) return 0;
-    if (progressForLane(idx) >= 1) return 0;
+    if (progressForLane(idx) >= 1) return finishedWpm(botCurves[idx - 1], passageLength);
     return segmentWpm(botCurves[idx - 1], elapsed, passageLength);
   };
 

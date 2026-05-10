@@ -30,14 +30,17 @@ export default function GameArena({ overlay, onReplay }: Props) {
     !finishOrder.includes(0) &&
     finishOrder.filter((i: number) => i !== 0).length === TOTAL_PLAYERS - 1;
 
+  // Everyone (including player) finished — stop the timer
+  const allDone = finishOrder.length === TOTAL_PLAYERS;
+
   const {
     passage, words, wordIndex, typed,
     handleType, completeWord,
-    elapsed, timeLeft, wpm, progress, finished,
+    elapsed, timeLeft, wpm, progress, finished, playerDone,
     finishTime, accuracy,
-  } = useGameState(active, allOthersFinished);
+  } = useGameState(active, allOthersFinished || allDone);
 
-  const effectiveFinish = finished || allOthersFinished;
+  const effectiveFinish = playerDone;
   const playerPlace = allOthersFinished && !finished
     ? TOTAL_PLAYERS - 1          // forced last
     : finishOrder.indexOf(0);    // actual position (0-indexed)
