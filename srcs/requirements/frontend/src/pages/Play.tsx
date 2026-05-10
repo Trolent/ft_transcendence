@@ -6,6 +6,7 @@ type Phase = "lobby" | "countdown" | "go" | "racing";
 export default function Play() {
   const [phase, setPhase] = useState<Phase>("lobby");
   const [countdown, setCountdown] = useState(10);
+  const [gameKey, setGameKey] = useState(0);
 
   useEffect(() => {
     if (phase === "countdown") {
@@ -23,7 +24,7 @@ export default function Play() {
   }, [phase, countdown]);
 
   const enterRace = () => {
-    setCountdown(8);
+    setCountdown(5);
     setPhase("countdown");
   };
 
@@ -48,5 +49,18 @@ export default function Play() {
     phase === "go"        ? "GO!"             :
     null;
 
-  return <GameArena overlay={overlay} />;
+  const replay = () => {
+    setGameKey((k: number) => k + 1);
+    setCountdown(5);
+    setPhase("countdown");
+  };
+
+  return (
+    <div className="w-full flex flex-col items-center gap-3">
+      <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start">
+        <Btn size="sm" variant="ghost" onClick={() => setPhase("lobby")}>← Main Menu</Btn>
+      </div>
+      <GameArena key={gameKey} overlay={overlay} onReplay={replay} />
+    </div>
+  );
 }
