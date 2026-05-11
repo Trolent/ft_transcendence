@@ -1,0 +1,36 @@
+export const QUOTES: string[] = [
+  "All due respect, you got no idea what it's like to be Number One. Every decision you make affects every facet of every other thing.",
+  "Those who want respect, give respect. You want to get ahead in this world, you treat people right and they treat you right.",
+  "I'm like King Midas in reverse. Everything I touch turns to shit. The garbage business is all I got left, and they're making that difficult.",
+  "We're soldiers. Soldiers don't go to hell. It's business. We're all soldiers, and we made a switch. It's business, not personal.",
+  "You are in the army now. And in the army, you follow orders. You don't decide what you will and won't do. That's how it works.",
+  "A wrong decision is better than indecision. This is not rocket science. You make the call and you live with it. Period.",
+  "Fear knocks at the door, courage answers, and nobody is there. My uncle said that. He was wrong about a lot of things, but not that.",
+  "The strength of a family, like the strength of an army, is in its loyalty to each other. You pull one string, you pull them all.",
+  "Someday soon you're gonna have families of your own. And if you're lucky, you'll remember the little moments that were good.",
+  "Every day is a gift, but does it have to be a pair of socks? I want something worthwhile for once. Is that too much to ask?",
+  "In my experience, the guys who complain the most are always the ones who did the least. You want respect, you earn it. Simple as that.",
+  "Even soldiers follow orders. Even bad ones. That's not a cop-out, it's a way of life. You're told what to do, you do it.",
+  "The things I've done for my family, and I get this. This is my thanks. I'm not saying I'm perfect. I just think I deserve some respect.",
+  "I find I have to be the sad clown. Laughing on the outside, crying on the inside. You know what I mean? It's exhausting.",
+  "My father, he was tough. But fair. You knew where you stood. I think that's all any of us really want. To know where we stand.",
+  "You know what they say: every day above ground is a good day. I try to remember that. Some days are harder than others, but you push through.",
+  "I got news for you. The things that I've been through? Most men would have checked out a long time ago. I'm still standing. That counts for something.",
+  "There's an old saying: in cauda venenum. The sting is in the tail. You think it's over and that's exactly when you have to watch your back.",
+  "They say that in the end, all that matters is your family and the people you love. Everything else, the money, the power, it all turns to ash.",
+  "You know, I look at my kids and I think, what kind of world am I leaving them? And then I think, well, it ain't so different from the one I was left.",
+  "Here's the thing about therapy. You start talking, really talking, and things come out that you never expected. Things you buried so deep you forgot they were there.",
+  "Depression is rage turned inward. That's what my doctor tells me. I never thought of myself as angry, but I guess when you look at it that way, maybe I am.",
+  "Sometimes I feel like I'm in two different worlds and I don't belong to either one. You try to keep them separate, but eventually they always collide.",
+  "The hardest part isn't making the decision. That's actually the easy part. The hardest part is living with it afterward, day after day, knowing what you did.",
+  "We're all part of a system. The government, the courts, the streets, it's all connected. You think you're free, but you're just operating inside a different set of rules.",
+  "Loyalty is the most important thing in this life. More important than love, more important than money. Because without loyalty you got nothing, you got no foundation.",
+  "People say you can't go home again. I think that's true. The place is the same but you're different, and when you're different the place is different too.",
+  "You spend your whole life trying to get ahead, trying to give your family a better life. And then one day you wake up and realize you barely know them.",
+  "A man's got to have a code, a way of doing things. Without that he's just an animal. I always believed that, even if I didn't always live up to it.",
+  "There are things in my life I'm not proud of. I won't pretend otherwise. But every choice made sense at the time with what I knew and who I was then.",
+];
+
+export function pickRandomQuote(): string {
+  return QUOTES[Math.floor(Math.random() * QUOTES.length)];
+}
