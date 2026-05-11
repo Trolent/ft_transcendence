@@ -53,6 +53,7 @@ model User {
     email               String              @unique
     passwordHash        String?
     avatarUrl           String?
+    bio                 String?
     language            Language            @default(EN)
     status              UserStatus          @default(OFFLINE)
     createdAt           DateTime            @default(now())

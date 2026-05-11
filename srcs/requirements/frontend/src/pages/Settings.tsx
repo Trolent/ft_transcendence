@@ -1,57 +1,64 @@
-import { Heading, Text } from "../components";
+import { Heading, Text, Label, Btn } from "../components";
 import Container from "../components/Container";
 import { PageLayout } from "../layout";
 import { useContext, useState } from "react";
-import { BioContext } from "../App";
 import { AuthContext } from "../auth/AuthContext";
 
 export default function Settings() {
-  const { bio, setBio } = useContext(BioContext);
-  const { logout } = useContext(AuthContext)!;
   const [editing, setEditing] = useState(false);
+  const { logout } = useContext(AuthContext)!;
+  //temp
+  let [bio, setBio] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
 
   return (
     <PageLayout maxWidth="max-w-lg">
       <Heading level={2}>SETTINGS</Heading>
-        <div className="mt-3 flex-col hover:opacity-80">
-          <Container variant="panel">
-            <Text>Edit bio</Text>
-            <div className="edit-bio">
-              <Container variant="terminal" onClick={() => setEditing(true)}>
+          <Container variant="panel" label="Edit bio" className="mt-3 flex-col">
+              <Container variant="terminal" onClick={() => setEditing(true)} className="mt-3">
                 {editing
-                  ? <textarea value={bio} onChange={(e) => setBio(e.target.value)} />
-                  : <Text>{bio}</Text>
-                }
+                  ? (
+                  <Container variant="default" className="flex flex-col gap-2 w-full border-none">
+                    <textarea 
+                      autoFocus
+                      className="w-full bg-transparent outline-none resize-none"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                    />
+                  </Container>
+                  ) : (
+                  <Text>{bio || "DEFAULT_BIO"}</Text>
+                )}
               </Container>
-            </div>
+                {editing && (
+                  <Container variant="panel" className="pb-0 flex justify-end w-full items-bottom border-none">
+                    <Btn size="sm" variant="primary" onClick={(e) => {
+                      e.stopPropagation();
+                      setEditing(false);
+                    }}>
+                      Sauvegarder
+                    </Btn>
+                  </Container>
+                )}
           </Container>
-        </div>
-        <div className="mt-3 flex-col hover:opacity-80">
-          <Container variant="panel">
-            <label className="flex justify-between items-center">
-              <Text>Game mode</Text>
-              <button /*onClick=""*/ className="bg-black border border-default px-4">Normal</button>
-            </label>
+
+          <Container variant="panel" className="mt-3 flex items-center justify-between w-full gap-4 p-4 hover:opacity-80">
+            <Label>Game mode</Label>
+            <Btn size="sm" variant="primary">Normal</Btn>
           </Container>
-        </div>
-        <div className="mt-3 flex-col hover:opacity-80">
-          <Container variant="panel">
-            <label className="flex justify-between items-center">
-              <Text>Language</Text>
-              <select className="bg-black border border-default text-default font-mono text-sm px-2 py-1 outline-none cursor-pointer">
+
+          <Container variant="panel" className="mt-3 flex w-full hover:opacity-80 flex items-center justify-between w-full gap-4 p-4">
+            <Label>Language</Label>
+            <select className="bg-black border border-default text-default font-mono text-sm px-2 py-1 outline-none cursor-pointer">
                 <option value="English">English</option>
                 <option value="Français">Français</option>
               </select>
-            </label>
           </Container>
-        </div>
-        <div className="mt-5 flex-col">
-          <Container variant="panel" className="w-fit py-1 hover:opacity-80">
+
+          <Container variant="panel" className="mt-5 w-fit py-1 hover:opacity-80">
             <button onClick={logout}>
-              <Text>Logout</Text>
+              <Label>Logout</Label>
             </button>
           </Container>
-        </div>
     </PageLayout>
   );
 }
