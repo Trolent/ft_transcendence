@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RoomState, RoomPlayer } from './game.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { MatchStatus, UserStatus } from '@prisma/client';
+import { MAX_WPM, QUOTES, MIN_RACE_SECONDS, MIN_CHARS_PER_SEC } from '../common/game.constant';
 
 type QueueEntry = {
     socketId:   string;
@@ -10,17 +11,7 @@ type QueueEntry = {
     avatarUrl:  string | null;
 }
 
-const QUOTES = [
-  "The quick brown fox jumps over the lazy dog.",
-  "To be or not to be, that is the question.",
-  "All that glitters is not gold.",
-  "A journey of a thousand miles begins with a single step.",
-];
-
-const MIN_RACE_SECONDS = 20;
-const MIN_CHARS_PER_SEC = 1.5;
-
-// utilitaires
+// utils
 
 function generateRoomID(): string {
     return Math.random().toString(36).substring(2, 7).toUpperCase();
@@ -239,7 +230,7 @@ export class GameService{
             data:  { endedAt: new Date(), status: MatchStatus.FINISHED },
         });
 
-        // trie
+        // tri
         const sorted = [...room.players.values()]
             .sort((a, b) => (a.finishedAt ?? Infinity) - (b.finishedAt ?? Infinity));
 
@@ -247,7 +238,7 @@ export class GameService{
             data: sorted.map((p, i) => ({
                 matchId:    room.matchId,
                 userId:     p.userId,
-                wpm:        p.wpm,
+                wpm:        p.wpm > MAX_WPM ? 0 : p.wpm,
                 accuracy:   null,
                 position:   i + 1,
                 finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
@@ -264,7 +255,7 @@ export class GameService{
         return sorted.map((p, i) => ({
             userId:   p.userId,
             username: p.username,
-            wpm:      p.wpm,
+            wpm:      p.wpm > MAX_WPM ? 0 : p.wpm,
             position: i + 1,
         }));
     }
