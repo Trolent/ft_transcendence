@@ -9,8 +9,7 @@ import { GameService } from './game.service'
 import { UseGuards, } from '@nestjs/common';
 import { WsJwtGuard } from '../auth/ws-jwt.guard'
 import { Socket, Namespace } from 'socket.io';
-
-const MAX_WPM = 250;
+import { MAX_WPM } from '../common/game.constant';
 
 @WebSocketGateway({ cors: { origin: [process.env.DOMAIN ? `https://${process.env.DOMAIN}` : '', 'http://localhost:5173'], credentials: true }, namespace: '/game' })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
