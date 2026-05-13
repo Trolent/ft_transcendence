@@ -1,12 +1,12 @@
 import { Heading, Text, Label, Btn } from "../components";
 import Container from "../components/Container";
 import { PageLayout } from "../layout";
-import { useContext, useState } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 
 export default function Settings() {
   const [editing, setEditing] = useState(false);
-  const { logout } = useContext(AuthContext)!;
+  const { logout } = useContext(AuthContext);
   //temp
   let [bio, setBio] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
 
