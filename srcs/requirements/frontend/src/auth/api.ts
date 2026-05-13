@@ -1,17 +1,7 @@
 import { type SafeUser } from "@backend/common/types";
-import { authHeaders, API_AUTH_ME, API_AUTH_LOGIN, API_AUTH_REGISTER } from '../api/config'
+import { handleResponse, authHeaders, API_AUTH_ME, API_AUTH_LOGIN, API_AUTH_REGISTER } from '../api/config'
 
 const headers = { 'Content-Type': 'application/json' };
-
-async function handleResponse<T>(res: Response): Promise<T> {
-  const text = await res.text();
-  const data = text ? JSON.parse(text) : {};
-  if (!res.ok) {
-    const msg = Array.isArray(data.message) ? data.message[0] : data.message;
-    throw new Error(msg ?? `HTTP ${res.status}`);
-  }
-  return data as T;
-}
 
 export async function loginApi(
   email: string,
