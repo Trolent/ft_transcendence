@@ -1,11 +1,4 @@
-const API_BASE = '/api/users';
-
-const TOKEN_KEY = 'transcendence';
-
-function authHeaders(): HeadersInit {
-  const token = localStorage.getItem(TOKEN_KEY);
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
+import { API_USERS, authHeaders } from './config'
 
 async function handleResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -51,15 +44,15 @@ export type HistoryEntry = {
 };
 
 export async function getUserProfile(username: string): Promise<UserProfile> {
-  const res = await fetch(`${API_BASE}/${encodeURIComponent(username)}`, {
-    headers: authHeaders(),
+  const res = await fetch(`${API_USERS}/${encodeURIComponent(username)}`, {
+    headers: authHeaders(null),
   });
   return handleResponse<UserProfile>(res);
 }
 
 export async function getUserHistory(username: string): Promise<HistoryEntry[]> {
-  const res = await fetch(`${API_BASE}/${encodeURIComponent(username)}/history`, {
-    headers: authHeaders(),
+  const res = await fetch(`${API_USERS}/${encodeURIComponent(username)}/history`, {
+    headers: authHeaders(null),
   });
   return handleResponse<HistoryEntry[]>(res);
 }
