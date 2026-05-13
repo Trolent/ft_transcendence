@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
-
-import { Btn, Container, Heading, Text, Avatar } from "../components";
+import { useParams } from "react-router-dom";
+import {
+  Btn,
+  Container,
+  Heading,
+  Text,
+  Avatar,
+  StatCard,
+  StatItem,
+  StatDivider
+} from "../components";
 import { PageLayout } from "../layout";
-import { StatCard, StatItem, StatDivider } from "../components";
-import { useAuth } from "../auth/useAuth";
+import { useAuth } from "../auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
-  const { user: me, loading: authLoading } = useAuth();
+  const { user: me } = useAuth();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -36,8 +43,6 @@ export default function Profile() {
       .finally(() => setLoading(false));
   }, [targetUsername]);
 
-  if (!username && authLoading) return null;
-  if (!username && !authLoading && !me) return <Navigate to="/signin" replace />;
   if (!targetUsername) return null;
 
   if (loading) {
