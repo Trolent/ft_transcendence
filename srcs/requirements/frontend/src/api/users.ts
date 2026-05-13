@@ -1,17 +1,4 @@
-import { API_USERS, authHeaders } from './config'
-
-async function handleResponse<T>(res: Response): Promise<T> {
-  const text = await res.text();
-  if (!text.trimStart().startsWith('{') && !text.trimStart().startsWith('[')) {
-    throw new Error(`HTTP ${res.status} — response not JSON: ${text.slice(0, 200)}`);
-  }
-  const data = JSON.parse(text);
-  if (!res.ok) {
-    const msg = Array.isArray(data.message) ? data.message[0] : data.message;
-    throw new Error(msg ?? `HTTP ${res.status}`);
-  }
-  return data as T;
-}
+import { API_USERS, authHeaders, handleResponse } from './config'
 
 export type UserStats = {
   rank: number;
