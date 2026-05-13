@@ -10,6 +10,8 @@ import { getMeApi, loginApi, registerApi } from './api';
 
 const TOKEN_KEY = 'transcendence';
 
+export const getToken = () => localStorage.getItem(TOKEN_KEY);
+
 interface AuthContextValue {
   user: SafeUser | null;
   loading: boolean;
