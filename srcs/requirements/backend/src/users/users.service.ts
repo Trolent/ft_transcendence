@@ -1,12 +1,17 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { UpdateProfileDto } from './dto'
+import { UpdateProfileDto, UpdateSettingsDto } from './dto'
 
 @Injectable()
 export class UsersService {
 
   constructor(private prisma: PrismaService) {}
+
+  private async HashThePass(password? : string) {
+    const passwordHash = password ? await bcrypt.hash(password, 10) : null;
+    return passwordHash;
+  }
 
   async create(username: string, email: string, password?: string) {
     const exists = await this.prisma.user.findFirst({
@@ -14,7 +19,7 @@ export class UsersService {
     });
     if (exists) throw new ConflictException('USER_ALREADY_EXISTS');
 
-    const passwordHash = password ? await bcrypt.hash(password, 10) : null;
+    const passwordHash = await this.HashThePass(password);
     return this.prisma.user.create({
       data: { username, email, passwordHash },
       select: {
@@ -139,5 +144,24 @@ export class UsersService {
       data: { bio:dto.bio },
       select: { bio:true }
     })
+  }
+
+  async updateSettings(username : string, dto: UpdateSettingsDto) {
+    const passHashed = await this.HashThePass(dto.password)
+    try {
+      return this.prisma.user.update({
+        where: { username },
+        data: { email:dto.email,
+                ...(dto.password && { passwordHash: passHashed }),
+                language : dto.language
+        },
+        select: { email:true, language:true }
+      })
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new ConflictException('EMAIL_ALREADY_TAKEN');
+      }
+      throw error;
+    }
   }
 }
