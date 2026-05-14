@@ -32,14 +32,14 @@ export type HistoryEntry = {
 
 export async function getUserProfile(username: string): Promise<UserProfile> {
   const res = await fetch(`${API_USERS}/${encodeURIComponent(username)}`, {
-    headers: authHeaders(null),
+    headers: authHeaders(),
   });
   return handleResponse<UserProfile>(res);
 }
 
 export async function getUserHistory(username: string): Promise<HistoryEntry[]> {
   const res = await fetch(`${API_USERS}/${encodeURIComponent(username)}/history`, {
-    headers: authHeaders(null),
+    headers: authHeaders(),
   });
   return handleResponse<HistoryEntry[]>(res);
 }
