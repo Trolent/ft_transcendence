@@ -31,6 +31,10 @@ export default function Navbar({ items }: { items: NavItem[] }) {
             </li>
           ))}
         </ul>
+
+        {/*<button type="button" className="sm:hidden" aria-label="Menu">
+          <img src="/axbaudri.jpg" alt="" className="h-7 w-7" />
+        </button>*/}
       </div>
     </nav>
   );
