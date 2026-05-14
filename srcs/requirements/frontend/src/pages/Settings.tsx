@@ -6,9 +6,8 @@ import { AuthContext } from "../auth/AuthContext";
 
 export default function Settings() {
   const [editing, setEditing] = useState(false);
-  const { logout } = useContext(AuthContext);
+  const { logout, bio, setBio } = useContext(AuthContext)!;
   //temp
-  let [bio, setBio] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
 
   return (
     <PageLayout maxWidth="max-w-lg">
@@ -35,7 +34,7 @@ export default function Settings() {
                       e.stopPropagation();
                       setEditing(false);
                     }}>
-                      Sauvegarder
+                      Save
                     </Btn>
                   </Container>
                 )}
