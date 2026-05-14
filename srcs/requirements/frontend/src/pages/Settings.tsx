@@ -6,9 +6,9 @@ import { AuthContext } from "../auth/AuthContext";
 
 export default function Settings() {
   const [editing, setEditing] = useState(false);
-  const { logout, bio, setBio } = useContext(AuthContext)!;
-  //temp
+  const { logout } = useContext(AuthContext)!;
 
+  let [bio, setBio] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
   return (
     <PageLayout maxWidth="max-w-lg">
       <Heading level={2}>SETTINGS</Heading>
