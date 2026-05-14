@@ -7,6 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalPipes(new ValidationPipe({ whitelist : true}));
   app.use(helmet());
+  app.use((_req: any, res: any, next: any) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  });
   app.enableCors({
       origin: [`https://${process.env.DOMAIN}`, 'http://localhost:5173'],
       methods: ['GET', 'POST', 'PATCH', 'DELETE'],

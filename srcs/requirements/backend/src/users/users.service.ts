@@ -93,7 +93,7 @@ export class UsersService {
       where: { username },
       select: {
         id: true, username: true, avatarUrl: true,
-        bio: true, status: true, createdAt: isOwner,
+        bio: true, status: true, createdAt: true,
         email : isOwner, language : true
       },
     });
