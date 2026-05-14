@@ -81,7 +81,7 @@ export default function Profile() {
                 <Text variant="muted" size="xs">created on {createdAt}</Text>
               )}
             </div>
-            {!isOwnProfile && (
+            {me != null && !isOwnProfile && (
               <div className="flex flex-wrap gap-2">
                 <Btn size="sm" variant="primary">+ Add friend</Btn>
                 <Btn size="sm" variant="secondary">Message</Btn>
@@ -109,8 +109,8 @@ export default function Profile() {
             <Text variant="muted">No game played.</Text>
           ) : (
             <div className="flex flex-col gap-2">
-              {history.map((entry, i) => (
-                <div key={i} className="flex justify-between text-sm">
+              {history.map((entry) => (
+                <div key={entry.match.id} className="flex justify-between text-sm">
                   <Text size="sm" variant="muted">
                     {entry.finishedAt
                       ? new Date(entry.finishedAt).toLocaleDateString("fr-CA")
