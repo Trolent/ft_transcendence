@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import {
+  FriendRequests,
   FriendsPage,
   Leaderboard,
   Play,
@@ -30,7 +31,8 @@ function App() {
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
-          <Route path="/friends" element={<FriendsPage />} />
+          <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
+          <Route path="/friends/requests" element={<ProtectedRoute><FriendRequests /></ProtectedRoute>} />
           <Route path="*" element={<Play />} />
         </Routes>
       </main>

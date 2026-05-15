@@ -1,14 +1,6 @@
 import { Link } from "react-router-dom";
-import { Avatar } from "./Avatar";
-import { Heading } from "./Heading";
-import { List } from "./List";
-import { Text } from "./Text";
-
-type Friend = {
-  id: number;
-  username: string;
-  avatarSrc?: string | null;
-};
+import { Avatar, Btn, Heading, List, Text } from "@/components";
+import type { Friend } from "./types";
 
 interface FriendsProps {
   friends?: Friend[];
@@ -24,7 +16,7 @@ const fakeFriends: Friend[] = [
   { id: 5, username: "lea" },
 ];
 
-export default function Friends({
+export default function FriendsList({
   friends = fakeFriends,
   limit,
   className = "",
@@ -33,7 +25,12 @@ export default function Friends({
 
   return (
     <section className={className}>
-      <Heading level={3}>Friends</Heading>
+      <div className="flex items-center justify-between">
+        <Heading level={3}>Friends [26]</Heading>
+        <Btn as={Link} to="/friends/requests" variant="ghost" size="sm">
+          Requests
+        </Btn>
+      </div>
       <List
         className="mt-6"
         items={displayedFriends}

@@ -1,10 +1,10 @@
-import { Friends } from "@/components";
+import { FriendsList } from "@/friends";
 import { PageLayout } from "@/layout";
 
-export default function Leaderboard() {
+export default function Friends() {
   return (
     <PageLayout maxWidth="max-w-lg">
-        <Friends />
+        <FriendsList />
     </PageLayout>
   )
 }
