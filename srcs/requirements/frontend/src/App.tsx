@@ -1,21 +1,23 @@
 import { Routes, Route } from "react-router-dom";
 
-import Play from "./pages/Play";
-import Leaderboard from "./pages/Leaderboard";
-import Profile from "./pages/Profile";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Signin from "./pages/Signin";
-import Register from "./pages/Register";
+import {
+  Leaderboard,
+  Play,
+  Privacy,
+  Profile,
+  Register,
+  Settings,
+  Signin,
+  Terms,
+} from "./pages";
 import { Navbar, Footer } from "./layout";
 import { ProtectedRoute, GuestRoute } from "./auth";
-import Settings from "./pages/Settings";
 
 function App() {
   return (
     <div className="min-h-screen bg-black flex flex-col font-mono">
       <Navbar />
-      <main className="flex-1 flex flex-col justify-center">
+      <main className="flex-1 flex flex-col">
         <Routes>
           <Route path="/" element={<Play />} />
           <Route path="/play" element={<Play />} />
