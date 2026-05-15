@@ -18,7 +18,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
           <a href="/">🚗 TRANSCENDENCE</a>
         </span>
 
-        <ul className="hidden sm:flex items-center gap-1">
+        <ul className="hidden md:flex items-center gap-1">
           {items?.map((item) => (
             <li key={item.label}>
               <Link
@@ -34,7 +34,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
           ))}
         </ul>
 
-        <Menu as="div" className="relative inline-block">
+        <Menu as="div" className="relative inline-block md:hidden">
           <MenuButton className="inline-flex items-center gap-1 px-3 py-1 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted">
             MENU
             <ChevronDownIcon aria-hidden="true" className="size-4" />
@@ -42,13 +42,13 @@ export default function Navbar({ items }: { items: NavItem[] }) {
 
           <MenuItems
             transition
-            className="absolute right-0 z-10 mt-2 w-50 border text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer"
+            className="absolute right-0 z-10 mt-2 w-40 border text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer"
           >
-            <div className="py-1">
+            <div>
               <MenuItem>
                 <a
                   href="/play"
-                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                  className="block px-4 py-1.5 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
                 >
                   PLAY
                 </a>
@@ -56,7 +56,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
               <MenuItem>
                 <a
                   href="/leaderboard"
-                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                  className="block px-4 py-1.5 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
                 >
                   LEADERBOARD
                 </a>
@@ -64,7 +64,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
               <MenuItem>
                 <a
                   href="/profile"
-                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                  className="block px-4 py-1.5 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
                 >
                   PROFILE
                 </a>
@@ -72,7 +72,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
               <MenuItem>
                 <a
                   href="/settings"
-                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                  className="block px-4 py-1.5 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
                 >
                   SETTINGS
                 </a>
@@ -80,7 +80,7 @@ export default function Navbar({ items }: { items: NavItem[] }) {
               <MenuItem>
                 <a
                   href="/signin"
-                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                  className="block px-4 py-1.5 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
                 >
                   SIGN IN
                 </a>
