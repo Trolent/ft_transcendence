@@ -11,7 +11,7 @@ export default function Settings() {
   let [bio, setBio] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
   return (
     <PageLayout maxWidth="max-w-lg">
-      <Heading level={2}>SETTINGS</Heading>
+      <Heading level={3} className="mt-20 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">SETTINGS</Heading>
           <Container variant="panel" label="Edit bio" className="mt-3 flex-col">
               <Container variant="terminal" onClick={() => setEditing(true)} className="mt-3">
                 {editing

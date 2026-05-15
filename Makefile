@@ -16,7 +16,7 @@ up:
 	docker compose -f $(COMPOSE) up --build -d
 	@printf "\n\033[1;32m  [OK] $(NAME) is up and running!\033[0m\n\n"
 	@printf "\033[1;36m  ┌───────────────────────────────────────────┐\033[0m\n"
-	@printf "\033[1;36m  │\033[0m  https://$(DOMAIN):1443                   \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  https://$(DOMAIN)                        \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  └───────────────────────────────────────────┘\033[0m\n\n"
 
 dev: check-env hosts
