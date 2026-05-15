@@ -37,12 +37,12 @@ export class AuthController {
     return user;
   }
 
-  // WARN Ajoutez la suppression du token dans le local storage coter front apres !!
   @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(200)
-  logout(){
-    return { message: 'LOGOUT_SUCCESS' };
+  logout(@CurrentUser() user: SafeUser) {
+    return this.authService.logout(user.id);
   }
 
 }
