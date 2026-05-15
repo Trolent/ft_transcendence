@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Btn, GameArena } from "../components";
-import { PageLayout } from "../layout";
+import { Btn } from "@/components";
+import { GameArena } from "@/game";
+import { PageLayout } from "@/layout";
 
 type Phase = "lobby" | "countdown" | "go" | "racing";
 
