@@ -50,6 +50,7 @@ export default function Settings() {
             <select className="bg-black border border-default text-default font-mono text-sm px-2 py-1 outline-none cursor-pointer">
                 <option value="English">English</option>
                 <option value="Français">Français</option>
+                <option value="Español">Español</option>
               </select>
           </Container>
 

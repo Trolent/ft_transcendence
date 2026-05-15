@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 interface NavItem {
   label: string;
@@ -32,9 +34,60 @@ export default function Navbar({ items }: { items: NavItem[] }) {
           ))}
         </ul>
 
-        {/*<button type="button" className="sm:hidden" aria-label="Menu">
-          <img src="/axbaudri.jpg" alt="" className="h-7 w-7" />
-        </button>*/}
+        <Menu as="div" className="relative inline-block">
+          <MenuButton className="inline-flex items-center gap-1 px-3 py-1 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted">
+            MENU
+            <ChevronDownIcon aria-hidden="true" className="size-4" />
+          </MenuButton>
+
+          <MenuItems
+            transition
+            className="absolute right-0 z-10 mt-2 w-50 border text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer"
+          >
+            <div className="py-1">
+              <MenuItem>
+                <a
+                  href="/play"
+                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                >
+                  PLAY
+                </a>
+              </MenuItem>
+              <MenuItem>
+                <a
+                  href="/leaderboard"
+                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                >
+                  LEADERBOARD
+                </a>
+              </MenuItem>
+              <MenuItem>
+                <a
+                  href="/profile"
+                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                >
+                  PROFILE
+                </a>
+              </MenuItem>
+              <MenuItem>
+                <a
+                  href="/settings"
+                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                >
+                  SETTINGS
+                </a>
+              </MenuItem>
+              <MenuItem>
+                <a
+                  href="/signin"
+                  className="block px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-100 cursor-pointer text-dim hover:text-default hover:bg-muted"
+                >
+                  SIGN IN
+                </a>
+              </MenuItem>
+            </div>
+          </MenuItems>
+        </Menu>
       </div>
     </nav>
   );
