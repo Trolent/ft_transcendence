@@ -14,10 +14,15 @@ import {
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { UpdateProfileDto, UpdateSettingsDto } from './dto'
 
 //API LIMIT
 import { Throttle } from '@nestjs/throttler';
-import { THROTTLE_LIMIT_API, THROTTLE_LIMIT_UP_AVATAR } from '../common/throttle.constants';
+import {
+    THROTTLE_LIMIT_API,
+    THROTTLE_LIMIT_UP_AVATAR,
+    THROTTLE_LIMIT_SETTINGS
+} from '../common/throttle.constants';
 
 //AUTH
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -28,8 +33,7 @@ import { SafeUser } from '../common/types';
 //AVATAR
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
-//PROFILE
-import { UpdateProfileDto } from './dto'
+
 
 const MAX_PROFILES_REQUEST = 70;
 
@@ -47,11 +51,20 @@ export class UsersController {
         return this.UsersService.getProfile(user.username, true);
     }
 
+    //Profil (bio)
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @UseGuards(JwtAuthGuard)
     @Patch('me')
     updateProfile(@Body() dto:UpdateProfileDto, @CurrentUser() user: SafeUser){
         return this.UsersService.updateProfile(user.username, dto)
+    }
+
+    //Settings (email,pass,language)
+    @Throttle({ auth: THROTTLE_LIMIT_SETTINGS })
+    @UseGuards(JwtAuthGuard)
+    @Patch('me/settings')
+    updateSettings(@Body() dto:UpdateSettingsDto, @CurrentUser() user: SafeUser){
+        return this.UsersService.updateSettings(user.username, dto)
     }
 
     @Throttle({ auth: THROTTLE_LIMIT_API })
