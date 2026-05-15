@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Btn, GameArena } from "../components";
+import { PageLayout } from "../layout";
 
 type Phase = "lobby" | "countdown" | "go" | "racing";
 
@@ -30,17 +31,19 @@ export default function Play() {
 
   if (phase === "lobby") {
     return (
-      <div className="flex flex-col items-center gap-8 p-6">
-        <div className="text-center flex flex-col gap-3">
-          <h1 className="text-3xl sm:text-5xl font-bold font-mono tracking-widest uppercase text-default">
-            Ready to Race?
-          </h1>
-          <p className="text-dim font-mono text-sm">
-            Type faster than your opponents to cross the finish line.
-          </p>
+      <PageLayout centerY>
+        <div className="flex flex-col items-center gap-8">
+          <div className="text-center flex flex-col gap-3">
+            <h1 className="text-3xl sm:text-5xl font-bold font-mono tracking-widest uppercase text-default">
+              Ready to Race?
+            </h1>
+            <p className="text-dim font-mono text-sm">
+              Type faster than your opponents to cross the finish line.
+            </p>
+          </div>
+          <Btn size="lg" onClick={enterRace}>Enter Race</Btn>
         </div>
-        <Btn size="lg" onClick={enterRace}>Enter Race</Btn>
-      </div>
+      </PageLayout>
     );
   }
 
