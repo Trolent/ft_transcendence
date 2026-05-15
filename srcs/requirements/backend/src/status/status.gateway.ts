@@ -36,13 +36,16 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async handleConnection(client: Socket) {
         const userId = await this.authenticate(client);
-        if (!userId)
-          { client.disconnect(); return; }
+        if (!userId) {
+          client.disconnect();
+          return;
+        }
         client.data.userId = userId;
         await this.prisma.user.update({
             where: { id: userId },
             data: { status: UserStatus.ONLINE },
         });
+        client.emit('status', {status: 'ONLINE', userId});
     }
 
     async handleDisconnect(client: Socket) {
@@ -53,5 +56,6 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
             where: { id: userId },
             data: { status: UserStatus.OFFLINE },
         });
+        client.emit('status', {status: 'OFFLINE', userId});
     }
 }

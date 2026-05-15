@@ -7,6 +7,7 @@ import {
 } from 'react';
 import type { SafeUser } from "@backend/common/types";
 import { getMeApi, loginApi, registerApi } from './api';
+import { io } from 'socket.io-client';
 
 const TOKEN_KEY = 'transcendence';
 
@@ -52,6 +53,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [login],
   );
+
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!user || !token)
+      return;
+    const socket = io('/status', { auth: { token } });
+    return () => { socket.disconnect(); };
+  }, [user]);
 
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
