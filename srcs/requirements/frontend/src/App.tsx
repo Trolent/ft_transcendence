@@ -14,13 +14,7 @@ import Settings from "./pages/Settings";
 function App() {
   return (
     <div className="min-h-screen bg-black flex flex-col font-mono">
-      <Navbar items={[
-        { label: "Play", href: "/play" },
-        { label: "Leaderboard", href: "/leaderboard" },
-        { label: "Profile", href: "/profile" },
-        { label: "Settings", href: "/settings" },
-        { label: "Sign in", href: "/signin" }
-      ]} />
+      <Navbar />
       <main className="flex-1 flex flex-col justify-center">
         <Routes>
           <Route path="/" element={<Play />} />
