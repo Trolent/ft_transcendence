@@ -27,7 +27,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   login(@Body() body: LoginDto) {
-    return this.authService.login(body.email, body.password);
+    return this.authService.login(body.identifier, body.password);
   }
 
   @Throttle({ auth: THROTTLE_LIMIT_API })

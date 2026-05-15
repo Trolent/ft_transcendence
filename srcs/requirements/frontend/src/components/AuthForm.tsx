@@ -6,11 +6,12 @@ interface AuthFormProps {
   mode?: "login" | "register";
   error?: string;
   loading?: boolean;
-  onSubmit?: (data: { username?: string; email: string; password: string }) => void;
+  onSubmit?: (data: { username?: string; identifier?: string; email?: string; password: string }) => void;
 }
 
 export function AuthForm({ mode = "login", error, loading = false, onSubmit }: AuthFormProps) {
   const [username, setUsername] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [localError, setLocalError] = useState("");
@@ -26,12 +27,22 @@ export function AuthForm({ mode = "login", error, loading = false, onSubmit }: A
       return;
     }
 
-    if (!email || !password) {
+    if (mode === "register" && username.includes("@")) {
+      setLocalError("Username cannot contain @");
+      return;
+    }
+
+    if (mode === "login" && !identifier.trim()) {
+      setLocalError("Email or username is required");
+      return;
+    }
+
+    if (mode === "register" && (!email || !password)) {
       setLocalError("All fields are required");
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (mode === "register" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setLocalError("Invalid email");
       return;
     }
@@ -41,7 +52,11 @@ export function AuthForm({ mode = "login", error, loading = false, onSubmit }: A
       return;
     }
 
-    onSubmit?.({ username: mode === "register" ? username : undefined, email, password });
+    onSubmit?.(
+      mode === "login"
+        ? { identifier, password }
+        : { username, email, password },
+    );
   };
 
   return (
@@ -65,13 +80,17 @@ export function AuthForm({ mode = "login", error, loading = false, onSubmit }: A
       )}
 
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor={mode === "login" ? "identifier" : "email"}>
+          {mode === "login" ? "Email or username" : "Email"}
+        </Label>
         <Input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id={mode === "login" ? "identifier" : "email"}
+          type={mode === "login" ? "text" : "email"}
+          placeholder={mode === "login" ? "you@example.com or your_username" : "you@example.com"}
+          value={mode === "login" ? identifier : email}
+          onChange={(e) =>
+            mode === "login" ? setIdentifier(e.target.value) : setEmail(e.target.value)
+          }
           className="mt-2"
         />
       </div>
