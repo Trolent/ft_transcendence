@@ -1,5 +1,5 @@
-const email    = 'rey.deckow@yahoo.com';
-const password = 'Password123!';
+const email    = '';
+const password = '';
 
 if (!email || !password) {
   console.log('Usage: node get_bearer.js <email> <password>');

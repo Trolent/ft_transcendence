@@ -2,7 +2,7 @@ const { io } = require('../srcs/requirements/frontend/node_modules/socket.io-cli
 
 const API    = 'http://localhost:3000'
 const WS_URL = `${API}/game`
-const PASS   = 'Password123!'
+const PASS   = ''
 
 const TEST = process.argv[2] || 'normal'
 
