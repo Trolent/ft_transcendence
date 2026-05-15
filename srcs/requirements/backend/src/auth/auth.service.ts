@@ -14,8 +14,10 @@ export class AuthService {
     return this.usersService.create(username, email, password);
   }
 
-  async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email, true);
+  async login(identifier: string, password: string) {
+    const user = identifier.includes('@')
+      ? await this.usersService.findByEmailForLogin(identifier)
+      : await this.usersService.findByUsernameForLogin(identifier);
     if (!user || !user.passwordHash)
       throw new UnauthorizedException('INVALID_CREDENTIALS');
 
