@@ -15,6 +15,7 @@ async function bootstrap() {
       origin: [`https://${process.env.DOMAIN}`, 'http://localhost:5173'],
       methods: ['GET', 'POST', 'PATCH', 'DELETE'],
       allowedHeaders : ['Content-Type', 'Authorization'],
+      credentials: true,
   });
   await app.listen(3000, '0.0.0.0')
 }
