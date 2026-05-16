@@ -3,6 +3,7 @@ import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'
 
 import helmet from 'helmet';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -31,6 +32,18 @@ async function bootstrap() {
       allowedHeaders : ['Content-Type', 'Authorization'],
       credentials: true,
   });
+
+  if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev') {
+    //swagger wiki config
+    const config = new DocumentBuilder()
+        .setTitle('Typerun API')
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
+  }
+
   await app.listen(3000, '0.0.0.0')
 }
 bootstrap()
