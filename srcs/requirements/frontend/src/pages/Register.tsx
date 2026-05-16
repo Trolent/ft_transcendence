@@ -33,7 +33,7 @@ export default function Register() {
   }
 
   return (
-    <PageLayout maxWidth="max-w-sm">
+    <PageLayout maxWidth="max-w-sm" centerY>
       <AuthForm mode="register" error={error} loading={loading} onSubmit={handleSubmit} />
     </PageLayout>
   );
