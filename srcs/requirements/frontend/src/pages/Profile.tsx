@@ -9,10 +9,11 @@ import {
   StatCard,
   StatItem,
   StatDivider
-} from "../components";
-import { PageLayout } from "../layout";
-import { useAuth } from "../auth";
+} from "@/components";
+import { PageWithSidebar, Sidebar } from "@/layout";
+import { useAuth } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
+import { FriendsList } from "@/friends";
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
@@ -47,17 +48,29 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <PageLayout maxWidth="max-w-lg">
+      <PageWithSidebar
+        sidebar={
+          <Sidebar>
+            <FriendsList limit={5} className="h-full" />
+          </Sidebar>
+        }
+      >
         <Text variant="muted">Loading...</Text>
-      </PageLayout>
+      </PageWithSidebar>
     );
   }
 
   if (error || !profile) {
     return (
-      <PageLayout maxWidth="max-w-lg">
+      <PageWithSidebar
+        sidebar={
+          <Sidebar>
+            <FriendsList limit={5} className="h-full" />
+          </Sidebar>
+        }
+      >
         <Text variant="muted">{error ?? "User not found."}</Text>
-      </PageLayout>
+      </PageWithSidebar>
     );
   }
 
@@ -68,7 +81,13 @@ export default function Profile() {
     : null;
 
   return (
-    <PageLayout maxWidth="max-w-lg">
+    <PageWithSidebar
+      sidebar={
+        <Sidebar>
+          <FriendsList limit={5} className="h-full" />
+        </Sidebar>
+      }
+    >
       <div className="flex flex-col gap-6">
 
         <div className="flex flex-col sm:flex-row items-start gap-5">
@@ -126,6 +145,6 @@ export default function Profile() {
         </Container>
 
       </div>
-    </PageLayout>
+    </PageWithSidebar>
   );
 }

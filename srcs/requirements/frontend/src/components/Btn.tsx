@@ -1,4 +1,4 @@
-import { type ButtonHTMLAttributes } from "react";
+import { type ElementType, type ComponentPropsWithoutRef } from "react";
 
 /*
 
@@ -25,10 +25,15 @@ Examples:
 type BtnVariant = "primary" | "secondary" | "ghost" | "danger";
 type BtnSize    = "sm" | "md" | "lg";
 
-interface BtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type BtnOwnProps<E extends ElementType> = {
+  as?: E;
   variant?: BtnVariant;
   size?: BtnSize;
-}
+  className?: string;
+};
+
+type BtnProps<E extends ElementType = "button"> = BtnOwnProps<E> &
+  Omit<ComponentPropsWithoutRef<E>, keyof BtnOwnProps<E>>;
 
 const variantClasses: Record<BtnVariant, string> = {
   primary:
@@ -62,15 +67,17 @@ const sizeClasses: Record<BtnSize, string> = {
   lg: "px-8 py-3 text-base",
 };
 
-export default function Btn({
+export default function Btn<E extends ElementType = "button">({
+  as,
   variant = "primary",
   size = "md",
   className = "",
   children,
   ...props
-}: BtnProps) {
+}: BtnProps<E>) {
+  const Component = as ?? "button";
   return (
-    <button
+    <Component
       className={[
         "font-mono uppercase tracking-widest cursor-pointer transition-colors duration-100",
         variantClasses[variant],
@@ -80,6 +87,6 @@ export default function Btn({
       {...props}
     >
       {children}
-    </button>
+    </Component>
   );
 }
