@@ -9,8 +9,3 @@ export { AuthForm }                         from "./AuthForm";
 export { List }                             from "./List";
 export { StatCard, StatItem, StatDivider }  from "./StatCard";
 export { Avatar }                           from "./Avatar";
-export { default as GameArena }              from "./GameArena";
-export { default as RaceTrack }              from "./RaceTrack";
-export { default as Car }                    from "./Car";
-export { default as TypingInput }            from "./TypingInput";
-export { default as HUD }                    from "./HUD";

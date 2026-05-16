@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import RaceTrack from "./RaceTrack";
 import HUD from "./HUD";
 import TypingInput from "./TypingInput";
-import Container from "./Container";
-import Btn from "./Btn";
-import { StatCard, StatItem, StatDivider } from "./StatCard";
+import Container from "../components/Container";
+import Btn from "../components/Btn";
+import { StatCard, StatItem, StatDivider } from "../components/StatCard";
 import { useGameState } from "../hooks/useGameState";
 
 const ORDINALS = ["1st", "2nd", "3rd"];
