@@ -53,7 +53,34 @@ async function main() {
     ),
   );
 
-  const usernames = new Set<string>();
+  const DEFAULT_USERS = [
+    { username: 'akhmed', email: 'akhmed@example.com' },
+    { username: 'kevin', email: 'kevin@example.com' },
+    { username: 'axel', email: 'axel@example.com' },
+    { username: 'jerome', email: 'jerome@example.com' },
+    { username: 'timothee', email: 'timothee@example.com' },
+  ];
+
+  const defaultUsers = await Promise.all(
+    DEFAULT_USERS.map((u, i) =>
+      prisma.user.upsert({
+        where:  { username: u.username },
+        update: {},
+        create: {
+          username:     u.username,
+          email:        u.email,
+          bio:          faker.lorem.sentence(),
+          passwordHash,
+          avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=default${i + 1}`,
+          language:     Language.EN,
+          status:       UserStatus.OFFLINE,
+          createdAt:    daysAgo(0),
+        },
+      }),
+    ),
+  );
+
+  const usernames = new Set<string>(DEFAULT_USERS.map(u => u.username));
   const usersData: { username: string; email: string }[] = [];
   while (usersData.length < SEED_USERS) {
     const username = faker.internet.username().toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 20);
@@ -62,7 +89,7 @@ async function main() {
     usersData.push({ username, email: faker.internet.email().toLowerCase() });
   }
 
-  const users = await Promise.all(
+  const randomUsers = await Promise.all(
     usersData.map((u, i) =>
       prisma.user.upsert({
         where:  { username: u.username },
@@ -80,6 +107,8 @@ async function main() {
       }),
     ),
   );
+
+  const users = [...defaultUsers, ...randomUsers];
 
   const friendshipPairs = new Set<string>();
   let attempts = 0;

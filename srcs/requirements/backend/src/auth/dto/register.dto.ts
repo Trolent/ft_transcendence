@@ -1,8 +1,9 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength, Matches } from 'class-validator';
 
 export class RegisterDto {
 
     @IsString()
+    @Matches(/^[^@]+$/, { message: 'USERNAME_CANNOT_CONTAIN_AT' })
     username: string;
 
     @IsEmail()
