@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { GameModule } from './game/game.module';
 import { UsersModule } from './users/users.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
@@ -20,6 +21,7 @@ import { StatusModule } from './status/status.module';
     AuthModule,
     UsersModule,
     LeaderBoardModule,
+    GameModule,
     FriendsModule,
     StatusModule
   ],

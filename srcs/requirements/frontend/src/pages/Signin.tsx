@@ -10,12 +10,13 @@ export default function Signin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit({ email, password }: { email: string; password: string }) {
+  async function handleSubmit({ identifier, password }: { identifier?: string; password: string }) {
+    if (!identifier) return;
     setError("");
     setLoading(true);
     try {
-      await login(email, password);
-      navigate("/settings");
+      await login(identifier, password);
+      navigate("/profile");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Login failed");
     } finally {
