@@ -1,0 +1,11 @@
+export { default as Demo } from "./Demo";
+export { default as Leaderboard } from "./Leaderboard";
+export { default as Play } from "./Play";
+export { default as Privacy } from "./Privacy";
+export { default as Profile } from "./Profile";
+export { default as Register } from "./Register";
+export { default as Settings } from "./Settings";
+export { default as Signin } from "./Signin";
+export { default as Terms } from "./Terms";
+export { default as FriendsPage } from "./Friends";
+export { default as FriendRequests } from "./FriendRequests";

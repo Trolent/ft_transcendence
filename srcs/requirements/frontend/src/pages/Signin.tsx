@@ -25,7 +25,7 @@ export default function Signin() {
   }
 
   return (
-    <PageLayout maxWidth="max-w-sm">
+    <PageLayout maxWidth="max-w-sm" centerY>
       <AuthForm mode="login" error={error} loading={loading} onSubmit={handleSubmit} />
     </PageLayout>
   );
