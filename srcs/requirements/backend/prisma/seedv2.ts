@@ -54,11 +54,11 @@ async function main() {
   );
 
   const DEFAULT_USERS = [
-    { username: 'akhmed_dovletov', email: 'akhmed.dovletov@typerun.dev' },
-    { username: 'kevin_pires',     email: 'kevin.pires@typerun.dev'     },
-    { username: 'axel_audrillart', email: 'axel.audrillart@typerun.dev' },
-    { username: 'jerome_bergeron', email: 'jerome.bergeron@typerun.dev' },
-    { username: 'timothee_rolland',email: 'timothee.rolland@typerun.dev'},
+    { username: 'akhmed', email: 'akhmed@example.com' },
+    { username: 'kevin', email: 'kevin@example.com' },
+    { username: 'axel', email: 'axel@example.com' },
+    { username: 'jerome', email: 'jerome@example.com' },
+    { username: 'timothee', email: 'timothee@example.com' },
   ];
 
   const defaultUsers = await Promise.all(

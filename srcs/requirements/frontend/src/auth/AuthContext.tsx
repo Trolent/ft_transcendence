@@ -15,7 +15,7 @@ export const getToken = () => localStorage.getItem(TOKEN_KEY);
 interface AuthContextValue {
   user: SafeUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -38,8 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const { access_token } = await loginApi(email, password);
+  const login = useCallback(async (identifier: string, password: string) => {
+    const { access_token } = await loginApi(identifier, password);
     localStorage.setItem(TOKEN_KEY, access_token);
     const me = await getMeApi(access_token);
     setUser(me);
