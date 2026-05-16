@@ -8,11 +8,17 @@ to limit width:
 interface PageLayoutProps {
   children: ReactNode;
   maxWidth?: string;
+  centerY?: boolean;
 }
 
-export default function PageLayout({ children, maxWidth }: PageLayoutProps) {
+export default function PageLayout({ children, maxWidth, centerY = false }: PageLayoutProps) {
+  const layoutClassName = [
+    "flex flex-col gap-6 p-6",
+    centerY ? "flex-1 justify-center" : "",
+  ].join(" ").trim();
+
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className={layoutClassName}>
       {maxWidth ? (
         <div className={`mx-auto w-full ${maxWidth}`}>
           {children}
