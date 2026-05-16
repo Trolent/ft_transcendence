@@ -22,7 +22,9 @@ export function List<T extends ListItem>({
     <ul className={["flex flex-col gap-3", className].join(" ")}>
       {items.map((item, index) => (
         <li key={item.id}>
-          <Container variant={containerVariant}>{renderItem(item, index)}</Container>
+          <Container variant={containerVariant} className="transition-all duration-200 hover:shadow-lg hover:scale-105">
+            {renderItem(item, index)}
+          </Container>
         </li>
       ))}
     </ul>
