@@ -43,6 +43,15 @@ export class FriendsController {
         return this.FriendsService.getMyFriends(user);
     }
 
+    @ApiOperation({ summary: "Get friends list by username" })
+    @ApiResponse({ status: 200, type: [FriendUserDto] })
+    @ApiResponse({ status: 404, description: 'USER_NOT_FOUND' })
+    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Get(':username')
+    getFriendsByUsername(@Param('username') username: string) {
+        return this.FriendsService.getFriendsByUsername(username);
+    }
+
     @ApiOperation({ summary: 'Get relationship with a user' })
     @ApiResponse({ status: 200, type: RelationshipResponseDto })
     @Throttle({ auth: THROTTLE_LIMIT_API })
