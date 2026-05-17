@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Heading, List, Text } from "@/components";
+import { Avatar, Btn, Heading, List, Text } from "@/components";
 import { getSentRequests } from "@/api/friends";
 import type { Friend } from "./types";
 
@@ -9,7 +9,7 @@ interface PendingRequestsProps {
 }
 
 export default function PendingRequests({ className = "" }: PendingRequestsProps) {
-  const [pending, setPending] = useState<Friend[]>([]);;
+  const [pending, setPending] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,13 +37,18 @@ export default function PendingRequests({ className = "" }: PendingRequestsProps
           className="mt-4"
           items={pending}
           renderItem={(item: Friend) => (
-            <Link
-              to={`/profile/${item.username}`}
-              className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
-            >
-              <Avatar username={item.username} src={item.avatarSrc} size="sm" />
-              <Text>{item.username}</Text>
-            </Link>
+            <div className="flex items-center justify-between gap-4">
+              <Link
+                to={`/profile/${item.username}`}
+                className="flex min-w-0 items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
+              >
+                <Avatar username={item.username} src={item.avatarSrc} size="sm" />
+                <Text>{item.username}</Text>
+              </Link>
+              <Btn size="sm" variant="ghost" disabled>
+                Pending
+              </Btn>
+            </div>
           )}
         />
       )}

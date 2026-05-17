@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, Btn, Heading, List, Text } from "@/components";
-import { getIncomingRequests, acceptFriendRequest } from "@/api/friends";
+import { getIncomingRequests, acceptFriendRequest, declineFriendRequest } from "@/api/friends";
 import type { Friend } from "./types";
 
 interface IncomingRequestsProps {
@@ -9,7 +9,7 @@ interface IncomingRequestsProps {
 }
 
 export default function IncomingRequests({ className = "" }: IncomingRequestsProps) {
-  const [requests, setRequests] = useState<Friend[]>([]);;
+  const [requests, setRequests] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +27,12 @@ export default function IncomingRequests({ className = "" }: IncomingRequestsPro
     acceptFriendRequest(username)
       .then(() => setRequests((prev) => prev.filter((r) => r.username !== username)))
       .catch((err: unknown) => setError(err instanceof Error ? err.message : "Failed to accept request."));
+  }
+
+  function handleDecline(username: string) {
+    declineFriendRequest(username)
+      .then(() => setRequests((prev) => prev.filter((r) => r.username !== username)))
+      .catch((err: unknown) => setError(err instanceof Error ? err.message : "Failed to decline request."));
   }
 
   return (
@@ -51,7 +57,10 @@ export default function IncomingRequests({ className = "" }: IncomingRequestsPro
                 <Avatar username={item.username} src={item.avatarSrc} size="sm" />
                 <Text>{item.username}</Text>
               </Link>
-              <Btn size="sm" onClick={() => handleAccept(item.username)}>Accept</Btn>
+              <div className="flex items-center gap-2">
+                <Btn size="sm" variant="danger" onClick={() => handleDecline(item.username)}>Decline</Btn>
+                <Btn size="sm" onClick={() => handleAccept(item.username)}>Accept</Btn>
+              </div>
             </div>
           )}
         />
