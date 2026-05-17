@@ -1,5 +1,7 @@
 import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { ChatService } from './chat.service'
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { MessageDto, ConversationDto } from '../common/dto/chat-response.dto';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../common/current-user.decorator';
@@ -11,10 +13,14 @@ import {
     THROTTLE_LIMIT_CHAT,
 } from '../common/throttle.constants';
 
+@ApiTags('chat')
+@ApiBearerAuth()
 @Controller('chat')
 export class ChatController {
     constructor(private chatservice: ChatService) {}
 
+    @ApiOperation({ summary: 'Get all conversations (last message per user)' })
+    @ApiResponse({ status: 200, type: [ConversationDto] })
     @Throttle({ chat: THROTTLE_LIMIT_CHAT })
     @UseGuards(JwtAuthGuard)
     @Get('/')
@@ -22,6 +28,9 @@ export class ChatController {
         return this.chatservice.getHistoryChat(user.id);
     }
 
+    @ApiOperation({ summary: 'Get message history with a user (paginated)' })
+    @ApiQuery({ name: 'before', required: false, description: 'ID du dernier message connu pour paginer', example: 120 })
+    @ApiResponse({ status: 200, type: [MessageDto] })
     @Throttle({ chat: THROTTLE_LIMIT_CHAT })
     @UseGuards(JwtAuthGuard)
     @Get(':username')
