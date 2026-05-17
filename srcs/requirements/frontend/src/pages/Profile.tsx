@@ -11,8 +11,9 @@ import {
   StatDivider
 } from "@/components";
 import { PageWithSidebar, Sidebar } from "@/layout";
-import { useAuth } from "@/auth";
+import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
+import { sendFriendRequest } from "../api/friends";
 import { FriendsList } from "@/friends";
 
 export default function Profile() {
@@ -23,8 +24,18 @@ export default function Profile() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [addError, setAddError] = useState<string | null>(null);
+
+  function handleAddFriend() {
+    if (!profile) return;
+    setAddError(null);
+    sendFriendRequest(profile.username).catch((err: unknown) => {
+      setAddError(err instanceof Error ? err.message : "Failed to send request.");
+    });
+  }
 
   const targetUsername = username ?? me?.username;
+  const isOwnProfile = useIsOwnProfile(targetUsername);
 
   useEffect(() => {
     if (!targetUsername) return;
@@ -51,7 +62,7 @@ export default function Profile() {
       <PageWithSidebar
         sidebar={
           <Sidebar>
-            <FriendsList limit={5} className="h-full" />
+            <FriendsList username={targetUsername} limit={5} className="h-full" />
           </Sidebar>
         }
       >
@@ -65,7 +76,7 @@ export default function Profile() {
       <PageWithSidebar
         sidebar={
           <Sidebar>
-            <FriendsList limit={5} className="h-full" />
+            <FriendsList username={targetUsername} limit={5} className="h-full" />
           </Sidebar>
         }
       >
@@ -73,8 +84,6 @@ export default function Profile() {
       </PageWithSidebar>
     );
   }
-
-  const isOwnProfile = me?.username === profile.username;
 
   const createdAt = profile.createdAt
     ? new Date(profile.createdAt).toLocaleDateString("fr-CA")
@@ -84,7 +93,7 @@ export default function Profile() {
     <PageWithSidebar
       sidebar={
         <Sidebar>
-          <FriendsList limit={5} className="h-full" />
+          <FriendsList username={targetUsername} limit={5} className="h-full" />
         </Sidebar>
       }
     >
@@ -102,10 +111,11 @@ export default function Profile() {
             </div>
             {me != null && !isOwnProfile && (
               <div className="flex flex-wrap gap-2">
-                <Btn size="sm" variant="primary">+ Add friend</Btn>
+                <Btn size="sm" variant="primary" onClick={handleAddFriend}>+ Add friend</Btn>
                 <Btn size="sm" variant="secondary">Message</Btn>
               </div>
             )}
+            {addError && <Text variant="error" size="xs">{addError}</Text>}
           </div>
         </div>
 
