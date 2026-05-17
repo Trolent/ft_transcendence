@@ -31,10 +31,10 @@ export class AuthService {
 
     const payload = { sub: user.id };
 
-    await this.prisma.user.update({
-        where: { id: user.id },
-        data: { status: UserStatus.ONLINE }
-    });
+    // await this.prisma.user.update({
+    //     where: { id: user.id },
+    //     data: { status: UserStatus.ONLINE }
+    // });
 
     return { access_token: this.jwtService.sign(payload) };
   }
