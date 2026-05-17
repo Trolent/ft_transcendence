@@ -1,7 +1,7 @@
 import { API_FRIENDS, authHeaders, handleResponse } from "./config";
-import type { FriendUserDto, FriendRequestDto } from "@backend/common/dto/friends-response.dto";
+import type { FriendUserDto, FriendRequestDto, RelationshipResponseDto } from "@backend/common/dto/friends-response.dto";
 
-export type { FriendUserDto, FriendRequestDto };
+export type { FriendUserDto, FriendRequestDto, RelationshipResponseDto };
 
 export async function getFriends(username: string): Promise<FriendUserDto[]> {
   const res = await fetch(`${API_FRIENDS}/${encodeURIComponent(username)}`, {
@@ -25,6 +25,29 @@ export async function acceptFriendRequest(username: string): Promise<void> {
     { method: "PATCH", headers: authHeaders() },
   );
   return handleResponse<void>(res);
+}
+
+export async function declineFriendRequest(username: string): Promise<void> {
+  const res = await fetch(
+    `${API_FRIENDS}/request/${encodeURIComponent(username)}/decline`,
+    { method: "PATCH", headers: authHeaders() },
+  );
+  return handleResponse<void>(res);
+}
+
+export async function deleteFriend(username: string): Promise<void> {
+  const res = await fetch(`${API_FRIENDS}/${encodeURIComponent(username)}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  return handleResponse<void>(res);
+}
+
+export async function getFriendRelationship(username: string): Promise<RelationshipResponseDto> {
+  const res = await fetch(`${API_FRIENDS}/${encodeURIComponent(username)}/relationship`, {
+    headers: authHeaders(),
+  });
+  return handleResponse<RelationshipResponseDto>(res);
 }
 
 export async function getIncomingRequests(): Promise<FriendRequestDto[]> {

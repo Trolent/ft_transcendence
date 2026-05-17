@@ -13,8 +13,10 @@ import {
 import { PageWithSidebar, Sidebar } from "@/layout";
 import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
-import { sendFriendRequest } from "../api/friends";
+import { deleteFriend, getFriendRelationship, sendFriendRequest } from "../api/friends";
 import { FriendsList } from "@/friends";
+
+type FriendRelationship = "NONE" | "PENDING_SENT" | "PENDING_RECEIVED" | "ACCEPTED" | "BLOCKED_BY_ME" | "BLOCKED_BY_THEM";
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
@@ -22,6 +24,7 @@ export default function Profile() {
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [relationship, setRelationship] = useState<FriendRelationship>("NONE");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addError, setAddError] = useState<string | null>(null);
@@ -29,8 +32,24 @@ export default function Profile() {
   function handleAddFriend() {
     if (!profile) return;
     setAddError(null);
-    sendFriendRequest(profile.username).catch((err: unknown) => {
-      setAddError(err instanceof Error ? err.message : "Failed to send request.");
+    sendFriendRequest(profile.username)
+      .then(() => setRelationship("PENDING_SENT"))
+      .catch((err: unknown) => {
+        if (err instanceof Error && err.message === "REQUEST_ALREADY_SENT") {
+          setRelationship("PENDING_SENT");
+          return;
+        }
+        setAddError(err instanceof Error ? err.message : "Failed to send request.");
+      });
+  }
+
+  function handleRemoveFriend() {
+    if (!profile) return;
+    setAddError(null);
+    deleteFriend(profile.username).then(() => {
+      setRelationship("NONE");
+    }).catch((err: unknown) => {
+      setAddError(err instanceof Error ? err.message : "Failed to remove friend.");
     });
   }
 
@@ -46,14 +65,16 @@ export default function Profile() {
     Promise.all([
       getUserProfile(targetUsername),
       getUserHistory(targetUsername),
+      me && targetUsername !== me.username ? getFriendRelationship(targetUsername) : Promise.resolve({ relationship: "NONE" as const }),
     ])
-      .then(([prof, hist]) => {
+      .then(([prof, hist, rel]) => {
         setProfile(prof);
         setHistory(hist);
+        setRelationship(rel.relationship as FriendRelationship);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [targetUsername]);
+  }, [targetUsername, me]);
 
   if (!targetUsername) return null;
 
@@ -111,7 +132,13 @@ export default function Profile() {
             </div>
             {me != null && !isOwnProfile && (
               <div className="flex flex-wrap gap-2">
-                <Btn size="sm" variant="primary" onClick={handleAddFriend}>+ Add friend</Btn>
+                {relationship === "ACCEPTED" ? (
+                  <Btn size="sm" variant="danger" onClick={handleRemoveFriend}>Remove friend</Btn>
+                ) : relationship === "PENDING_SENT" || relationship === "PENDING_RECEIVED" ? (
+                  <Btn size="sm" variant="ghost" disabled>Pending</Btn>
+                ) : (
+                  <Btn size="sm" variant="primary" onClick={handleAddFriend}>+ Add friend</Btn>
+                )}
                 <Btn size="sm" variant="secondary">Message</Btn>
               </div>
             )}
