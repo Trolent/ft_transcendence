@@ -8,6 +8,8 @@ import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_API } from './common/throttle.constants';
+import { FriendsModule } from './friends/friends.module';
+import { StatusModule } from './status/status.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_API } from './common/throttle.const
     UsersModule,
     LeaderBoardModule,
     GameModule,
+    FriendsModule,
+    StatusModule
   ],
   controllers: [AsyncApiController],
   providers: [
