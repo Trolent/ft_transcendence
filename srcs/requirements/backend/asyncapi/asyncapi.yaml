@@ -1,0 +1,185 @@
+asyncapi: '2.6.0'
+
+info:
+  title: Typerun WebSocket API
+  version: '1.0.0'
+  description: |
+    Documentation des WebSockets Socket.IO pour Typerun.
+    Tous les namespaces nécessitent un JWT dans handshake.auth.token.
+
+servers:
+  dev:
+    url: 'http://localhost:3000'
+    protocol: socketio
+    description: Serveur de développement
+
+channels:
+  /status:
+    description: Player status
+  /game:
+    description: Multijoueur temps réel
+  /game/join_queue:
+    description: Rejoindre la file de matchmaking
+    publish:
+      operationId: joinQueue
+      message:
+        name: join_queue
+        title: Join Queue
+        summary: Le client rejoint la file — aucun payload requis
+  /game/leave_queue:
+    description: Quitter la file de matchmaking
+    publish:
+      operationId: leaveQueue
+      message:
+        name: leave_queue
+        title: Leave Queue
+        summary: Le client quitte la file — aucun payload requis
+  /game/match_found:
+    description: Match trouvé après matchmaking
+    subscribe:
+      operationId: matchFound
+      message:
+        name: match_found
+        title: Match Found
+        summary: Émis aux deux joueurs quand un match est créé
+        payload:
+          type: object
+          properties:
+            roomId:
+              type: string
+              description: Identifiant unique de la room
+              example: XK3P2
+            text:
+              type: string
+              description: Texte à taper choisi par le serveur
+              example: The quick brown fox jumps over the lazy dog
+            players:
+              type: array
+              description: Liste des joueurs dans la room
+              items:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    description: Identifiant utilisateur
+                    example: 1
+                  username:
+                    type: string
+                    description: Nom d'utilisateur
+                    example: johndoe
+                  avatarUrl:
+                    type: string
+                    nullable: true
+                    description: URL de l'avatar Cloudinary
+                    example: null
+  /game/countdown:
+    description: Compte à rebours avant le départ (3, 2, 1)
+    subscribe:
+      operationId: countdown
+      message:
+        name: countdown
+        title: Countdown
+        summary: Émis chaque seconde avant le départ de la course
+        payload:
+          type: object
+          properties:
+            time:
+              type: integer
+              enum: [3, 2, 1]
+              description: Valeur du compte à rebours en secondes
+              example: 3
+
+  /game/race_start:
+    description: La course commence
+    subscribe:
+      operationId: raceStart
+      message:
+        name: race_start
+        title: Race Start
+  
+  /game/race_update:
+    description: Mise à jour de la progression en cours de course
+    subscribe:
+      operationId: raceUpdate
+      message:
+        name: race_update
+        title: Race Update
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+              description: Identifiant utilisateur
+              example: 1
+            username:
+              type: string
+              description: Nom d'utilisateur
+              example: johndoe
+            progress:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.42
+              description: Progression du joueur entre 0 et 1
+            wpm:
+              type: integer
+              minimum: 0
+              maximum: 250
+              example: 85
+              description: Mots par minute (plafonné à 250)
+
+  /game/race_finished:
+    description: La course est terminée
+    subscribe:
+      operationId: raceFinished
+      message:
+        name: race_finished
+        title: Race Finished
+        summary: Émis à tous les joueurs quand la course se termine
+        payload:
+          type: object
+          properties:
+            results:
+              type: array
+              description: Classement final trié par ordre d'arrivée
+              items:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    description: Identifiant utilisateur
+                    example: 1
+                  username:
+                    type: string
+                    description: Nom d'utilisateur
+                    example: johndoe
+                  wpm:
+                    type: integer
+                    minimum: 0
+                    maximum: 250
+                    example: 85
+                    description: Mots par minute (plafonné à 250 dans game.constant.ts)
+                  position:
+                    type: integer
+                    minimum: 1
+                    description: Position finale du joueur
+                    example: 1
+
+  /game/player_progress:
+    description: Mise à jour de la progression du joueur.
+    publish:
+      operationId: playerProgress
+      message:
+        name: player_progress
+        title: Player Progress
+        payload:
+          type: object
+          properties:
+            chars:
+              type: integer
+              description: Nombre de caractères corrects tapés
+              example: 42
+
+  /chat:
+    description: online messaging

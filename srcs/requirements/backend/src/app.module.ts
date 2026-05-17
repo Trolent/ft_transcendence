@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
+import { AsyncApiController } from './asyncapi/asyncapi.controller';
 import { AuthModule } from './auth/auth.module';
 import { GameModule } from './game/game.module';
 import { UsersModule } from './users/users.module';
@@ -14,7 +15,6 @@ import {
   THROTTLE_LIMIT_SETTINGS,
   THROTTLE_LIMIT_UP_AVATAR
 } from './common/throttle.constants';
-
 
 @Module({
   imports: [
@@ -32,6 +32,7 @@ import {
     GameModule,
     ChatModule,
   ],
+  controllers: [AsyncApiController],
   providers: [
     {
       provide: APP_GUARD,
