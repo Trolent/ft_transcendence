@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
+import { AsyncApiController } from './asyncapi/asyncapi.controller';
 import { AuthModule } from './auth/auth.module';
 import { GameModule } from './game/game.module';
 import { UsersModule } from './users/users.module';
@@ -9,7 +10,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_API } from './common/throttle.constants';
 import { FriendsModule } from './friends/friends.module';
 import { StatusModule } from './status/status.module';
-
 
 @Module({
   imports: [
@@ -25,6 +25,7 @@ import { StatusModule } from './status/status.module';
     FriendsModule,
     StatusModule
   ],
+  controllers: [AsyncApiController],
   providers: [
     {
       provide: APP_GUARD,
