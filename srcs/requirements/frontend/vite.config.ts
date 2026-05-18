@@ -16,6 +16,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/socket.io': {
+        target: 'http://backend:3000',
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
   resolve: {

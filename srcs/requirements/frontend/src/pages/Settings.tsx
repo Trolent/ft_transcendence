@@ -1,17 +1,16 @@
 import { Heading, Text, Label, Btn } from "../components";
 import Container from "../components/Container";
 import { PageLayout } from "../layout";
-import { useState, useContext } from "react";
-import { AuthContext } from "../auth/AuthContext";
+import { useState } from "react";
 
 export default function Settings() {
   const [editing, setEditing] = useState(false);
-  const { logout } = useContext(AuthContext)!;
-
+  //temp
   let [bio, setBio] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+
   return (
     <PageLayout maxWidth="max-w-lg">
-      <Heading level={3} className="mt-20 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">SETTINGS</Heading>
+      <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">SETTINGS</Heading>
           <Container variant="panel" label="Edit bio" className="mt-3 flex-col">
               <Container variant="terminal" onClick={() => setEditing(true)} className="mt-3">
                 {editing
@@ -52,12 +51,6 @@ export default function Settings() {
                 <option value="Français">Français</option>
                 <option value="Español">Español</option>
               </select>
-          </Container>
-
-          <Container variant="panel" className="mt-5 w-fit py-1 hover:opacity-80">
-            <button onClick={logout}>
-              <Label>Logout</Label>
-            </button>
           </Container>
     </PageLayout>
   );
