@@ -14,7 +14,7 @@ const players: { id: number; rank: number; username: string }[] = [
 export default function Leaderboard() {
   return (
     <PageLayout maxWidth="max-w-lg">
-      <Heading level={3} className="mt-20 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">LEADERBOARD</Heading>
+      <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">LEADERBOARD</Heading>
       <List
        className="mt-6"
         items={players}
