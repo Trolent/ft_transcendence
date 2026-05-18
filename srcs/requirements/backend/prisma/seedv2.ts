@@ -54,11 +54,11 @@ async function main() {
   );
 
   const DEFAULT_USERS = [
-    { username: 'akhmed1', email: 'akhmed1@example.com' },
-    { username: 'kevin1', email: 'kevin1@example.com' },
-    { username: 'axel1', email: 'axel1@example.com' },
-    { username: 'jerome1', email: 'jerome1@example.com' },
-    { username: 'timothee1', email: 'timothee1@example.com' },
+    { username: 'akhmed', email: 'akhmed@example.com' },
+    { username: 'kevin', email: 'kevin@example.com' },
+    { username: 'axel', email: 'axel@example.com' },
+    { username: 'jerome', email: 'jerome@example.com' },
+    { username: 'timothee', email: 'timothee@example.com' },
   ];
 
   const defaultUsers = await Promise.all(
