@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import RaceTrack from "./RaceTrack";
 import HUD from "./HUD";
 import TypingInput from "./TypingInput";
-import Container from "./Container";
-import Btn from "./Btn";
-import { StatCard, StatItem, StatDivider } from "./StatCard";
+import Container from "../components/Container";
+import Btn from "../components/Btn";
+import { StatCard, StatItem, StatDivider } from "../components/StatCard";
 import { useGameState } from "../hooks/useGameState";
 
 const ORDINALS = ["1st", "2nd", "3rd"];
@@ -25,6 +25,11 @@ export default function GameArena({ overlay, onReplay }: Props) {
   const active = overlay == null;
   const [finishOrder, setFinishOrder] = useState<number[]>([]);
 
+  // All bots done but player hasn't finished — auto end in last place
+  const allOthersFinished =
+    !finishOrder.includes(0) &&
+    finishOrder.filter((i: number) => i !== 0).length === TOTAL_PLAYERS - 1;
+
   // Everyone (including player) finished — stop the timer
   const allDone = finishOrder.length === TOTAL_PLAYERS;
 
@@ -33,10 +38,12 @@ export default function GameArena({ overlay, onReplay }: Props) {
     handleType, completeWord,
     elapsed, timeLeft, wpm, progress, finished, playerDone,
     finishTime, accuracy,
-  } = useGameState(active, allDone);
+  } = useGameState(active, allOthersFinished || allDone);
 
   const effectiveFinish = playerDone;
-  const playerPlace = finishOrder.indexOf(0);
+  const playerPlace = allOthersFinished && !finished
+    ? TOTAL_PLAYERS - 1          // forced last
+    : finishOrder.indexOf(0);    // actual position (0-indexed)
 
   return (
     <div className="w-full flex justify-center">
