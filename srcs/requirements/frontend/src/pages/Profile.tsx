@@ -1,19 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Btn,
-  Container,
-  Heading,
-  Text,
-  Avatar,
-  StatCard,
-  StatItem,
-  StatDivider
-} from "@/components";
-import { PageWithSidebar, Sidebar } from "@/layout";
-import { useAuth } from "@/auth";
+import { Heading, Text, Avatar, Alert } from "@/components";
+import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
+import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
 import { FriendsList } from "@/friends";
+import { FriendActions, Bio, Stats, History } from "@/profile";
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
@@ -23,8 +15,10 @@ export default function Profile() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [friendsRefreshKey, setFriendsRefreshKey] = useState(0);
 
   const targetUsername = username ?? me?.username;
+  const isOwnProfile = useIsOwnProfile(targetUsername);
 
   useEffect(() => {
     if (!targetUsername) return;
@@ -42,39 +36,25 @@ export default function Profile() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [targetUsername]);
+  }, [targetUsername, me]);
 
   if (!targetUsername) return null;
 
   if (loading) {
     return (
-      <PageWithSidebar
-        sidebar={
-          <Sidebar>
-            <FriendsList limit={5} className="h-full" />
-          </Sidebar>
-        }
-      >
-        <Text variant="muted">Loading...</Text>
-      </PageWithSidebar>
+      <PageLayout>
+        <Alert>Loading</Alert>
+      </PageLayout>
     );
   }
 
   if (error || !profile) {
     return (
-      <PageWithSidebar
-        sidebar={
-          <Sidebar>
-            <FriendsList limit={5} className="h-full" />
-          </Sidebar>
-        }
-      >
-        <Text variant="muted">{error ?? "User not found."}</Text>
-      </PageWithSidebar>
+      <PageLayout>
+        <Alert variant="error">{error ?? "User not found."}</Alert>
+      </PageLayout>
     );
   }
-
-  const isOwnProfile = me?.username === profile.username;
 
   const createdAt = profile.createdAt
     ? new Date(profile.createdAt).toLocaleDateString("fr-CA")
@@ -84,7 +64,7 @@ export default function Profile() {
     <PageWithSidebar
       sidebar={
         <Sidebar>
-          <FriendsList limit={5} className="h-full" />
+          <FriendsList username={targetUsername} limit={5} className="h-full" refreshKey={friendsRefreshKey} />
         </Sidebar>
       }
     >
@@ -101,48 +81,23 @@ export default function Profile() {
               )}
             </div>
             {me != null && !isOwnProfile && (
-              <div className="flex flex-wrap gap-2">
-                <Btn size="sm" variant="primary">+ Add friend</Btn>
-                <Btn size="sm" variant="secondary">Message</Btn>
-              </div>
+              <FriendActions
+                username={profile.username}
+                onFriendRemoved={() => setFriendsRefreshKey((prev) => prev + 1)}
+              />
             )}
           </div>
         </div>
 
-        <Container label="bio" variant="panel">
-          <Text>{profile.bio ?? "No bio yet."}</Text>
-        </Container>
+        <Bio
+          bio={profile.bio ?? null}
+          isOwnProfile={isOwnProfile}
+          onBioChange={(bio) => setProfile((prev) => prev ? { ...prev, bio } : prev)}
+        />
 
-        <StatCard label="statistics">
-          <StatItem label="Rank" value={`#${profile.stats.rank}`} accent />
-          <StatDivider />
-          <StatItem label="Avg WPM" value={String(profile.stats.avgWpm)} />
-          <StatDivider />
-          <StatItem label="Level" value={String(profile.stats.level)} />
-          <StatDivider />
-          <StatItem label="Played" value={String(profile.stats.gamesPlayed)} />
-        </StatCard>
+        <Stats stats={profile.stats} />
 
-        <Container label="history">
-          {history.length === 0 ? (
-            <Text variant="muted">No game played.</Text>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {history.map((entry) => (
-                <div key={entry.match.id} className="flex justify-between text-sm">
-                  <Text size="sm" variant="muted">
-                    {entry.finishedAt
-                      ? new Date(entry.finishedAt).toLocaleDateString("fr-CA")
-                      : "—"}
-                  </Text>
-                  <Text size="sm">{entry.wpm != null ? `${Math.round(entry.wpm)} WPM` : "—"}</Text>
-                  <Text size="sm">{entry.accuracy != null ? `${Math.round(entry.accuracy)}%` : "—"}</Text>
-                  <Text size="sm" variant="muted">#{entry.position ?? "—"}</Text>
-                </div>
-              ))}
-            </div>
-          )}
-        </Container>
+        <History history={history} />
 
       </div>
     </PageWithSidebar>
