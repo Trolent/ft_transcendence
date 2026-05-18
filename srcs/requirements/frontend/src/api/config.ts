@@ -4,6 +4,11 @@ export const API_AUTH_LOGIN = '/api/auth/login';
 export const API_AUTH_REGISTER = '/api/auth/register';
 export const API_AUTH_ME = '/api/auth/me';
 export const API_USERS = '/api/users';
+<<<<<<< HEAD
+=======
+export const API_FRIENDS = '/api/friends';
+export const API_LEADERBOARD = '/api/leaderboard';
+>>>>>>> origin/main
 
 
 export function authHeaders(token? : string | null): HeadersInit {

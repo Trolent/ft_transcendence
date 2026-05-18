@@ -9,4 +9,9 @@ export { AuthForm }                         from "./AuthForm";
 export { List }                             from "./List";
 export { StatCard, StatItem, StatDivider }  from "./StatCard";
 export { Avatar }                           from "./Avatar";
+<<<<<<< HEAD
 export { default }                          from "./TextArea";
+=======
+export { default }                          from "./TextArea";
+export { Pagination }                       from "./Pagination";
+>>>>>>> origin/main
