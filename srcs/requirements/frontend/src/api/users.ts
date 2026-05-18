@@ -43,3 +43,19 @@ export async function getUserHistory(username: string): Promise<HistoryEntry[]> 
   });
   return handleResponse<HistoryEntry[]>(res);
 }
+<<<<<<< HEAD
+=======
+
+export async function updateMyBio(bio: string): Promise<{ bio: string | null }> {
+  const res = await fetch(`${API_USERS}/me`, {
+    method: "PATCH",
+    headers: {
+      ...authHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ bio }),
+  });
+
+  return handleResponse<{ bio: string | null }>(res);
+}
+>>>>>>> origin/main

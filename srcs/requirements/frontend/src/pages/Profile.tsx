@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+<<<<<<< HEAD
 import {
   Btn,
   Container,
@@ -14,6 +15,14 @@ import { PageWithSidebar, Sidebar } from "@/layout";
 import { useAuth } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
 import { FriendsList } from "@/friends";
+=======
+import { Heading, Text, Avatar, Alert } from "@/components";
+import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
+import { useAuth, useIsOwnProfile } from "@/auth";
+import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
+import { FriendsList } from "@/friends";
+import { FriendActions, Bio, Stats, History } from "@/profile";
+>>>>>>> origin/main
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
@@ -23,8 +32,15 @@ export default function Profile() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+<<<<<<< HEAD
 
   const targetUsername = username ?? me?.username;
+=======
+  const [friendsRefreshKey, setFriendsRefreshKey] = useState(0);
+
+  const targetUsername = username ?? me?.username;
+  const isOwnProfile = useIsOwnProfile(targetUsername);
+>>>>>>> origin/main
 
   useEffect(() => {
     if (!targetUsername) return;
@@ -42,12 +58,17 @@ export default function Profile() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+<<<<<<< HEAD
   }, [targetUsername]);
+=======
+  }, [targetUsername, me]);
+>>>>>>> origin/main
 
   if (!targetUsername) return null;
 
   if (loading) {
     return (
+<<<<<<< HEAD
       <PageWithSidebar
         sidebar={
           <Sidebar>
@@ -57,11 +78,17 @@ export default function Profile() {
       >
         <Text variant="muted">Loading...</Text>
       </PageWithSidebar>
+=======
+      <PageLayout>
+        <Alert>Loading</Alert>
+      </PageLayout>
+>>>>>>> origin/main
     );
   }
 
   if (error || !profile) {
     return (
+<<<<<<< HEAD
       <PageWithSidebar
         sidebar={
           <Sidebar>
@@ -76,6 +103,14 @@ export default function Profile() {
 
   const isOwnProfile = me?.username === profile.username;
 
+=======
+      <PageLayout>
+        <Alert variant="error">{error ?? "User not found."}</Alert>
+      </PageLayout>
+    );
+  }
+
+>>>>>>> origin/main
   const createdAt = profile.createdAt
     ? new Date(profile.createdAt).toLocaleDateString("fr-CA")
     : null;
@@ -84,7 +119,11 @@ export default function Profile() {
     <PageWithSidebar
       sidebar={
         <Sidebar>
+<<<<<<< HEAD
           <FriendsList limit={5} className="h-full" />
+=======
+          <FriendsList username={targetUsername} limit={5} className="h-full" refreshKey={friendsRefreshKey} />
+>>>>>>> origin/main
         </Sidebar>
       }
     >
@@ -101,14 +140,22 @@ export default function Profile() {
               )}
             </div>
             {me != null && !isOwnProfile && (
+<<<<<<< HEAD
               <div className="flex flex-wrap gap-2">
                 <Btn size="sm" variant="primary">+ Add friend</Btn>
                 <Btn size="sm" variant="secondary">Message</Btn>
               </div>
+=======
+              <FriendActions
+                username={profile.username}
+                onFriendRemoved={() => setFriendsRefreshKey((prev) => prev + 1)}
+              />
+>>>>>>> origin/main
             )}
           </div>
         </div>
 
+<<<<<<< HEAD
         <Container label="bio" variant="panel">
           <Text>{profile.bio ?? "No bio yet."}</Text>
         </Container>
@@ -143,6 +190,17 @@ export default function Profile() {
             </div>
           )}
         </Container>
+=======
+        <Bio
+          bio={profile.bio ?? null}
+          isOwnProfile={isOwnProfile}
+          onBioChange={(bio) => setProfile((prev) => prev ? { ...prev, bio } : prev)}
+        />
+
+        <Stats stats={profile.stats} />
+
+        <History history={history} />
+>>>>>>> origin/main
 
       </div>
     </PageWithSidebar>

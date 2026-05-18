@@ -60,6 +60,10 @@ function UserMenu({ username, onLogout }: { username: string; onLogout: () => vo
         <ul className="absolute right-0 top-full mt-1 min-w-[10rem] bg-black border border-muted z-50">
           <li><Link to="/profile" onClick={() => setIsOpen(false)} className={itemClass}>Profile</Link></li>
           <li><Link to="/friends" onClick={() => setIsOpen(false)} className={itemClass}>Friends</Link></li>
+<<<<<<< HEAD
+=======
+          <li><Link to="/friends/requests" onClick={() => setIsOpen(false)} className={itemClass}>Requests</Link></li>
+>>>>>>> origin/main
           <li><Link to="/settings" onClick={() => setIsOpen(false)} className={itemClass}>Settings</Link></li>
           <li><button type="button" onClick={() => { onLogout(); setIsOpen(false); }} className="block w-full text-left px-4 py-2 text-xs uppercase tracking-widest text-danger hover:text-black hover:bg-danger transition-colors duration-100">Logout</button></li>
         </ul>
@@ -99,6 +103,10 @@ function MobileMenu({ pathname, user, onLogout }: {
           <>
             <Link to="/profile" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Profile</Link>
             <Link to="/friends" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Friends</Link>
+<<<<<<< HEAD
+=======
+            <Link to="/friends/requests" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Requests</Link>
+>>>>>>> origin/main
             <Link to="/settings" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Settings</Link>
             <button type="button" onClick={onLogout} className={`text-left ${linkClass} text-danger hover:text-black hover:bg-danger`}>
               Logout

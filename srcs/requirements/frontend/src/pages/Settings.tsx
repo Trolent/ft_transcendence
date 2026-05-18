@@ -10,7 +10,11 @@ export default function Settings() {
 
   return (
     <PageLayout maxWidth="max-w-lg">
+<<<<<<< HEAD
       <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">SETTINGS</Heading>
+=======
+      <Heading level={2}>SETTINGS</Heading>
+>>>>>>> origin/main
           <Container variant="panel" label="Edit bio" className="mt-3 flex-col">
               <Container variant="terminal" onClick={() => setEditing(true)} className="mt-3">
                 {editing
@@ -33,7 +37,11 @@ export default function Settings() {
                       e.stopPropagation();
                       setEditing(false);
                     }}>
+<<<<<<< HEAD
                       Save
+=======
+                      Sauvegarder
+>>>>>>> origin/main
                     </Btn>
                   </Container>
                 )}
