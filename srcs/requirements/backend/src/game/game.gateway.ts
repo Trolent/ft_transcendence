@@ -8,6 +8,7 @@ import {
 import { GameService } from './game.service'
 import { UseGuards, } from '@nestjs/common';
 import { WsJwtGuard } from '../auth/ws-jwt.guard'
+import { AuthService } from '../auth/auth.service'
 import { Socket, Namespace } from 'socket.io';
 import { MAX_WPM } from '../common/game.constant';
 import { WS_CORS } from '../common/ws.config'
@@ -18,10 +19,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Namespace;
 
-  constructor(private gameService: GameService) {}
+  constructor(
+      private gameService: GameService,
+      private authService: AuthService,
+  ) {}
 
-  handleConnection(client: Socket) {
-    console.log('[WS] client connected:', client.id)
+  async handleConnection(client: Socket) {
+    await this.authService.validateWsClient(client);
   }
 
   async handleDisconnect(client: Socket) {

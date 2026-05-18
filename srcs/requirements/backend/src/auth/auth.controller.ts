@@ -53,11 +53,13 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Logout' })
   @ApiResponse({ status: 200, type: LogoutResponseDto })
+
   @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(200)
-  logout(){
-    return { message: 'LOGOUT_SUCCESS' };
+  logout(@CurrentUser() user: SafeUser) {
+    return this.authService.logout(user.id);
   }
 
 }

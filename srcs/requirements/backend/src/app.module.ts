@@ -7,14 +7,10 @@ import { UsersModule } from './users/users.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_API, THROTTLE_LIMIT_UP_AVATAR, THROTTLE_LIMIT_SETTINGS, THROTTLE_LIMIT_CHAT } from './common/throttle.constants';
+import { FriendsModule } from './friends/friends.module';
+import { StatusModule } from './status/status.module';
 import { ChatModule } from './chat/chat.module';
-import {
-  THROTTLE_LIMIT_AUTH,
-  THROTTLE_LIMIT_API,
-  THROTTLE_LIMIT_CHAT,
-  THROTTLE_LIMIT_SETTINGS,
-  THROTTLE_LIMIT_UP_AVATAR
-} from './common/throttle.constants';
 
 @Module({
   imports: [
@@ -30,7 +26,9 @@ import {
     UsersModule,
     LeaderBoardModule,
     GameModule,
-    ChatModule,
+    FriendsModule,
+    StatusModule,
+    ChatModule
   ],
   controllers: [AsyncApiController],
   providers: [
