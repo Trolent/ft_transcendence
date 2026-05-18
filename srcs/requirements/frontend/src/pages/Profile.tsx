@@ -8,9 +8,10 @@ import {
   Avatar,
   StatCard,
   StatItem,
-  StatDivider
+  StatDivider,
+  Alert
 } from "@/components";
-import { PageWithSidebar, Sidebar } from "@/layout";
+import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
 import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
 import { deleteFriend, getFriendRelationship, sendFriendRequest } from "../api/friends";
@@ -80,29 +81,17 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <PageWithSidebar
-        sidebar={
-          <Sidebar>
-            <FriendsList username={targetUsername} limit={5} className="h-full" />
-          </Sidebar>
-        }
-      >
-        <Text variant="muted">Loading...</Text>
-      </PageWithSidebar>
+      <PageLayout>
+        <Alert>Loading</Alert>
+      </PageLayout>
     );
   }
 
   if (error || !profile) {
     return (
-      <PageWithSidebar
-        sidebar={
-          <Sidebar>
-            <FriendsList username={targetUsername} limit={5} className="h-full" />
-          </Sidebar>
-        }
-      >
-        <Text variant="muted">{error ?? "User not found."}</Text>
-      </PageWithSidebar>
+      <PageLayout>
+        <Alert variant="error">{error ?? "User not found."}</Alert>
+      </PageLayout>
     );
   }
 
