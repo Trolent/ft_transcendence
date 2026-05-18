@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Heading, Text, Avatar, StatCard, StatItem, StatDivider, Alert } from "@/components";
+import { Heading, Text, Avatar, Alert } from "@/components";
 import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
 import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
 import { FriendsList } from "@/friends";
-import { FriendActions, Bio } from "@/profile";
+import { FriendActions, Bio, Stats, History } from "@/profile";
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
@@ -95,36 +95,9 @@ export default function Profile() {
           onBioChange={(bio) => setProfile((prev) => prev ? { ...prev, bio } : prev)}
         />
 
-        <StatCard label="statistics">
-          <StatItem label="Rank" value={`#${profile.stats.rank}`} accent />
-          <StatDivider />
-          <StatItem label="Avg WPM" value={String(profile.stats.avgWpm)} />
-          <StatDivider />
-          <StatItem label="Level" value={String(profile.stats.level)} />
-          <StatDivider />
-          <StatItem label="Played" value={String(profile.stats.gamesPlayed)} />
-        </StatCard>
+        <Stats stats={profile.stats} />
 
-        <Container label="history">
-          {history.length === 0 ? (
-            <Text variant="muted">No game played.</Text>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {history.map((entry) => (
-                <div key={entry.match.id} className="flex justify-between text-sm">
-                  <Text size="sm" variant="muted">
-                    {entry.finishedAt
-                      ? new Date(entry.finishedAt).toLocaleDateString("fr-CA")
-                      : "—"}
-                  </Text>
-                  <Text size="sm">{entry.wpm != null ? `${Math.round(entry.wpm)} WPM` : "—"}</Text>
-                  <Text size="sm">{entry.accuracy != null ? `${Math.round(entry.accuracy)}%` : "—"}</Text>
-                  <Text size="sm" variant="muted">#{entry.position ?? "—"}</Text>
-                </div>
-              ))}
-            </div>
-          )}
-        </Container>
+        <History history={history} />
 
       </div>
     </PageWithSidebar>
