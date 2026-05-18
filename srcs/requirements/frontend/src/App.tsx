@@ -1,27 +1,25 @@
 import { Routes, Route } from "react-router-dom";
 
-import Play from "./pages/Play";
-import Leaderboard from "./pages/Leaderboard";
-import Profile from "./pages/Profile";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Signin from "./pages/Signin";
-import Register from "./pages/Register";
+import {
+  FriendRequests,
+  FriendsPage,
+  Leaderboard,
+  Play,
+  Privacy,
+  Profile,
+  Register,
+  Settings,
+  Signin,
+  Terms,
+} from "./pages";
 import { Navbar, Footer } from "./layout";
 import { ProtectedRoute, GuestRoute } from "./auth";
-import Settings from "./pages/Settings";
 
 function App() {
   return (
     <div className="min-h-screen bg-black flex flex-col font-mono">
-      <Navbar items={[
-        { label: "Play", href: "/play" },
-        { label: "Leaderboard", href: "/leaderboard" },
-        { label: "Profile", href: "/profile" },
-        { label: "Settings", href: "/settings" },
-        { label: "Sign in", href: "/signin" }
-      ]} />
-      <main className="flex-1 flex flex-col justify-center">
+      <Navbar />
+      <main className="flex-1 flex flex-col">
         <Routes>
           <Route path="/" element={<Play />} />
           <Route path="/play" element={<Play />} />
@@ -29,10 +27,12 @@ function App() {
           <Route path="/signin" element={<GuestRoute><Signin /></GuestRoute>} />
           <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
+          <Route path="/friends/requests" element={<ProtectedRoute><FriendRequests /></ProtectedRoute>} />
           <Route path="*" element={<Play />} />
         </Routes>
       </main>
