@@ -10,7 +10,7 @@ export default function Settings() {
 
   return (
     <PageLayout maxWidth="max-w-lg">
-      <Heading level={2}>SETTINGS</Heading>
+      <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">SETTINGS</Heading>
           <Container variant="panel" label="Edit bio" className="mt-3 flex-col">
               <Container variant="terminal" onClick={() => setEditing(true)} className="mt-3">
                 {editing
@@ -33,7 +33,7 @@ export default function Settings() {
                       e.stopPropagation();
                       setEditing(false);
                     }}>
-                      Sauvegarder
+                      Save
                     </Btn>
                   </Container>
                 )}
@@ -49,6 +49,7 @@ export default function Settings() {
             <select className="bg-black border border-default text-default font-mono text-sm px-2 py-1 outline-none cursor-pointer">
                 <option value="English">English</option>
                 <option value="Français">Français</option>
+                <option value="Español">Español</option>
               </select>
           </Container>
     </PageLayout>
