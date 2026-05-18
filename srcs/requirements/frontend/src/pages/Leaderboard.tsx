@@ -42,24 +42,7 @@ export default function Leaderboard() {
 
   return (
     <PageLayout maxWidth="max-w-lg">
-<<<<<<< HEAD
       <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">LEADERBOARD</Heading>
-      <List
-       className="mt-6"
-        items={players}
-        renderItem={(item: { id: number; rank: number; username: string }) => (
-          <Link
-            to={`/profile/${item.username}`}
-            className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
-          >
-            <Heading level={4}>#{item.rank}</Heading>
-            <Avatar username={item.username} size="sm" />
-            <Text>{item.username}</Text>
-          </Link>
-        )}
-      />
-=======
-      <Heading level={2}>LEADERBOARD</Heading>
       {loading && (
         <Text className="mt-6" variant="muted">
           Loading...
@@ -99,7 +82,6 @@ export default function Leaderboard() {
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
         </div>
       )}
->>>>>>> origin/main
     </PageLayout>
   );
 }
