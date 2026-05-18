@@ -15,7 +15,28 @@ servers:
 
 channels:
   /status:
-    description: Player status
+    description: Présence en ligne — connexion = ONLINE, déconnexion = OFFLINE
+
+  /status/connected:
+    description: Confirmation de connexion au namespace /status
+    subscribe:
+      operationId: statusConnected
+      message:
+        name: status
+        title: Status Update
+        summary: Émis au client à la connexion pour confirmer son statut ONLINE
+        payload:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [ONLINE, OFFLINE]
+              description: Statut du joueur
+              example: ONLINE
+            userId:
+              type: integer
+              description: Identifiant utilisateur
+              example: 1
   /game:
     description: Multijoueur temps réel
   /game/join_queue:
@@ -182,4 +203,53 @@ channels:
               example: 42
 
   /chat:
-    description: online messaging
+    description: Messagerie directe entre joueurs
+
+  /chat/send_message:
+    description: Envoyer un message privé à un autre joueur
+    publish:
+      operationId: sendMessage
+      message:
+        name: send_message
+        title: Send Message
+        summary: Le client envoie un message à un destinataire — rate limité à 500ms (chat.constant.ts)
+        payload:
+          type: object
+          required: [to, content]
+          properties:
+            to:
+              type: string
+              description: Username du destinataire
+              example: johndoe
+            content:
+              type: string
+              description: Contenu du message (max 2000 caractères, trimé automatiquement)
+              example: Hello!
+
+  /chat/receive_message:
+    description: Recevoir un message privé en temps réel
+    subscribe:
+      operationId: receiveMessage
+      message:
+        name: receive_message
+        title: Receive Message
+        summary: Émis au destinataire si connecté, sinon message sauvegardé en DB
+        payload:
+          type: object
+          properties:
+            from:
+              type: integer
+              description: ID de l'expéditeur
+              example: 1
+            fromUsername:
+              type: string
+              description: Username de l'expéditeur
+              example: janedoe
+            content:
+              type: string
+              description: Contenu du message
+              example: Hello!
+            sentAt:
+              type: string
+              format: date-time
+              example: '2026-05-16T10:00:00.000Z'

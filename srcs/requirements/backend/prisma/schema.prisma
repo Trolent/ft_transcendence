@@ -61,7 +61,8 @@ model User {
     oauthAccounts       OAuthAccount[]
     sentFriendships     Friendship[]        @relation("FriendshipInitiator")
     receivedFriendships Friendship[]        @relation("FriendshipReceiver")
-    message             Message[]
+    sentMessages        Message[]           @relation("MessageSender")
+    receivedMessages    Message[]           @relation("MessageReceiver")
     matchResult         MatchResult[]
     userAchievement     UserAchievement[]
 }
@@ -93,7 +94,8 @@ model Message {
     content             String
     senderId            Int
     receiverId          Int
-    user                User                @relation(fields: [senderId], references: [id], onDelete: Cascade)
+    sender              User                @relation("MessageSender",   fields: [senderId],   references: [id], onDelete: Cascade)
+    receiver            User                @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
     sentAt              DateTime            @default(now())
 }
 
