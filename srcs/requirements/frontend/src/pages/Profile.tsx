@@ -29,6 +29,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addError, setAddError] = useState<string | null>(null);
+  const [friendsRefreshKey, setFriendsRefreshKey] = useState(0);
 
   function handleAddFriend() {
     if (!profile) return;
@@ -49,6 +50,7 @@ export default function Profile() {
     setAddError(null);
     deleteFriend(profile.username).then(() => {
       setRelationship("NONE");
+      setFriendsRefreshKey((prev) => prev + 1);
     }).catch((err: unknown) => {
       setAddError(err instanceof Error ? err.message : "Failed to remove friend.");
     });
@@ -103,7 +105,7 @@ export default function Profile() {
     <PageWithSidebar
       sidebar={
         <Sidebar>
-          <FriendsList username={targetUsername} limit={5} className="h-full" />
+          <FriendsList username={targetUsername} limit={5} className="h-full" refreshKey={friendsRefreshKey} />
         </Sidebar>
       }
     >

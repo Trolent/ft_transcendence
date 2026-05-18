@@ -9,12 +9,14 @@ interface FriendsListProps {
   username: string;
   limit?: number;
   className?: string;
+  refreshKey?: number;
 }
 
 export default function FriendsList({
   username,
   limit,
   className = "",
+  refreshKey,
 }: FriendsListProps) {
   const isOwnProfile = useIsOwnProfile(username);
 
@@ -53,7 +55,7 @@ export default function FriendsList({
     return () => {
       cancelled = true;
     };
-  }, [isOwnProfile, username]);
+  }, [isOwnProfile, refreshKey, username]);
 
   const displayedFriends = typeof limit === "number" ? friends.slice(0, limit) : friends;
 
