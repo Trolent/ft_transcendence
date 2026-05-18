@@ -30,12 +30,12 @@ export class UsersService {
     });
   }
 
-  async findByEmail(email: string, incPass: boolean) {
+  async findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
       select: {
         id: true, username: true, email: true,
-        passwordHash: incPass, avatarUrl: true, bio: true,
+        avatarUrl: true, bio: true,
         language: true, status: true, createdAt: true, updatedAt: true,
       },
     });
@@ -58,6 +58,30 @@ export class UsersService {
       select: {
         id: true, username: true, email: true,
         avatarUrl: true, bio: true, language: true,
+        status: true, createdAt: true, updatedAt: true,
+      },
+    });
+  }
+
+  // used for login with email only
+  async findByEmailForLogin(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true, username: true, email: true,
+        passwordHash: true, avatarUrl: true, bio: true,
+        language: true, status: true, createdAt: true, updatedAt: true,
+      },
+    });
+  }
+
+  // used for login with username only
+  async findByUsernameForLogin(username: string) {
+    return this.prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true, username: true, email: true,
+        passwordHash: true, avatarUrl: true, bio: true, language: true,
         status: true, createdAt: true, updatedAt: true,
       },
     });
@@ -93,7 +117,7 @@ export class UsersService {
       where: { username },
       select: {
         id: true, username: true, avatarUrl: true,
-        bio: true, status: true, createdAt: isOwner,
+        bio: true, status: true, createdAt: true,
         email : isOwner, language : true
       },
     });
