@@ -43,15 +43,6 @@ export class FriendsController {
         return this.FriendsService.getMyFriends(user);
     }
 
-    @ApiOperation({ summary: 'Get relationship with a user' })
-    @ApiResponse({ status: 200, type: RelationshipResponseDto })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
-    @UseGuards(JwtAuthGuard)
-    @Get(':username/relationship')
-    getFriendRelationship(@Param('username') username: string, @CurrentUser() user:SafeUser) {
-        return this.FriendsService.getFriendRelationship(user, username);
-    }
-
     @ApiOperation({ summary: 'Get received friend requests' })
     @ApiResponse({ status: 200, type: [FriendRequestDto] })
     @Throttle({ auth: THROTTLE_LIMIT_API })
@@ -77,6 +68,24 @@ export class FriendsController {
     @Get('/blocked')
     getBlocked(@CurrentUser() user:SafeUser) {
         return this.FriendsService.getBlocked(user);
+    }
+
+    @ApiOperation({ summary: 'Get relationship with a user' })
+    @ApiResponse({ status: 200, type: RelationshipResponseDto })
+    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @UseGuards(JwtAuthGuard)
+    @Get(':username/relationship')
+    getFriendRelationship(@Param('username') username: string, @CurrentUser() user:SafeUser) {
+        return this.FriendsService.getFriendRelationship(user, username);
+    }
+
+    @ApiOperation({ summary: "Get friends list by username" })
+    @ApiResponse({ status: 200, type: [FriendUserDto] })
+    @ApiResponse({ status: 404, description: 'USER_NOT_FOUND' })
+    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Get(':username')
+    getFriendsByUsername(@Param('username') username: string) {
+        return this.FriendsService.getFriendsByUsername(username);
     }
 
     @ApiOperation({ summary: 'Send a friend request' })

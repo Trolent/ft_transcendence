@@ -32,24 +32,29 @@ export class FriendsService {
     }
 
     async getMyFriends(user: SafeUser) {
-        const friendship = await this.prisma.friendship.findMany({
+        return this.getFriendsByUsername(user.username);
+    }
+
+    async getFriendsByUsername(username: string) {
+        const user = await this.users.findByUsername(username);
+        if (!user)
+            throw new NotFoundException('USER_NOT_FOUND');
+
+        const friendships = await this.prisma.friendship.findMany({
             where: {
                 OR: [
                     { initiatorId: user.id },
                     { receiverId: user.id },
                 ],
                 status: FriendshipStatus.ACCEPTED,
-                
             },
             include: {
-                initiator: { select: { id:true , username:true , avatarUrl:true, status:true } },
-                receiver:  { select: { id:true , username:true , avatarUrl:true, status:true } },
-            }
+                initiator: { select: { id: true, username: true, avatarUrl: true, status: true } },
+                receiver:  { select: { id: true, username: true, avatarUrl: true, status: true } },
+            },
         });
 
-        const myfriends = friendship.map(f => f.initiatorId === user.id ? f.receiver : f.initiator);
-
-        return myfriends;
+        return friendships.map(f => f.initiatorId === user.id ? f.receiver : f.initiator);
     }
 
     async getFriendRequests(user: SafeUser) {
