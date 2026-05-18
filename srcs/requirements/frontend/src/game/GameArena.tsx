@@ -25,25 +25,18 @@ export default function GameArena({ overlay, onReplay }: Props) {
   const active = overlay == null;
   const [finishOrder, setFinishOrder] = useState<number[]>([]);
 
-  // All bots done but player hasn't finished — auto end in last place
-  const allOthersFinished =
-    !finishOrder.includes(0) &&
-    finishOrder.filter((i: number) => i !== 0).length === TOTAL_PLAYERS - 1;
-
   // Everyone (including player) finished — stop the timer
   const allDone = finishOrder.length === TOTAL_PLAYERS;
 
   const {
     passage, words, wordIndex, typed,
     handleType, completeWord,
-    elapsed, timeLeft, wpm, progress, finished, playerDone,
+    elapsed, timeLeft, wpm, progress, playerDone,
     finishTime, accuracy,
-  } = useGameState(active, allOthersFinished || allDone);
+  } = useGameState(active, allDone);
 
   const effectiveFinish = playerDone;
-  const playerPlace = allOthersFinished && !finished
-    ? TOTAL_PLAYERS - 1          // forced last
-    : finishOrder.indexOf(0);    // actual position (0-indexed)
+  const playerPlace = finishOrder.indexOf(0);
 
   return (
     <div className="w-full flex justify-center">
