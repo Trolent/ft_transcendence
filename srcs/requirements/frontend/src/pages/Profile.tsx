@@ -1,23 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Btn,
-  Container,
-  Heading,
-  Text,
-  Avatar,
-  StatCard,
-  StatItem,
-  StatDivider,
-  Alert
-} from "@/components";
+import { Container, Heading, Text, Avatar, StatCard, StatItem, StatDivider, Alert } from "@/components";
 import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
 import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
-import { deleteFriend, getFriendRelationship, sendFriendRequest } from "../api/friends";
 import { FriendsList } from "@/friends";
-
-type FriendRelationship = "NONE" | "PENDING_SENT" | "PENDING_RECEIVED" | "ACCEPTED" | "BLOCKED_BY_ME" | "BLOCKED_BY_THEM";
+import { FriendActions, Bio } from "@/profile";
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
@@ -25,36 +13,9 @@ export default function Profile() {
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const [relationship, setRelationship] = useState<FriendRelationship>("NONE");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [addError, setAddError] = useState<string | null>(null);
   const [friendsRefreshKey, setFriendsRefreshKey] = useState(0);
-
-  function handleAddFriend() {
-    if (!profile) return;
-    setAddError(null);
-    sendFriendRequest(profile.username)
-      .then(() => setRelationship("PENDING_SENT"))
-      .catch((err: unknown) => {
-        if (err instanceof Error && err.message === "REQUEST_ALREADY_SENT") {
-          setRelationship("PENDING_SENT");
-          return;
-        }
-        setAddError(err instanceof Error ? err.message : "Failed to send request.");
-      });
-  }
-
-  function handleRemoveFriend() {
-    if (!profile) return;
-    setAddError(null);
-    deleteFriend(profile.username).then(() => {
-      setRelationship("NONE");
-      setFriendsRefreshKey((prev) => prev + 1);
-    }).catch((err: unknown) => {
-      setAddError(err instanceof Error ? err.message : "Failed to remove friend.");
-    });
-  }
 
   const targetUsername = username ?? me?.username;
   const isOwnProfile = useIsOwnProfile(targetUsername);
@@ -68,12 +29,10 @@ export default function Profile() {
     Promise.all([
       getUserProfile(targetUsername),
       getUserHistory(targetUsername),
-      me && targetUsername !== me.username ? getFriendRelationship(targetUsername) : Promise.resolve({ relationship: "NONE" as const }),
     ])
-      .then(([prof, hist, rel]) => {
+      .then(([prof, hist]) => {
         setProfile(prof);
         setHistory(hist);
-        setRelationship(rel.relationship as FriendRelationship);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -122,24 +81,19 @@ export default function Profile() {
               )}
             </div>
             {me != null && !isOwnProfile && (
-              <div className="flex flex-wrap gap-2">
-                {relationship === "ACCEPTED" ? (
-                  <Btn size="sm" variant="danger" onClick={handleRemoveFriend}>Remove friend</Btn>
-                ) : relationship === "PENDING_SENT" || relationship === "PENDING_RECEIVED" ? (
-                  <Btn size="sm" variant="ghost" disabled>Pending</Btn>
-                ) : (
-                  <Btn size="sm" variant="primary" onClick={handleAddFriend}>+ Add friend</Btn>
-                )}
-                <Btn size="sm" variant="secondary">Message</Btn>
-              </div>
+              <FriendActions
+                username={profile.username}
+                onFriendRemoved={() => setFriendsRefreshKey((prev) => prev + 1)}
+              />
             )}
-            {addError && <Text variant="error" size="xs">{addError}</Text>}
           </div>
         </div>
 
-        <Container label="bio" variant="panel">
-          <Text>{profile.bio ?? "No bio yet."}</Text>
-        </Container>
+        <Bio
+          bio={profile.bio ?? null}
+          isOwnProfile={isOwnProfile}
+          onBioChange={(bio) => setProfile((prev) => prev ? { ...prev, bio } : prev)}
+        />
 
         <StatCard label="statistics">
           <StatItem label="Rank" value={`#${profile.stats.rank}`} accent />
