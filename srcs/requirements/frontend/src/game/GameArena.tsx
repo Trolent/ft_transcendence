@@ -8,7 +8,6 @@ import { StatCard, StatItem, StatDivider } from "../components/StatCard";
 import { useGameState } from "../hooks/useGameState";
 
 const ORDINALS = ["1st", "2nd", "3rd"];
-const TOTAL_PLAYERS = 3;
 
 function formatTime(s: number): string {
   const mm = String(Math.floor(s / 60)).padStart(2, "0");
@@ -19,44 +18,39 @@ function formatTime(s: number): string {
 type Props = {
   overlay?: string | null;
   onReplay?: () => void;
+  practice?: boolean;
 };
 
-export default function GameArena({ overlay, onReplay }: Props) {
+export default function GameArena({ overlay, onReplay, practice = false }: Props) {
   const active = overlay == null;
   const [finishOrder, setFinishOrder] = useState<number[]>([]);
 
-  // All bots done but player hasn't finished — auto end in last place
-  const allOthersFinished =
-    !finishOrder.includes(0) &&
-    finishOrder.filter((i: number) => i !== 0).length === TOTAL_PLAYERS - 1;
-
-  // Everyone (including player) finished — stop the timer
-  const allDone = finishOrder.length === TOTAL_PLAYERS;
+  const totalPlayers = practice ? 1 : 3;
+  const allDone = finishOrder.length === totalPlayers;
 
   const {
     passage, words, wordIndex, typed,
     handleType, completeWord,
-    elapsed, timeLeft, wpm, progress, finished, playerDone,
+    elapsed, timeLeft, wpm, progress, playerDone,
     finishTime, accuracy,
-  } = useGameState(active, allOthersFinished || allDone);
+  } = useGameState(active, allDone, practice);
 
   const effectiveFinish = playerDone;
-  const playerPlace = allOthersFinished && !finished
-    ? TOTAL_PLAYERS - 1          // forced last
-    : finishOrder.indexOf(0);    // actual position (0-indexed)
+  const playerPlace = finishOrder.indexOf(0);
 
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-3xl px-2 sm:px-4">
         <Container variant="panel" className="mx-auto">
           <div className="flex flex-col gap-6">
-            <HUD timeLeft={timeLeft} wpm={wpm} />
+            <HUD timeLeft={timeLeft} wpm={wpm} practice={practice} />
             <RaceTrack
               playerProgress={progress}
               playerWpm={wpm}
               elapsed={elapsed}
               active={active}
               passageLength={passage.length}
+              practice={practice}
               onFinishOrderChange={setFinishOrder}
             />
             <TypingInput
@@ -76,14 +70,18 @@ export default function GameArena({ overlay, onReplay }: Props) {
                   <StatItem label="Time" value={formatTime(finishTime ?? elapsed)} />
                   <StatDivider />
                   <StatItem label="Accuracy" value={`${accuracy}%`} />
-                  <StatDivider />
-                  <StatItem
-                    label="Position"
-                    value={playerPlace >= 0 ? ORDINALS[playerPlace] : "—"}
-                  />
+                  {!practice && (
+                    <>
+                      <StatDivider />
+                      <StatItem
+                        label="Position"
+                        value={playerPlace >= 0 ? ORDINALS[playerPlace] : "—"}
+                      />
+                    </>
+                  )}
                 </StatCard>
                 <div className="flex justify-center">
-                  <Btn onClick={onReplay}>Race Again</Btn>
+                  <Btn onClick={onReplay}>{practice ? "Try Again" : "Race Again"}</Btn>
                 </div>
               </div>
             )}

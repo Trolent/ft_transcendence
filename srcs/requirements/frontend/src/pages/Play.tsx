@@ -9,6 +9,7 @@ export default function Play() {
   const [phase, setPhase] = useState<Phase>("lobby");
   const [countdown, setCountdown] = useState(10);
   const [gameKey, setGameKey] = useState(0);
+  const [practice, setPractice] = useState(false);
 
   useEffect(() => {
     if (phase === "countdown") {
@@ -26,8 +27,14 @@ export default function Play() {
   }, [phase, countdown]);
 
   const enterRace = () => {
+    setPractice(false);
     setCountdown(5);
     setPhase("countdown");
+  };
+
+  const enterPractice = () => {
+    setPractice(true);
+    setPhase("racing");
   };
 
   if (phase === "lobby") {
@@ -42,7 +49,10 @@ export default function Play() {
               Type faster than your opponents to cross the finish line.
             </p>
           </div>
-          <Btn size="lg" onClick={enterRace}>Enter Race</Btn>
+          <div className="flex flex-col items-center gap-3">
+            <Btn size="lg" onClick={enterRace}>Enter Race</Btn>
+            <Btn size="lg" variant="secondary" onClick={enterPractice}>Practice</Btn>
+          </div>
         </div>
       </PageLayout>
     );
@@ -55,8 +65,12 @@ export default function Play() {
 
   const replay = () => {
     setGameKey((k: number) => k + 1);
-    setCountdown(5);
-    setPhase("countdown");
+    if (practice) {
+      setPhase("racing");
+    } else {
+      setCountdown(5);
+      setPhase("countdown");
+    }
   };
 
   return (
@@ -64,7 +78,7 @@ export default function Play() {
       <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start">
         <Btn size="sm" variant="ghost" onClick={() => setPhase("lobby")}>← Main Menu</Btn>
       </div>
-      <GameArena key={gameKey} overlay={overlay} onReplay={replay} />
+      <GameArena key={gameKey} overlay={overlay} onReplay={replay} practice={practice} />
     </div>
   );
 }

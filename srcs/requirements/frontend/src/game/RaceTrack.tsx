@@ -7,7 +7,7 @@ const ORDINALS = ["1st", "2nd", "3rd"];
 
 type Waypoint = { t: number; p: number };
 
-function randomUniqueVariants(count: number): number[] 
+function randomUniqueVariants(count: number): number[]
 {
   const pool = Array.from({ length: CAR_COUNT }, (_, i) => i);
   for (let i = pool.length - 1; i > 0; i--) {
@@ -17,7 +17,7 @@ function randomUniqueVariants(count: number): number[]
   return pool.slice(0, count);
 }
 
-function buildCurve(targetWpm: number, passageLength: number): Waypoint[] 
+function buildCurve(targetWpm: number, passageLength: number): Waypoint[]
 {
   const charsPerSec = (targetWpm * 5) / 60;
   const curve: Waypoint[] = [{ t: 0, p: 0 }];
@@ -33,7 +33,7 @@ function buildCurve(targetWpm: number, passageLength: number): Waypoint[]
   return curve;
 }
 
-function interpolate(curve: Waypoint[], elapsed: number): number 
+function interpolate(curve: Waypoint[], elapsed: number): number
 {
   if (elapsed <= 0) return 0;
   const last = curve[curve.length - 1];
@@ -65,21 +65,23 @@ function finishedWpm(curve: Waypoint[], passageLength: number): number
   return t > 0 ? Math.round((passageLength / 5) / (t / 60)) : 0;
 }
 
-type Props = 
+type Props =
 {
   playerProgress: number;
   playerWpm: number;
   elapsed: number;
   active: boolean;
   passageLength: number;
+  practice?: boolean;
   onFinishOrderChange?: (order: number[]) => void;
 };
 
 export default function RaceTrack(
 {
   playerProgress, playerWpm,
-  elapsed, active, passageLength, onFinishOrderChange,
+  elapsed, active, passageLength, practice = false, onFinishOrderChange,
 }: Props) {
+  const lanes = practice ? [0] : LANES;
   const [variants] = useState<number[]>(() => randomUniqueVariants(LANES.length));
   const [botTargetWpms] = useState<number[]>(() => [1, 2].map(() => Math.round(40 + Math.random() * 40)));
   const [botCurves] = useState<Waypoint[][]>(() =>
@@ -104,7 +106,7 @@ export default function RaceTrack(
     if (!active) return;
     setFinishOrder((prev: number[]) => {
       const next = [...prev];
-      LANES.forEach(idx => {
+      lanes.forEach(idx => {
         const p = idx === 0 ? playerProgress : interpolate(botCurves[idx - 1], elapsed);
         if (p >= 1 && !next.includes(idx)) next.push(idx);
       });
@@ -124,7 +126,7 @@ export default function RaceTrack(
 
   return (
     <div className="w-full">
-      {LANES.map(idx => (
+      {lanes.map(idx => (
         <div key={idx} className="flex items-center h-14 mb-3">
           <div className="w-16 sm:w-28 text-right pr-3 sm:pr-4 text-sm text-dim truncate">
             {label(idx)}
