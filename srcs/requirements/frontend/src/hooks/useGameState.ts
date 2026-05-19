@@ -12,7 +12,7 @@ function calcMaxTime(passageLength: number): number {
   return Math.max(20, Math.ceil(passageLength / 2.5));
 }
 
-export function useGameState(active: boolean, forcedEnd = false) {
+export function useGameState(active: boolean, forcedEnd = false, practice = false) {
   const [passage] = useState<string>(pickRandomQuote);
   const words = passage.split(" ");
   const maxTime = calcMaxTime(passage.length);
@@ -31,9 +31,9 @@ export function useGameState(active: boolean, forcedEnd = false) {
   const totalCorrect = completedChars + correctInCurrent;
   const progress = passage.length > 0 ? totalCorrect / passage.length : 0;
   const finished = wordIndex >= words.length;
-  const timedOut = active && elapsed >= maxTime && !finished;
+  const timedOut = !practice && active && elapsed >= maxTime && !finished;
   const playerDone = finished || forcedEnd || timedOut;
-  const raceOver = forcedEnd || timedOut; // timer keeps going when player merely finishes first
+  const raceOver = forcedEnd || timedOut;
   const timeLeft = Math.max(0, maxTime - elapsed);
   const minutes = elapsed / 60;
   const wpm = lockedWpm ?? (minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
