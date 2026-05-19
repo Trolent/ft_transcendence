@@ -16,7 +16,7 @@ Examples:
 
 */
 
-export type ContainerVariant = "default" | "panel" | "terminal";
+export type ContainerVariant = "default" | "panel" | "terminal" | "danger";
 
 interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ContainerVariant;
@@ -33,6 +33,9 @@ const variantClasses: Record<ContainerVariant, string> = {
   terminal:
     "bg-black border border-default " +
     "shadow-[0_0_12px_0_rgba(0,255,65,0.15)]",
+
+  danger:
+    "bg-black border border-danger",
 };
 
 export default function Container({

@@ -52,6 +52,12 @@ export default function Settings() {
                 <option value="Español">Español</option>
               </select>
           </Container>
+
+          <Container variant="danger" className="mt-6 flex w-fit hover:opacity-80 py-2">
+            <Label>
+              <div className="text-danger">Delete account</div>
+            </Label>
+          </Container>
     </PageLayout>
   );
 }
