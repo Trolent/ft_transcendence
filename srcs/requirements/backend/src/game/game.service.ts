@@ -3,6 +3,7 @@ import { RoomState, RoomPlayer } from './game.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { MatchStatus, UserStatus } from '@prisma/client';
 import { MAX_WPM, QUOTES, MIN_RACE_SECONDS, MIN_CHARS_PER_SEC } from '../common/game.constant';
+import { AchievementService } from '../achievement/achievement.service';
 
 type QueueEntry = {
     socketId:   string;
@@ -24,7 +25,10 @@ function pickQuote() : string {
 @Injectable()
 export class GameService{
 
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        private achievementService: AchievementService,
+    ) {}
 
     private queue        = new Map<string, QueueEntry>();
     private rooms        = new Map<string, RoomState>();
@@ -249,6 +253,13 @@ export class GameService{
             where: { id: { in: sorted.map(p => p.userId) } },
             data:  { status: UserStatus.ONLINE },
         });
+
+        const savedResults = await this.prisma.matchResult.findMany({
+            where: { matchId: room.matchId },
+        });
+        for (const result of savedResults) {
+            await this.achievementService.checkAndUnlockAchievements(result.userId, result);
+        }
 
         this.cleanRoom(roomId);
 
