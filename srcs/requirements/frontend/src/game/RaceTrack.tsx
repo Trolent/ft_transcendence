@@ -72,14 +72,16 @@ type Props =
   elapsed: number;
   active: boolean;
   passageLength: number;
+  practice?: boolean;
   onFinishOrderChange?: (order: number[]) => void;
 };
 
 export default function RaceTrack(
 {
   playerProgress, playerWpm,
-  elapsed, active, passageLength, onFinishOrderChange,
+  elapsed, active, passageLength, practice = false, onFinishOrderChange,
 }: Props) {
+  const lanes = practice ? [0] : LANES;
   const [variants] = useState<number[]>(() => randomUniqueVariants(LANES.length));
   const [botTargetWpms] = useState<number[]>(() => [1, 2].map(() => Math.round(40 + Math.random() * 40)));
   const [botCurves] = useState<Waypoint[][]>(() =>
@@ -104,7 +106,7 @@ export default function RaceTrack(
     if (!active) return;
     setFinishOrder((prev: number[]) => {
       const next = [...prev];
-      LANES.forEach(idx => {
+      lanes.forEach(idx => {
         const p = idx === 0 ? playerProgress : interpolate(botCurves[idx - 1], elapsed);
         if (p >= 1 && !next.includes(idx)) next.push(idx);
       });
@@ -124,7 +126,7 @@ export default function RaceTrack(
 
   return (
     <div className="w-full">
-      {LANES.map(idx => (
+      {lanes.map(idx => (
         <div key={idx} className="flex items-center h-14 mb-3">
           <div className="w-16 sm:w-28 text-right pr-3 sm:pr-4 text-sm text-dim truncate">
             {label(idx)}
