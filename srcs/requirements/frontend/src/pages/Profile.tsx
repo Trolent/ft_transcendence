@@ -76,7 +76,7 @@ export default function Profile() {
 
           <div className="flex flex-col gap-4 flex-1">
             <div>
-              <Heading level={1}><Status status={profile.status}/> {profile.username}</Heading>
+              <Heading level={1}><Status status={profile.status} hoverText={profile.status}/> {profile.username}</Heading>
               {createdAt && (
                 <Text variant="muted" size="xs">created on {createdAt}</Text>
               )}

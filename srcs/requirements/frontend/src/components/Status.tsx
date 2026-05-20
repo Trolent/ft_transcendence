@@ -1,8 +1,11 @@
 interface StatusProps {
   status: string; // ONLINE, IN_GAME, OFFLINE
+  hoverText?: string;
 }
 
-export function Status({ status }: StatusProps) {
+// TODO cursor-help ?
+
+export function Status({ status, hoverText }: StatusProps) {
   const colors: Record<string, string> = {
     ONLINE: "bg-green-500",
     IN_GAME: "bg-yellow-500",
@@ -10,6 +13,9 @@ export function Status({ status }: StatusProps) {
   };
 
   return (
-    <span className={`inline-block w-3 h-3 rounded-full align-middle ${colors[status] || colors.OFFLINE}`} />
+    <span
+      className={`relative -top-[2px] inline-block w-3 h-3 align-middle ${colors[status] || colors.OFFLINE}`}
+      title={hoverText}
+    />
   );
 }
