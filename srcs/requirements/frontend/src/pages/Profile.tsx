@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Heading, Text, Avatar, Alert } from "@/components";
+import { Heading, Text, Avatar, Alert, Status } from "@/components";
 import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
 import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
@@ -75,7 +75,7 @@ export default function Profile() {
 
           <div className="flex flex-col gap-4 flex-1">
             <div>
-              <Heading level={1}>{profile.username}</Heading>
+              <Heading level={1}><Status status={profile.status}/> {profile.username}</Heading>
               {createdAt && (
                 <Text variant="muted" size="xs">created on {createdAt}</Text>
               )}
