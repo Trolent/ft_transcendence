@@ -26,6 +26,7 @@ export default function ChatPage() {
           onSelectChat={handleSelectChat}
         />
       }
+      maxWidth="max-w-xl"
     >
       <ChatBox targetUsername={selectedChat} />
     </PageWithSidebar>
