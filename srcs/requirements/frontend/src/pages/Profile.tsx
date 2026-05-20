@@ -67,6 +67,7 @@ export default function Profile() {
           <FriendsList username={targetUsername} limit={5} className="h-full" refreshKey={friendsRefreshKey} />
         </Sidebar>
       }
+      maxWidth="max-w-2xl"
     >
       <div className="flex flex-col gap-6">
 
