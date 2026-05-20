@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Btn, Text } from "@/components";
 import { deleteFriend, sendFriendRequest, getFriendRelationship } from "@/api/friends";
 
@@ -84,9 +85,11 @@ export default function FriendActions({
             + Add friend
           </Btn>
         )}
-        <Btn size="sm" variant="secondary" disabled={loading}>
-          Message
-        </Btn>
+        <Link to={`/chat/${username}`}>
+          <Btn size="sm" variant="secondary" disabled={loading}>
+            Message
+          </Btn>
+        </Link>
       </div>
       {error && <Text variant="error" size="xs">{error}</Text>}
     </div>
