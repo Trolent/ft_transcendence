@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Alert, Avatar, Text } from '../components';
+import { Alert } from '@/components';
+import { Message } from './Message';
 
 interface MessageData {
   id?: number;
@@ -36,16 +37,8 @@ export function Messages({ messages }: MessagesProps) {
       ) : (
         <>
           {messages.map((msg, idx) => {
-            const sender = msg.sender || { username: msg.fromUsername };
-            const avatarUrl = msg.sender?.avatarUrl;
-
             return (
-              <div key={msg.id ?? idx} className="mb-2 flex items-center gap-2">
-                <Avatar username={sender.username} src={avatarUrl} size="sm" />
-                <Text size="sm" className="truncate">
-                  <span className="font-bold">{sender.username}</span>: {msg.content}
-                </Text>
-              </div>
+              <Message key={msg.id ?? idx} message={msg} />
             );
           })}
           <div ref={messagesEndRef} />

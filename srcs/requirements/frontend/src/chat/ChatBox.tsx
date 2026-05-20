@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 // @ts-ignore
 import { io, Socket } from 'socket.io-client';
-import { AuthContext, getToken } from '../auth/AuthContext';
-import { Heading, Text, Alert } from '../components';
+import { AuthContext, getToken } from '@/auth';
+import { Heading, Text, Alert } from '@/components';
 import { Messages } from './Messages';
 import { ChatForm } from './ChatForm';
-import { chatApi } from '../api/chat';
+import { chatApi } from '@/api/chat';
 
 interface MessageData {
   id?: number;
