@@ -1,0 +1,33 @@
+{
+  "loading": "Chargement...",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "please_wait": "Veuillez patienter…",
+  "pagination": {
+    "prev": "Préc",
+    "next": "Suiv"
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
+    "USER_ALREADY_EXISTS": "Nom d'utilisateur déjà pris.",
+    "USER_NOT_FOUND": "Utilisateur introuvable.",
+    "EMAIL_ALREADY_TAKEN": "Email déjà utilisé.",
+    "EMAIL_ALREADY_IN_USE": "Email déjà utilisé.",
+    "ALREADY_FRIENDS": "Vous êtes déjà amis.",
+    "CANNOT_ADD_YOURSELF": "Vous ne pouvez pas vous ajouter vous-même.",
+    "ALREADY_BLOCKED": "Cet utilisateur est déjà bloqué.",
+    "CANNOT_BLOCK_YOURSELF": "Vous ne pouvez pas vous bloquer vous-même.",
+    "CANNOT_UNBLOCK_YOURSELF": "Vous ne pouvez pas vous débloquer vous-même.",
+    "NOT_FRIENDS": "Vous n'êtes pas amis.",
+    "NOT_YOUR_BLOCK": "Vous n'avez pas bloqué cet utilisateur.",
+    "NOT_YOUR_REQUEST": "Cette demande ne vous appartient pas.",
+    "REQUEST_ALREADY_SENT": "Demande d'ami déjà envoyée.",
+    "REQUEST_NOT_FOUND": "Demande d'ami introuvable.",
+    "AVATAR_UPLOAD_FAILED": "Échec du téléchargement de l'avatar.",
+    "NO_FILE_PROVIDED": "Aucun fichier fourni.",
+    "AVATAR_TOO_LARGE": "Le fichier avatar est trop volumineux.",
+    "AVATAR_MIMETYPE_NOT_ALLOWED": "Type de fichier non autorisé.",
+    "MISSING_USERS_PARAM": "Paramètre utilisateur manquant.",
+    "USERNAME_CANNOT_CONTAIN_AT": "Le nom d'utilisateur ne peut pas contenir @."
+  }
+}
