@@ -1,5 +1,5 @@
 interface StatusProps {
-  status: string; // ONLINE, IN_GAME, OFFLINE
+  status: "ONLINE" | "IN_GAME" | "OFFLINE";
   hoverText?: string;
 }
 

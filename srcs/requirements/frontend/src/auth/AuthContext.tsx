@@ -7,15 +7,20 @@ import {
 } from 'react';
 import type { SafeUser } from "@backend/common/types";
 import { getMeApi, loginApi, registerApi } from './api';
-import { io } from 'socket.io-client';
+// @ts-ignore
+import { io, type Socket } from 'socket.io-client';
 
 const TOKEN_KEY = 'transcendence';
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
 
+export type LiveUserStatus = 'ONLINE' | 'IN_GAME' | 'OFFLINE';
+export type LiveStatusMap = Record<number, LiveUserStatus>;
+
 interface AuthContextValue {
   user: SafeUser | null;
   loading: boolean;
+  liveStatuses: LiveStatusMap;
   login: (identifier: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -26,6 +31,7 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SafeUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [liveStatuses, setLiveStatuses] = useState<LiveStatusMap>({});
 
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY);
@@ -54,21 +60,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [login],
   );
 
+  // === status ===
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (!user || !token)
       return;
-    const socket = io('/status', { auth: { token } });
-    return () => { socket.disconnect(); };
+    const socket: Socket = io('/status', {
+      auth: { token },
+      transports: ['websocket'],
+    });
+
+    socket.on('status:update', (payload: { userId: number; status: LiveUserStatus }) => {
+      setLiveStatuses((prev) => ({ ...prev, [payload.userId]: payload.status }));
+    });
+
+    return () => {
+      socket.off('status:update');
+      socket.disconnect();
+    };
   }, [user]);
 
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
     setUser(null);
+    setLiveStatuses({});
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, liveStatuses, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
