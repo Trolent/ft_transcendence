@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, HttpCode } from '@nestjs/common';
+import { Controller, Post, Get, Query, Body, UseGuards, HttpCode, Res, Redirect } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 //API LIMIT
@@ -62,4 +62,30 @@ export class AuthController {
     return this.authService.logout(user.id);
   }
 
+  @ApiOperation({ summary: 'Redirect to 42 OAuth login page' })
+  @ApiResponse({ status: 302, description: 'Redirects to api.intra.42.fr/oauth/authorize' })
+  @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @Get('42')
+  @Redirect()
+  redirectTo42(){
+    const params = new URLSearchParams({
+      client_id:      process.env.FORTYTWO_CLIENT_ID,
+      redirect_uri:   process.env.FORTYTWO_CALLBACK_URL,
+      response_type:  'code',
+      scope:          'public',
+    });
+    return { url: `https://api.intra.42.fr/oauth/authorize?${params}`, statusCode: 302 };
+  }
+
+  @ApiOperation({ summary: '42 OAuth callback — exchanges code for JWT and redirects to frontend' })
+  @ApiResponse({ status: 302, description: 'Redirects to FRONTEND_URL/auth/callback?token=...' })
+  @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @Get('42/callback')
+  @Redirect()
+  async callback42(@Query('code') code:string, @Query('error') error: string){
+    if (error || !code)
+        return { url: `${process.env.FRONTEND_URL}/signin?error=oauth_denied`, statusCode: 302 };
+    const { access_token } = await this.authService.loginWith42(code);
+    return { url: `${process.env.FRONTEND_URL}/auth/callback?token=${access_token}`, statusCode: 302 };
+  }
 }
