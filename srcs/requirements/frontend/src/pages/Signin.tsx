@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthForm } from "../components";
-import { PageLayout } from "../layout";
-import { useAuth } from "../auth";
+import { AuthForm, Btn } from "@/components";
+import { PageLayout } from "@/layout";
+import { useAuth } from "@/auth";
 
 export default function Signin() {
   const { login } = useAuth();
@@ -27,6 +27,9 @@ export default function Signin() {
   return (
     <PageLayout maxWidth="max-w-sm" centerY>
       <AuthForm mode="login" error={error} loading={loading} onSubmit={handleSubmit} />
+      <Btn as="a" href="/api/auth/42" size="md" className="block w-full mt-3 text-center !bg-[#00babc] !text-white !border-[#00babc] hover:!opacity-90">
+        Login with 42
+      </Btn>
     </PageLayout>
   );
 }
