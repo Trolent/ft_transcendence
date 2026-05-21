@@ -41,12 +41,16 @@ const textSnippets = [
 ];
 
 const achievementsData = [
-  { key: 'first_match',     label: 'First Blood',       description: 'Complete your first match',        iconUrl: null },
-  { key: 'speed_demon',     label: 'Speed Demon',        description: 'Reach 100 WPM in a match',         iconUrl: null },
-  { key: 'perfectionist',   label: 'Perfectionist',      description: 'Finish a match with 100% accuracy', iconUrl: null },
-  { key: 'social_butterfly',label: 'Social Butterfly',   description: 'Add 5 friends',                    iconUrl: null },
-  { key: 'veteran',         label: 'Veteran',             description: 'Complete 50 matches',              iconUrl: null },
-  { key: 'win_streak_5',    label: 'On Fire',             description: 'Win 5 matches in a row',           iconUrl: null },
+  { key: 'first_race',  label: 'First Race',    description: 'Complete your first race',         iconUrl: null },
+  { key: 'first_win',   label: 'First Win',     description: 'Win your first race',              iconUrl: null },
+  { key: 'speed_50',    label: 'Getting Fast',  description: 'Reach 50 WPM in a race',           iconUrl: null },
+  { key: 'speed_80',    label: 'Speed Typist',  description: 'Reach 80 WPM in a race',           iconUrl: null },
+  { key: 'speed_100',   label: 'Century',       description: 'Reach 100 WPM in a race',          iconUrl: null },
+  { key: 'veteran_10',  label: 'Regular',       description: 'Complete 10 races',                iconUrl: null },
+  { key: 'veteran_50',  label: 'Veteran',       description: 'Complete 50 races',                iconUrl: null },
+  { key: 'podium_3',    label: 'Podium Hunter', description: 'Finish 1st in 3 different races',  iconUrl: null },
+  { key: 'social_1',    label: 'Social',        description: 'Add your first friend',            iconUrl: null },
+  { key: 'speed_150',   label: 'Type Master',   description: 'Reach 150 WPM in a race',          iconUrl: null },
 ];
 
 function randInt(min: number, max: number): number {

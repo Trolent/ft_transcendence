@@ -11,6 +11,7 @@ import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_API, THROTTLE_LIMIT_UP_AVATAR, THRO
 import { FriendsModule } from './friends/friends.module';
 import { StatusModule } from './status/status.module';
 import { ChatModule } from './chat/chat.module';
+import { AchievementModule } from './achievement/achievement.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { ChatModule } from './chat/chat.module';
     GameModule,
     FriendsModule,
     StatusModule,
-    ChatModule
+    ChatModule,
+    AchievementModule
   ],
   controllers: [AsyncApiController],
   providers: [
