@@ -10,3 +10,4 @@ export { default as Terms } from "./Terms";
 export { default as FriendsPage } from "./Friends";
 export { default as FriendRequests } from "./FriendRequests";
 export { default as Chat } from "./Chat";
+export { default as OAuthCallback } from "./OAuthCallback";
