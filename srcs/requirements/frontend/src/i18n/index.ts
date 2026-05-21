@@ -23,14 +23,12 @@ export const SUPPORTED   = ['en', 'fr', 'es'] as const;
 export type  Lang        = (typeof SUPPORTED)[number];
 export const STORAGE_KEY = 'lang';
 
-/** Prisma enum → i18n lang code */
 export const DB_LANG_MAP: Record<string, Lang> = {
   EN: 'en',
   FR: 'fr',
   ES: 'es',
 };
 
-/** i18n lang code → Prisma enum */
 export const LANG_DB_MAP: Record<Lang, string> = {
   en: 'EN',
   fr: 'FR',
@@ -39,10 +37,12 @@ export const LANG_DB_MAP: Record<Lang, string> = {
 
 function detectGuestLanguage(): Lang {
   const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-  if (stored && SUPPORTED.includes(stored)) return stored;
+  if (stored && SUPPORTED.includes(stored))
+    return stored;
 
   const browser = navigator.language.slice(0, 2) as Lang;
-  if (SUPPORTED.includes(browser)) return browser;
+  if (SUPPORTED.includes(browser))
+    return browser;
 
   return 'en';
 }
@@ -50,7 +50,7 @@ function detectGuestLanguage(): Lang {
 i18n
   .use(initReactI18next)
   .init({
-    lng: detectGuestLanguage(),   // AuthContext overrides this once user is loaded
+    lng: detectGuestLanguage(),
     fallbackLng: 'en',
     ns: ['common', 'auth', 'nav', 'pages'],
     defaultNS: 'common',
@@ -60,11 +60,10 @@ i18n
       es: { common: esCommon, auth: esAuth, nav: esNav, pages: esPages },
     },
     interpolation: {
-      escapeValue: false, // React already escapes
+      escapeValue: false,
     },
   });
 
-// Persist for guests / fallback when logged out
 i18n.on('languageChanged', (lng) => {
   localStorage.setItem(STORAGE_KEY, lng);
 });
