@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserStatus } from '@prisma/client'
@@ -70,5 +70,94 @@ export class AuthService {
         data: { status: UserStatus.OFFLINE }
     });
     return { message: 'LOGOUT_SUCCESS' };
+  }
+
+  async loginWith42(code: string){
+
+    const tokenRes = await fetch('https://api.intra.42.fr/oauth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            grant_type:    'authorization_code',
+            client_id:     process.env.FORTYTWO_CLIENT_ID,
+            client_secret: process.env.FORTYTWO_CLIENT_SECRET,
+            code,
+            redirect_uri:  process.env.FORTYTWO_CALLBACK_URL,
+        }),
+    });
+
+    if (!tokenRes.ok) {
+      if (tokenRes.status === 400)
+        throw new BadRequestException('FORTYTWO_BAD_REQUEST');
+      if (tokenRes.status === 401)
+        throw new UnauthorizedException('FORTYTWO_UNAUTHORIZED');
+      if (tokenRes.status === 403)
+        throw new UnauthorizedException('FORTYTWO_FORBIDDEN');
+      if (tokenRes.status === 404)
+        throw new UnauthorizedException('FORTYTWO_NOT_FOUND');
+
+      throw new UnauthorizedException('FORTYTWO_TOKEN_EXCHANGE_FAILED');
+    }
+
+    const { access_token } = await tokenRes.json();
+
+    if (!access_token) {
+        throw new UnauthorizedException('FORTYTWO_INVALID_TOKEN');
+    }
+
+    const meRes = await fetch('https://api.intra.42.fr/v2/me', {
+        headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    if (!meRes.ok) {
+      if (meRes.status === 401)
+        throw new UnauthorizedException('FORTYTWO_TOKEN_EXPIRED');
+      if (meRes.status === 403)
+        throw new UnauthorizedException('FORTYTWO_FORBIDDEN');
+      if (meRes.status === 404)
+        throw new UnauthorizedException('FORTYTWO_USER_NOT_FOUND');
+
+      throw new UnauthorizedException('FORTYTWO_USER_FETCH_FAILED');
+    }
+
+    const me = await meRes.json();
+
+    if (!me?.id || !me?.login || !me.email)
+      throw new UnauthorizedException('FORTYTWO_INVALID_USER_DATA');
+
+    let oauthAccount = await this.prisma.oAuthAccount.findUnique({
+        where: { provider_providerId: { provider: 'QuaranteDeux', providerId: String(me.id) } },
+        include: { user: true },
+    });
+
+    let user;
+
+    if (oauthAccount) {
+        user = oauthAccount.user;
+    } else {
+      let username = me.login;
+      const existing = await this.usersService.findByUsername(username);
+
+      if (existing)
+        username = `${me.login}_42`;
+
+      const existingEmail = await this.usersService.findByEmail(me.email);
+
+      if (existingEmail)
+        throw new BadRequestException('EMAIL_ALREADY_IN_USE');
+      
+      user = await this.prisma.user.create({
+            data: {
+                username:  username,
+                email:     me.email,
+                avatarUrl: me.image?.versions?.small ?? null,
+                oauthAccounts: {
+                    create: { provider: 'QuaranteDeux', providerId: String(me.id) }
+                }
+            }
+        });
+    }
+
+    return { access_token: this.jwtService.sign({ sub: user.id }) };
   }
 }
