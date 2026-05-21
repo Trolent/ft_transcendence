@@ -17,5 +17,5 @@ export default function OAuthCallback() {
         }
     }, []);
 
-    return <div>Connexion en cours...</div>;
+    return <Alert variant="info">Connexion en cours..</Alert>;
 }
