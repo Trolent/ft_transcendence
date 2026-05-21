@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Heading, Text } from "../components";
 import { PageLayout } from "../layout";
 
@@ -5,10 +6,16 @@ export default function Terms() {
   return (
     <PageLayout>
       <Heading level={2}>Terms</Heading>
-      <Text variant="dim">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque sit amet ornare tincidunt. Sed hendrerit ultrices mauris et placerat. Sed mattis odio eu aliquam faucibus. Cras nec libero neque. Suspendisse potenti. Maecenas commodo risus nec nisl tincidunt, at mattis metus pulvinar. Nulla consequat orci augue, nec vehicula mi pellentesque a. Quisque dictum ex non tortor pharetra pulvinar. Pellentesque vel hendrerit felis. Aenean pharetra erat ac mi sollicitudin, quis vehicula elit molestie. Curabitur varius odio efficitur aliquam vestibulum.</Text>
-      <Text variant="dim">Aliquam id posuere ipsum. Maecenas aliquam ut sem sed consequat. Quisque id dignissim velit. Aliquam eu lacus sit amet risus scelerisque condimentum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vivamus at ligula vel augue tempor suscipit. Cras ultrices at magna eget egestas.</Text>
-      <Text variant="dim">Nullam lacinia dapibus ipsum quis sodales. Curabitur turpis erat, finibus ut bibendum eu, facilisis hendrerit ante. Suspendisse vel egestas urna. Maecenas ullamcorper est non luctus congue. In hac habitasse platea dictumst. Morbi convallis erat aliquet magna eleifend euismod. In pretium, nulla nec vulputate faucibus, ligula dui laoreet sapien, pharetra tincidunt metus felis nec sem. In commodo aliquet sem, in cursus quam faucibus et. Mauris elementum non ipsum a feugiat. Etiam pellentesque, nisi sed tincidunt molestie, libero magna mattis risus, eget euismod dui nunc at purus. Aliquam efficitur felis id justo consectetur, nec convallis nisl pellentesque. Etiam condimentum, lorem et fringilla auctor, justo mi tincidunt arcu, eu porta tellus turpis sit amet diam. </Text>
-      <Text variant="dim">Pellentesque interdum auctor tempus. Donec diam dui, condimentum sit amet arcu quis, ullamcorper pulvinar neque. Morbi efficitur metus scelerisque, finibus risus quis, eleifend mi. Integer ultrices eros quis condimentum dictum. Sed lacinia in augue vel laoreet. Curabitur venenatis quis arcu vel interdum. Praesent finibus mi in cursus interdum. Nulla facilisi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Praesent eleifend enim sed scelerisque lobortis. </Text>
+      <Text variant="dim">Merci d'utiliser Typerun. Veuillez lire attentivement cet accord de conditions d'utilisation.</Text>
+      <Text variant="dim"><u>Gestion du compte:</u> Votre compte doit être crée par une personne. Vous devez avoir minimum 13 ans et devez fournir une adresse email valide. Vous êtes le seul responsable de votre compte et des messages que vous envoyez aux autres utilisateurs et à l'administration. Vous avez le droit de supprimer votre compte à tout moment.</Text>
+      <Text variant="dim"><u>Règles de conduite:</u> Restez courtois avec les autres joueurs. Le harcèlement et les propos haineux ne sont en aucun cas tolérés. Si un message ou un pseudo est signalé par un autre utilisateur, nous serons en droit de vous exclure de la plateforme si nous estimons le signalement légitime.</Text>
+      <Text variant="dim"><u>Triche:</u> Il est interdit d'utiliser des bots, scripts ou tout autre outil automatisant la saisie, sous peine de score invalidé voire bannissement du leaderboard.</Text>
+      <Text variant="dim"><u>Propriété intellectuelle:</u> Le jeu, son code, son design et ses contenus appartiennent à Typerun. L'utilisateur ne peut en aucun cas copier, redistribuer ou modifier le jeu.</Text>
+      <Text variant="dim"><u>Disponibilité du service:</u> Typerun ne garantit pas d'être disponible h24 7j/7 en raison des possibles maintenances et pannes. Nous ne sommes pas responsables en cas de perte de progression liée à un incident technique.</Text>
+      <Text variant="dim"><u>Modification des conditions :</u> En cas de modification de nos conditions, vous en serez informés par mail.</Text>
+      <Text variant="dim">Pour en savoir plus sur la confidentialité de vos données, <Link to="/privacy"><u>cliquez ici</u></Link></Text>
+      <br />
+      <Text variant="dim"><i><br />Dernière mise à jour le 21 mai 2026</i></Text>
     </PageLayout>
   );
 }
