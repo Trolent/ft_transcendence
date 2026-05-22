@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
+import { Alert } from "../components";
+import { useTranslation } from "react-i18next";
 
 export default function OAuthCallback() {
     const navigate = useNavigate();
     const { loginWithToken } = useAuth();
+    const { t } = useTranslation('auth');
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -17,5 +20,5 @@ export default function OAuthCallback() {
         }
     }, []);
 
-    return <Alert variant="info">Connexion en cours..</Alert>;
+  return <Alert variant="info">{t('oauth_callback.connecting')}</Alert>;
 }
