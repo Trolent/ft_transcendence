@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
+import { Alert } from '../components';
 
 export default function OAuthCallback() {
     const navigate = useNavigate();
