@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth';
+import { Alert } from "../components";
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
@@ -19,5 +20,5 @@ export default function OAuthCallback() {
     }
   }, []);
 
-  return <div>{t('oauth_callback.connecting')}</div>;
+  return <Alert variant="info">{t('oauth_callback.connecting')}</Alert>;
 }

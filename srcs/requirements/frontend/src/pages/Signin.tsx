@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tError } from "../i18n";
-import { AuthForm } from "../components";
+import { AuthForm, Btn } from "../components";
 import { PageLayout } from "../layout";
 import { useAuth } from "../auth";
 
@@ -30,6 +30,9 @@ export default function Signin() {
   return (
     <PageLayout maxWidth="max-w-sm" centerY>
       <AuthForm mode="login" error={error} loading={loading} onSubmit={handleSubmit} />
+      <Btn as="a" href="/api/auth/42" size="md" className="block w-full mt-3 text-center !bg-[#00babc] !text-white !border-[#00babc] hover:!opacity-90">
+        {t('login_with_42')}
+      </Btn>
     </PageLayout>
   );
 }
