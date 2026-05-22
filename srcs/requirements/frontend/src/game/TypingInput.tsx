@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components";
 
 type Props = {
@@ -16,6 +17,7 @@ export default function TypingInput({
   words = [], wordIndex = 0,
   typed = "", onType, onCompleteWord,
 }: Props) {
+  const { t } = useTranslation('pages');
   const ref = useRef<HTMLInputElement>(null);
   const currentWord = words[wordIndex] ?? "";
   const isLastWord = wordIndex === words.length - 1;
@@ -87,7 +89,7 @@ export default function TypingInput({
       {!finished && (
         <Input
           ref={ref}
-          placeholder={active ? "Type here..." : "Waiting for race to start..."}
+          placeholder={active ? t('play.type_here') : t('play.waiting_start')}
           disabled={!active}
           value={typed}
           autoComplete="off"

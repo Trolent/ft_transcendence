@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Container, Text } from "@/components";
 import type { HistoryEntry } from "@/api/users";
 
@@ -6,10 +7,12 @@ interface HistoryProps {
 }
 
 export default function History({ history }: HistoryProps) {
+  const { t } = useTranslation('pages');
+
   return (
-    <Container label="history">
+    <Container label={t('profile.history_label')}>
       {history.length === 0 ? (
-        <Text variant="muted">No game played.</Text>
+        <Text variant="muted">{t('profile.history_empty')}</Text>
       ) : (
         <div className="flex flex-col gap-2">
           {history.map((entry) => (
