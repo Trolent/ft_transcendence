@@ -12,8 +12,11 @@ export default function Settings() {
     <PageLayout maxWidth="max-w-lg">
       <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">SETTINGS</Heading>
 
-      <Container variant="panel" className="mt-3 flex w-full hover:opacity-80">
-        <Label>Manage account</Label>
+      <Container variant="panel" label="Manage account" className="mt-3 flex w-full justify-center hover:opacity-80">
+        <div className="flex gap-20 text-sm">
+          <Container variant="terminal" className="py-1">CHANGE EMAIL</Container>
+          <Container variant="terminal" className="py-1">CHANGE PASSWORD</Container>
+        </div>
       </Container>
 
       <Container variant="panel" className="mt-3 flex items-center justify-between w-full gap-4 p-4 hover:opacity-80">
