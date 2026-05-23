@@ -11,3 +11,4 @@ export { StatCard, StatItem, StatDivider }  from "./StatCard";
 export { Avatar }                           from "./Avatar";
 export { default }                          from "./TextArea";
 export { Pagination }                       from "./Pagination";
+export { LanguageSwitcher }                 from "./LanguageSwitcher";

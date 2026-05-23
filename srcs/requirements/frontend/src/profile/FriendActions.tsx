@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { tError } from "@/i18n";
 import { Btn, Text } from "@/components";
 import { deleteFriend, sendFriendRequest, getFriendRelationship } from "@/api/friends";
 
@@ -13,10 +15,8 @@ interface FriendActionsProps {
   onFriendRemoved?: () => void;
 }
 
-export default function FriendActions({
-  username,
-  onFriendRemoved,
-}: FriendActionsProps) {
+export default function FriendActions({ username, onFriendRemoved }: FriendActionsProps) {
+  const { t } = useTranslation('pages');
   const [relationship, setRelationship] = useState<FriendRelationship>("NONE");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,10 +31,8 @@ export default function FriendActions({
 
   function handleAddFriend() {
     if (loading) return;
-
     setError(null);
     setLoading(true);
-
     sendFriendRequest(username)
       .then(() => setRelationship("PENDING_SENT"))
       .catch((err: unknown) => {
@@ -42,30 +40,24 @@ export default function FriendActions({
           setRelationship("PENDING_SENT");
           return;
         }
-        setError(err instanceof Error ? err.message : "Failed to send request.");
+        setError(err instanceof Error ? tError(err.message, t) : t('profile.error_add'));
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }
 
   function handleRemoveFriend() {
     if (loading) return;
-
     setError(null);
     setLoading(true);
-
     deleteFriend(username)
       .then(() => {
         setRelationship("NONE");
         onFriendRemoved?.();
       })
       .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : "Failed to remove friend.");
+        setError(err instanceof Error ? tError(err.message, t) : t('profile.error_remove'));
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -73,19 +65,19 @@ export default function FriendActions({
       <div className="flex flex-wrap gap-2">
         {relationship === "ACCEPTED" ? (
           <Btn size="sm" variant="danger" onClick={handleRemoveFriend} disabled={loading}>
-            Remove friend
+            {t('profile.remove_friend')}
           </Btn>
         ) : relationship === "PENDING_SENT" || relationship === "PENDING_RECEIVED" ? (
           <Btn size="sm" variant="ghost" disabled>
-            Pending
+            {t('profile.pending')}
           </Btn>
         ) : (
           <Btn size="sm" variant="primary" onClick={handleAddFriend} disabled={loading}>
-            + Add friend
+            {t('profile.add_friend')}
           </Btn>
         )}
         <Btn size="sm" variant="secondary" disabled={loading}>
-          Message
+          {t('profile.message')}
         </Btn>
       </div>
       {error && <Text variant="error" size="xs">{error}</Text>}

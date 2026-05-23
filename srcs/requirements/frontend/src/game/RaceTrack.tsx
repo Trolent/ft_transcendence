@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Car, { CAR_COUNT } from "./Car";
 
 const LANES = [0, 1, 2];
 const SEGMENT_DURATION = 2;
-const ORDINALS = ["1st", "2nd", "3rd"];
 
 type Waypoint = { t: number; p: number };
 
@@ -118,10 +118,12 @@ export default function RaceTrack(
     onFinishOrderChange?.(finishOrder);
   }, [finishOrder]);
 
-  const label = (idx: number) => idx === 0 ? "You" : `Player ${idx + 1}`;
+  const { t } = useTranslation('pages');
+  const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
+  const label = (idx: number) => idx === 0 ? t('play.you') : t('play.player', { n: idx + 1 });
   const place = (idx: number) => {
     const i = finishOrder.indexOf(idx);
-    return i >= 0 ? ORDINALS[i] : null;
+    return i >= 0 ? (ordinals[i] ?? null) : null;
   };
 
   return (
