@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useAuth } from "@/auth";
-
-export type UserStatus = "ONLINE" | "IN_GAME" | "OFFLINE";
+import type { UserStatus } from "@backend/common/types";
 
 export function useStatus() {
   const { user, liveStatuses } = useAuth();

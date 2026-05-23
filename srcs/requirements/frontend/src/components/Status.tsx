@@ -1,5 +1,7 @@
+import type { UserStatus } from "@backend/common/types";
+
 interface StatusProps {
-  status: "ONLINE" | "IN_GAME" | "OFFLINE";
+  status: UserStatus;
   hoverText?: string;
 }
 
