@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Avatar, Btn, Heading, List, Status, Text } from "@/components";
 import { useTranslation } from "react-i18next";
 import { tError } from "../i18n";
-import { Avatar, Btn, Heading, List, Text } from "@/components";
 import { useIsOwnProfile } from "@/auth";
 import { getFriends } from "@/api/friends";
+import { useStatus } from "@/hooks/useStatus";
 import type { Friend } from "./types";
 
 interface FriendsListProps {
@@ -22,6 +23,7 @@ export default function FriendsList({
 }: FriendsListProps) {
   const { t } = useTranslation('pages');
   const isOwnProfile = useIsOwnProfile(username);
+  const getStatus = useStatus();
 
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,11 +39,14 @@ export default function FriendsList({
       .then((data) => {
         if (cancelled) return;
         setFriends(
-          data.map((item) => ({
-            id: item.id,
-            username: item.username,
-            avatarSrc: item.avatarUrl,
-          })),
+          data.map((item) => {
+            return {
+              id: item.id,
+              username: item.username,
+              avatarSrc: item.avatarUrl,
+              status: getStatus(item.status, item.id, item.username),
+            };
+          }),
         );
       })
       .catch((err: unknown) => {
@@ -58,7 +63,7 @@ export default function FriendsList({
     return () => {
       cancelled = true;
     };
-  }, [isOwnProfile, refreshKey, username]);
+  }, [getStatus, isOwnProfile, refreshKey, username]);
 
   const displayedFriends = typeof limit === "number" ? friends.slice(0, limit) : friends;
 
@@ -94,7 +99,9 @@ export default function FriendsList({
               className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
             >
               <Avatar username={item.username} src={item.avatarSrc} size="sm" />
-              <Text>{item.username}</Text>
+              <Text>
+                <Status status={item.status} hoverText={item.status} /> {item.username}
+              </Text>
             </Link>
           )}
         />

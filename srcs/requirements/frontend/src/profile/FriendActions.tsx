@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tError } from "@/i18n";
 import { Btn, Text } from "@/components";
@@ -76,9 +77,11 @@ export default function FriendActions({ username, onFriendRemoved }: FriendActio
             {t('profile.add_friend')}
           </Btn>
         )}
-        <Btn size="sm" variant="secondary" disabled={loading}>
-          {t('profile.message')}
-        </Btn>
+        <Link to={`/chat/${username}`}>
+          <Btn size="sm" variant="secondary" disabled={loading}>
+            {t('profile.message')}
+          </Btn>
+        </Link>
       </div>
       {error && <Text variant="error" size="xs">{error}</Text>}
     </div>
