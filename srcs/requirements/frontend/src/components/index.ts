@@ -12,3 +12,4 @@ export { Avatar }                           from "./Avatar";
 export { default }                          from "./TextArea";
 export { Pagination }                       from "./Pagination";
 export { Status }                           from './Status';
+export { LanguageSwitcher }                 from "./LanguageSwitcher";

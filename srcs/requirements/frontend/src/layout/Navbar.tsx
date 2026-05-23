@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../auth/useAuth";
+import { LanguageSwitcher } from "../components";
 
 const NAV_LINKS = [
-  { label: "Play", href: "/play" },
-  { label: "Leaderboard", href: "/leaderboard" },
+  { key: "play",        href: "/play" },
+  { key: "leaderboard", href: "/leaderboard" },
 ];
 
 function isActive(href: string, pathname: string) {
@@ -32,6 +34,7 @@ function NavLink({ href, label, pathname }: { href: string; label: string; pathn
 // == USERMENU ==
 
 function UserMenu({ username, onLogout }: { username: string; onLogout: () => void }) {
+  const { t } = useTranslation('nav');
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -58,12 +61,19 @@ function UserMenu({ username, onLogout }: { username: string; onLogout: () => vo
 
       {isOpen && (
         <ul className="absolute right-0 top-full mt-1 min-w-[10rem] bg-black border border-muted z-50">
-          <li><Link to="/profile" onClick={() => setIsOpen(false)} className={itemClass}>Profile</Link></li>
+          <li><Link to="/profile"          onClick={() => setIsOpen(false)} className={itemClass}>{t('profile')}</Link></li>
           <li><Link to="/chat" onClick={() => setIsOpen(false)} className={itemClass}>Chat</Link></li>
-          <li><Link to="/friends" onClick={() => setIsOpen(false)} className={itemClass}>Friends</Link></li>
-          <li><Link to="/friends/requests" onClick={() => setIsOpen(false)} className={itemClass}>Requests</Link></li>
-          <li><Link to="/settings" onClick={() => setIsOpen(false)} className={itemClass}>Settings</Link></li>
-          <li><button type="button" onClick={() => { onLogout(); setIsOpen(false); }} className="block w-full text-left px-4 py-2 text-xs uppercase tracking-widest text-danger hover:text-black hover:bg-danger transition-colors duration-100">Logout</button></li>
+          <li><Link to="/friends"          onClick={() => setIsOpen(false)} className={itemClass}>{t('friends')}</Link></li>
+          <li><Link to="/friends/requests" onClick={() => setIsOpen(false)} className={itemClass}>{t('requests')}</Link></li>
+          <li><Link to="/settings"         onClick={() => setIsOpen(false)} className={itemClass}>{t('settings')}</Link></li>
+          <li>
+            <button
+              type="button"
+              onClick={() => { onLogout(); setIsOpen(false); }}
+              className="block w-full text-left px-4 py-2 text-xs uppercase tracking-widest text-danger hover:text-black hover:bg-danger transition-colors duration-100">
+              {t('logout')}
+            </button>
+          </li>
         </ul>
       )}
     </div>
@@ -77,20 +87,20 @@ function MobileMenu({ pathname, user, onLogout }: {
   user: { username: string } | null;
   onLogout: () => void;
 }) {
-  const linkClass =
-    "block w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-100";
+  const { t } = useTranslation('nav');
+  const linkClass = "block w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-100";
 
   return (
     <ul className="sm:hidden border-t border-muted px-4 pb-3 flex flex-col gap-1">
-      {NAV_LINKS.map(({ href, label }) => {
+      {NAV_LINKS.map(({ key, href }) => {
         const active = isActive(href, pathname);
         return (
-          <li key={label}>
+          <li key={key}>
             <Link
               to={href}
               className={[linkClass, active ? "text-black bg-default" : "text-dim hover:text-default hover:bg-muted"].join(" ")}>
               {active && <span className="mr-1">[*]</span>}
-              {label}
+              {t(key)}
             </Link>
           </li>
         );
@@ -99,17 +109,17 @@ function MobileMenu({ pathname, user, onLogout }: {
       <li className="border-t border-muted pt-1 mt-1">
         {user ? (
           <>
-            <Link to="/profile" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Profile</Link>
+            <Link to="/profile"          className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('profile')}</Link>
             <Link to="/chat" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Chat</Link>
-            <Link to="/friends" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Friends</Link>
-            <Link to="/friends/requests" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Requests</Link>
-            <Link to="/settings" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Settings</Link>
+            <Link to="/friends"          className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('friends')}</Link>
+            <Link to="/friends/requests" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('requests')}</Link>
+            <Link to="/settings"         className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('settings')}</Link>
             <button type="button" onClick={onLogout} className={`text-left ${linkClass} text-danger hover:text-black hover:bg-danger`}>
-              Logout
+              {t('logout')}
             </button>
           </>
         ) : (
-          <Link to="/signin" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Sign In</Link>
+          <Link to="/signin" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('sign_in')}</Link>
         )}
       </li>
     </ul>
@@ -119,6 +129,7 @@ function MobileMenu({ pathname, user, onLogout }: {
 // == NAVBAR ==
 
 export default function Navbar() {
+  const { t } = useTranslation('nav');
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const { user, logout } = useAuth();
@@ -130,28 +141,32 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-4 h-12">
         <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none">🚗 Typerun</Link>
 
-        <button
-          type="button"
-          className="sm:hidden px-2 py-1 text-xs uppercase tracking-widest text-dim border border-dim hover:text-default hover:border-default transition-colors duration-100"
-          onClick={() => setMenuOpen(!menuOpen)}>
-          Menu {menuOpen ? "[-]" : "[+]"}
-        </button>
+        <div className="sm:hidden flex items-center gap-2">
+          <LanguageSwitcher />
+          <button
+            type="button"
+            className="px-2 py-1 text-xs uppercase tracking-widest text-dim border border-dim hover:text-default hover:border-default transition-colors duration-100"
+            onClick={() => setMenuOpen(!menuOpen)}>
+            {t('menu')} {menuOpen ? "[-]" : "[+]"}
+          </button>
+        </div>
 
         <ul className="hidden sm:flex items-center gap-1">
-          {NAV_LINKS.map(({ href, label }) => (
-            <li key={label}>
-              <NavLink href={href} label={label} pathname={pathname} />
+          {NAV_LINKS.map(({ key, href }) => (
+            <li key={key}>
+              <NavLink href={href} label={t(key)} pathname={pathname} />
             </li>
           ))}
         </ul>
 
-        <div className="hidden sm:flex items-center">
+        <div className="hidden sm:flex items-center gap-1">
+          <LanguageSwitcher />
           {user ? (
             <UserMenu username={user.username} onLogout={logout} />
           ) : (
             <Link to="/signin"
               className="px-3 py-1 text-xs uppercase tracking-widest text-dim hover:text-default hover:bg-muted transition-colors duration-100">
-              Sign In
+              {t('sign_in')}
             </Link>
           )}
         </div>

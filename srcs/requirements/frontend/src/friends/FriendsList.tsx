@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, Btn, Heading, List, Status, Text } from "@/components";
+import { useTranslation } from "react-i18next";
+import { tError } from "../i18n";
 import { useIsOwnProfile } from "@/auth";
 import { getFriends } from "@/api/friends";
 import { useStatus } from "@/hooks/useStatus";
@@ -19,6 +21,7 @@ export default function FriendsList({
   className = "",
   refreshKey,
 }: FriendsListProps) {
+  const { t } = useTranslation('pages');
   const isOwnProfile = useIsOwnProfile(username);
   const getStatus = useStatus();
 
@@ -48,7 +51,7 @@ export default function FriendsList({
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        const message = err instanceof Error ? err.message : "Unable to load friends.";
+        const message = err instanceof Error ? tError(err.message, t) : t('friends.error_load');
         setError(message);
         setFriends([]);
       })
@@ -67,16 +70,16 @@ export default function FriendsList({
   return (
     <section className={className}>
       <div className="flex items-center justify-between">
-        <Heading level={3}>Friends [{friends.length}]</Heading>
+        <Heading level={3}>{t('friends.list_heading', { count: friends.length })}</Heading>
         {isOwnProfile && (
           <Btn as={Link} to="/friends/requests" variant="ghost" size="sm">
-            Requests
+            {t('nav:requests')}
           </Btn>
         )}
       </div>
       {loading ? (
         <Text className="mt-6" variant="muted">
-          Loading...
+          {t('common:loading')}
         </Text>
       ) : error ? (
         <Text className="mt-6" variant="error">
@@ -84,7 +87,7 @@ export default function FriendsList({
         </Text>
       ) : displayedFriends.length === 0 ? (
         <Text className="mt-6" variant="muted">
-          No friends yet.
+          {t('friends.no_friends')}
         </Text>
       ) : (
         <List

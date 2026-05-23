@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Heading, Text, Avatar, Alert, Status } from "@/components";
+import { useTranslation } from "react-i18next";
+import { tError } from "@/i18n";
 import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
 import { useAuth, useIsOwnProfile } from "@/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
@@ -9,6 +11,7 @@ import { FriendActions, Bio, Stats, History } from "@/profile";
 import { useStatus } from "@/hooks/useStatus";
 
 export default function Profile() {
+  const { t } = useTranslation('pages');
   const { username } = useParams<{ username?: string }>();
   const { user: me } = useAuth();
 
@@ -36,7 +39,7 @@ export default function Profile() {
         setProfile(prof);
         setHistory(hist);
       })
-      .catch((err) => setError(err.message))
+      .catch((err) => setError(tError(err.message, t)))
       .finally(() => setLoading(false));
   }, [targetUsername, me]);
 
@@ -45,7 +48,7 @@ export default function Profile() {
   if (loading) {
     return (
       <PageLayout>
-        <Alert>Loading</Alert>
+        <Alert>{t('profile.loading')}</Alert>
       </PageLayout>
     );
   }
@@ -53,7 +56,7 @@ export default function Profile() {
   if (error || !profile) {
     return (
       <PageLayout>
-        <Alert variant="error">{error ?? "User not found."}</Alert>
+        <Alert variant="error">{error ?? t('profile.not_found')}</Alert>
       </PageLayout>
     );
   }
@@ -82,7 +85,7 @@ export default function Profile() {
             <div>
               <Heading level={1}><Status status={displayedStatus} hoverText={displayedStatus}/> {profile.username}</Heading>
               {createdAt && (
-                <Text variant="muted" size="xs">created on {createdAt}</Text>
+                <Text variant="muted" size="xs">{t('profile.created_on', { date: createdAt })}</Text>
               )}
             </div>
             {me != null && !isOwnProfile && (

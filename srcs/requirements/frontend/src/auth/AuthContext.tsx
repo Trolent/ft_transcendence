@@ -9,6 +9,7 @@ import type { SafeUser } from "@backend/common/types";
 import { getMeApi, loginApi, registerApi } from './api';
 // @ts-ignore
 import { io, type Socket } from 'socket.io-client';
+import i18n, { DB_LANG_MAP } from '../i18n';
 
 const TOKEN_KEY = 'transcendence';
 
@@ -34,6 +35,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [liveStatuses, setLiveStatuses] = useState<LiveStatusMap>({});
 
+  function applyUser(u: SafeUser) {
+    setUser(u);
+    const lang = DB_LANG_MAP[u.language];
+    if (lang)
+      i18n.changeLanguage(lang);
+  }
+
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (!token) {
@@ -41,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     getMeApi(token)
-      .then(setUser)
+      .then(applyUser)
       .catch(() => localStorage.removeItem(TOKEN_KEY))
       .finally(() => setLoading(false));
   }, []);
@@ -50,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { access_token } = await loginApi(identifier, password);
     localStorage.setItem(TOKEN_KEY, access_token);
     const me = await getMeApi(access_token);
-    setUser(me);
+    applyUser(me);
   }, []);
 
   const register = useCallback(
