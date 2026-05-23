@@ -1,30 +1,30 @@
 import { authHeaders, handleResponse } from './config';
+import type { ConversationDto, MessageDto } from '@backend/common/dto/chat-response.dto';
 
-interface Message {
-  id?: number;
+export type ChatMessage = MessageDto;
+export type ChatConversation = ConversationDto;
+
+export interface IncomingChatMessageEvent {
   from: number;
   fromUsername: string;
   content: string;
   sentAt: string;
-  sender?: { id: number; username: string; avatarUrl?: string };
-  receiver?: { id: number; username: string; avatarUrl?: string };
-  senderId?: number;
 }
 
 export const chatApi = {
-  getHistory: async (username: string, before?: number): Promise<Message[]> => {
+  getHistory: async (username: string, before?: number): Promise<ChatMessage[]> => {
     const params = new URLSearchParams();
     if (before) params.append('before', before.toString());
     const queryString = params.toString() ? '?' + params.toString() : '';
     const res = await fetch(`/api/chat/${encodeURIComponent(username)}${queryString}`, {
       headers: authHeaders(),
     });
-    return handleResponse<Message[]>(res);
+    return handleResponse<ChatMessage[]>(res);
   },
-  getConversations: async (): Promise<any[]> => {
+  getConversations: async (): Promise<ChatConversation[]> => {
     const res = await fetch('/api/chat', {
       headers: authHeaders(),
     });
-    return handleResponse<any[]>(res);
+    return handleResponse<ChatConversation[]>(res);
   },
 };

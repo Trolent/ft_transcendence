@@ -5,18 +5,7 @@ import { AuthContext, getToken } from '@/auth';
 import { Heading, Text, Alert } from '@/components';
 import { Messages } from './Messages';
 import { ChatForm } from './ChatForm';
-import { chatApi } from '@/api/chat';
-
-interface MessageData {
-  id?: number;
-  from: number;
-  fromUsername: string;
-  content: string;
-  sentAt: string;
-  sender?: { id: number; username: string; avatarUrl?: string };
-  receiver?: { id: number; username: string; avatarUrl?: string };
-  senderId?: number;
-}
+import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat';
 
 interface ChatBoxProps {
   targetUsername?: string | null;
@@ -25,7 +14,7 @@ interface ChatBoxProps {
 export function ChatBox({ targetUsername }: ChatBoxProps) {
   const auth = useContext(AuthContext);
 
-  const [messages, setMessages] = useState<MessageData[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,15 +61,26 @@ export function ChatBox({ targetUsername }: ChatBoxProps) {
       console.error('Chat:', error);
     });
 
-    newSocket.on('receive_message', (data: any) => {
+    newSocket.on('receive_message', (data: IncomingChatMessageEvent) => {
       console.log('Message received:', data);
       setMessages((prev) => [
         ...prev,
         {
-          from: data.from,
-          fromUsername: data.fromUsername,
+          id: Date.now(),
+          senderId: data.from,
+          receiverId: auth?.user?.id ?? 0,
           content: data.content,
           sentAt: data.sentAt,
+          sender: {
+            id: data.from,
+            username: data.fromUsername,
+            avatarUrl: null,
+          },
+          receiver: {
+            id: auth?.user?.id ?? 0,
+            username: auth?.user?.username ?? 'You',
+            avatarUrl: null,
+          },
         },
       ]);
     });
@@ -107,10 +107,21 @@ export function ChatBox({ targetUsername }: ChatBoxProps) {
       setMessages((prev) => [
         ...prev,
         {
-          from: auth?.user?.id || 0,
-          fromUsername: auth?.user?.username || '',
+          id: Date.now(),
+          senderId: auth?.user?.id || 0,
+          receiverId: 0,
           content,
           sentAt: new Date().toISOString(),
+          sender: {
+            id: auth?.user?.id || 0,
+            username: auth?.user?.username || 'You',
+            avatarUrl: null,
+          },
+          receiver: {
+            id: 0,
+            username: targetUsername,
+            avatarUrl: null,
+          },
         },
       ]);
     }

@@ -1,21 +1,13 @@
 import { useEffect, useState } from "react";
 import { Alert, Avatar, Heading, List, Text } from "@/components";
-import { chatApi } from "@/api/chat";
-
-interface Chat {
-  id: string;
-  username: string;
-  avatarSrc?: string;
-  lastMessage: string;
-  sentAt: string;
-}
+import { chatApi, type ChatConversation } from "@/api/chat";
 
 interface ChatsListProps {
   onSelectChat: (username: string) => void;
 }
 
 export function ChatsList({ onSelectChat }: ChatsListProps) {
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,15 +21,7 @@ export function ChatsList({ onSelectChat }: ChatsListProps) {
       .getConversations()
       .then((data) => {
         if (cancelled) return;
-        setChats(
-          data.map((item: any) => ({
-            id: item.user.id,
-            username: item.user.username,
-            avatarSrc: item.user.avatarUrl,
-            lastMessage: item.lastMessage,
-            sentAt: item.sentAt,
-          }))
-        );
+        setChats(data);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -69,20 +53,20 @@ export function ChatsList({ onSelectChat }: ChatsListProps) {
         <List
           className="mt-4"
           items={chats}
-          renderItem={(item: Chat) => {
+          renderItem={(item: ChatConversation) => {
             return (
               <button
-                onClick={() => onSelectChat(item.username)}
+                onClick={() => onSelectChat(item.user.username)}
                 className="w-full text-left"
               >
                 <div className="flex items-center gap-3">
                   <Avatar
-                    username={item.username}
-                    src={item.avatarSrc}
+                    username={item.user.username}
+                    src={item.user.avatarUrl ?? undefined}
                     size="sm"
                   />
                   <div className="flex-1 min-w-0">
-                    <Text className="truncate font-bold">{item.username}</Text>
+                    <Text className="truncate font-bold">{item.user.username}</Text>
                     <Text className="truncate">{item.lastMessage}</Text>
                   </div>
                 </div>

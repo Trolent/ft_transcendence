@@ -1,23 +1,13 @@
 import { Avatar, Text } from '@/components';
-
-interface MessageData {
-  id?: number;
-  from: number;
-  fromUsername: string;
-  content: string;
-  sentAt: string;
-  sender?: { id: number; username: string; avatarUrl?: string };
-  receiver?: { id: number; username: string; avatarUrl?: string };
-  senderId?: number;
-}
+import type { ChatMessage } from '@/api/chat';
 
 interface MessageProps {
-  message: MessageData;
+  message: ChatMessage;
 }
 
 export function Message({ message }: MessageProps) {
-  const sender = message.sender || { username: message.fromUsername };
-  const avatarUrl = message.sender?.avatarUrl;
+  const sender = message.sender;
+  const avatarUrl = message.sender.avatarUrl ?? undefined;
 
   return (
     <div className="mb-2 flex items-center gap-2">

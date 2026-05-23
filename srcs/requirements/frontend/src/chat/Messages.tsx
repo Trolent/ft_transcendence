@@ -1,20 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Alert } from '@/components';
 import { Message } from './Message';
-
-interface MessageData {
-  id?: number;
-  from: number;
-  fromUsername: string;
-  content: string;
-  sentAt: string;
-  sender?: { id: number; username: string; avatarUrl?: string };
-  receiver?: { id: number; username: string; avatarUrl?: string };
-  senderId?: number;
-}
+import type { ChatMessage } from '@/api/chat';
 
 interface MessagesProps {
-  messages: MessageData[];
+  messages: ChatMessage[];
 }
 
 export function Messages({ messages }: MessagesProps) {
