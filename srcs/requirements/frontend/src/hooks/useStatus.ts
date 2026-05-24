@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useAuth } from "@/auth";
+import { useAuth } from "@/features/auth";
 import type { UserStatus } from "@backend/common/types";
 
 export function useStatus() {

@@ -1,4 +1,4 @@
-import { API_FRIENDS, authHeaders, handleResponse } from "./config";
+import { API_FRIENDS, authHeaders, handleResponse } from "@/api/config.api";
 import type { FriendUserDto, FriendRequestDto, RelationshipResponseDto } from "@backend/common/dto/friends-response.dto";
 
 export type { FriendUserDto, FriendRequestDto, RelationshipResponseDto };

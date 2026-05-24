@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { tError } from "../i18n";
+import { tError } from "@/features/i18n";
 import { Avatar, Btn, Heading, List, Text } from "@/components";
-import { getIncomingRequests, acceptFriendRequest, declineFriendRequest } from "@/api/friends";
+import { getIncomingRequests, acceptFriendRequest, declineFriendRequest } from "@/api/friends.api";
 import type { Friend } from "./types";
 
 interface IncomingRequestsProps {

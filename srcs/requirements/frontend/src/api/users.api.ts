@@ -1,4 +1,4 @@
-import { API_USERS, authHeaders, handleResponse } from './config'
+import { API_USERS, authHeaders, handleResponse } from '@/api/config.api'
 
 export type UserStats = {
   rank: number;

@@ -1,6 +1,6 @@
 import { type HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
-import Btn from "./Btn";
+import { Btn } from "@/components";
 
 interface PaginationProps extends HTMLAttributes<HTMLDivElement> {
   currentPage: number;

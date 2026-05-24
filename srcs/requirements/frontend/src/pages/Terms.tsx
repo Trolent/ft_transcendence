@@ -1,5 +1,4 @@
-import { Heading, Text } from "../components";
-import { PageLayout } from "../layout";
+import { Heading, Text, PageLayout } from "@/components";
 
 export default function Terms() {
   return (

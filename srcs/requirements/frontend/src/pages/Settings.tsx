@@ -1,7 +1,5 @@
-import { Heading, Text, Label, Btn, LanguageSwitcher } from "../components";
-import Container from "../components/Container";
-import { PageLayout } from "../layout";
 import { useState } from "react";
+import { Heading, Text, Label, Btn, LanguageSwitcher, Container, PageLayout } from "@/components";
 import { useTranslation } from "react-i18next";
 
 export default function Settings() {

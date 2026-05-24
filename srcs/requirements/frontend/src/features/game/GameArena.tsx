@@ -3,10 +3,8 @@ import { useTranslation } from "react-i18next";
 import RaceTrack from "./RaceTrack";
 import HUD from "./HUD";
 import TypingInput from "./TypingInput";
-import Container from "../components/Container";
-import Btn from "../components/Btn";
-import { StatCard, StatItem, StatDivider } from "../components/StatCard";
-import { useGameState } from "../hooks/useGameState";
+import { Btn, Container, StatCard, StatItem, StatDivider } from "@/components";
+import { useGameState } from "@/hooks/useGameState";
 
 function formatTime(s: number): string {
   const mm = String(Math.floor(s / 60)).padStart(2, "0");

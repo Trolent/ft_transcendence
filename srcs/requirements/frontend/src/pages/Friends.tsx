@@ -1,6 +1,6 @@
-import { FriendsList } from "@/friends";
-import { useAuth } from "@/auth";
-import { PageLayout } from "@/layout";
+import { FriendsList } from "@/features/friends";
+import { useAuth } from "@/features/auth";
+import { PageLayout } from "@/components";
 
 export default function Friends() {
   const { user, loading } = useAuth();

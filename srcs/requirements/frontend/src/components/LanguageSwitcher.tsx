@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getToken } from "../auth/AuthContext";
-import type { Lang } from "../i18n";
-import { SUPPORTED } from "../i18n";
+import { getToken } from "@/features/auth/AuthContext";
+import type { Lang } from "@/features/i18n";
+import { SUPPORTED } from "@/features/i18n";
 
 const FLAG: Record<Lang, string> = {
   en: "🇬🇧",

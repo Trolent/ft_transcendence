@@ -6,10 +6,10 @@ import {
   type ReactNode,
 } from 'react';
 import type { SafeUser } from "@backend/common/types";
-import { getMeApi, loginApi, registerApi } from './api';
+import { getMeApi, loginApi, registerApi } from '@/api/auth.api';
 // @ts-ignore
 import { io, type Socket } from 'socket.io-client';
-import i18n, { DB_LANG_MAP } from '../i18n';
+import i18n, { DB_LANG_MAP } from '@/features/i18n';
 
 const TOKEN_KEY = 'transcendence';
 

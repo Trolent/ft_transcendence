@@ -1,4 +1,4 @@
-import { authHeaders, handleResponse } from './config';
+import { authHeaders, handleResponse } from '@/api/config.api';
 import type { ConversationDto, MessageDto } from '@backend/common/dto/chat-response.dto';
 
 export type ChatMessage = MessageDto;

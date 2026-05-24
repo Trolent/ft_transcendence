@@ -1,4 +1,4 @@
-import { API_LEADERBOARD, authHeaders, handleResponse } from './config';
+import { API_LEADERBOARD, authHeaders, handleResponse } from '@/api/config.api';
 import type { LeaderboardEntryDto } from '@backend/common/dto/leaderboard-response.dto';
 
 export type LeaderboardEntry = LeaderboardEntryDto;

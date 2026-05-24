@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Heading, Text, Avatar, Alert, Status } from "@/components";
 import { useTranslation } from "react-i18next";
-import { tError } from "@/i18n";
-import { PageLayout, PageWithSidebar, Sidebar } from "@/layout";
-import { useAuth, useIsOwnProfile } from "@/auth";
-import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "../api/users";
-import { FriendsList } from "@/friends";
-import { FriendActions, Bio, Stats, History } from "@/profile";
+import { Heading, Text, Avatar, Alert, Status, PageLayout, PageWithSidebar, Sidebar } from "@/components";
+import { tError } from "@/features/i18n";
+import { useAuth, useIsOwnProfile } from "@/features/auth";
+import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "@/api/users.api";
+import { FriendsList } from "@/features/friends";
+import { FriendActions, Bio, Stats, History } from "@/features/profile";
 import { useStatus } from "@/hooks/useStatus";
 
 export default function Profile() {

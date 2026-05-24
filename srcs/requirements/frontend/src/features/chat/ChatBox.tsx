@@ -1,11 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 // @ts-ignore
 import { io, Socket } from 'socket.io-client';
-import { AuthContext, getToken } from '@/auth';
+import { AuthContext, getToken } from '@/features/auth';
 import { Heading, Text, Alert } from '@/components';
-import { Messages } from './Messages';
-import { ChatForm } from './ChatForm';
-import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat';
+import { Messages, ChatForm } from '.';
+import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
 
 interface ChatBoxProps {
   targetUsername?: string | null;

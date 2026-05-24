@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import {Container} from "../components";
+import { Container } from "@/components";
 
 interface SidebarProps {
   children: ReactNode;
