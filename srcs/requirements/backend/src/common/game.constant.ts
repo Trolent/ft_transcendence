@@ -1,3 +1,5 @@
+export const MAX_PLAYERS = 5;
+
 export const MAX_WPM = 250;
 export const QUOTES = [
   "The quick brown fox jumps over the lazy dog.",

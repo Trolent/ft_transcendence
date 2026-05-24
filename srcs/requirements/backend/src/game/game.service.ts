@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RoomState, RoomPlayer } from './game.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { MatchStatus, UserStatus } from '@prisma/client';
-import { MAX_WPM, QUOTES, MIN_RACE_SECONDS, MIN_CHARS_PER_SEC } from '../common/game.constant';
+import { MAX_PLAYERS, MAX_WPM, QUOTES, MIN_RACE_SECONDS, MIN_CHARS_PER_SEC } from '../common/game.constant';
 import { AchievementService } from '../achievement/achievement.service';
 
 type QueueEntry = {
@@ -34,34 +34,33 @@ export class GameService{
     private rooms        = new Map<string, RoomState>();
     private socketToRoom = new Map<string, string>();
 
-    //QUEUE
-
-    private dequeuTwo(): QueueEntry[] {
-        const iter      = this.queue.entries();
-        const first     = iter.next().value!;
-        const second    = iter.next().value!;
-
-        this.queue.delete(first[0]);
-        this.queue.delete(second[0]);
-
-        return [first[1], second[1]];
+    getAllQueued(): QueueEntry[] {
+        return [...this.queue.values()];
     }
 
-    addToQueue(entry : QueueEntry): QueueEntry[] | null {
+    getQueueSize(): number {
+        return this.queue.size;
+    }
+
+    dequeuAll(max = MAX_PLAYERS): QueueEntry[] {
+        const entries = [...this.queue.entries()].slice(0, max);
+        for (const [socketId] of entries)
+            this.queue.delete(socketId);
+        return entries.map(([, entry]) => entry);
+    }
+
+    addToQueue(entry : QueueEntry): boolean {
 
         if (this.isInQueue(entry.socketId) || this.isInRoom(entry.socketId))
-            return null;
+            return false;
 
         this.queue.set(entry.socketId, entry);
-        console.log(`[Queue] ${entry.username} rej file ${this.queue.size} en attente`);
-        
-        if(this.queue.size >= 2)
-            return this.dequeuTwo();
+        console.log(`[Queue] ${entry.username} rej file ${this.queue.size} waiting`);
 
-        return null;
+        return true;
     }
 
-    removeFromQueu(socketId : string) : void {
+    removeFromQueue(socketId : string) : void {
         const entry = this.queue.get(socketId);
         if(entry){
             this.queue.delete(socketId);
@@ -102,7 +101,7 @@ export class GameService{
             phase:          'waiting',
             text,
             players:        roomPlayers,
-            maxPlayers:     2,
+            maxPlayers:     players.length,
             startedAt:      null,
             countdown:      null,
             raceTimeout:    null,
@@ -334,7 +333,7 @@ export class GameService{
         room.players.delete(socketId);
         this.socketToRoom.delete(socketId);
 
-        const cancelled = room.phase !== 'finished' && active < 2;
+        const cancelled = room.phase !== 'finished' && active < 1;
 
         if(cancelled){
             //update match status
