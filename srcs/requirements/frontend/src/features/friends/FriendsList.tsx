@@ -14,6 +14,7 @@ interface FriendsListProps {
   className?: string;
   refreshKey?: number;
   showMsgBtn?: boolean;
+  showRequestsBtn?: boolean;
 }
 
 export default function FriendsList({
@@ -22,6 +23,7 @@ export default function FriendsList({
   className = "",
   refreshKey,
   showMsgBtn,
+  showRequestsBtn,
 }: FriendsListProps) {
   const { t } = useTranslation('pages');
   const isOwnProfile = useIsOwnProfile(username);
@@ -73,7 +75,7 @@ export default function FriendsList({
     <section className={className}>
       <div className="flex items-center justify-between">
         <Heading level={3}>{t('friends.list_heading', { count: friends.length })}</Heading>
-        {isOwnProfile && (
+        {isOwnProfile && showRequestsBtn && (
           <Btn as={Link} to="/friends/requests" variant="ghost" size="sm">
             {t('nav:requests')}
           </Btn>
