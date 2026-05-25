@@ -13,6 +13,7 @@ interface FriendsListProps {
   limit?: number;
   className?: string;
   refreshKey?: number;
+  showMsgBtn?: boolean;
 }
 
 export default function FriendsList({
@@ -20,6 +21,7 @@ export default function FriendsList({
   limit,
   className = "",
   refreshKey,
+  showMsgBtn,
 }: FriendsListProps) {
   const { t } = useTranslation('pages');
   const isOwnProfile = useIsOwnProfile(username);
@@ -94,15 +96,22 @@ export default function FriendsList({
           className="mt-6"
           items={displayedFriends}
           renderItem={(item: Friend) => (
-            <Link
-              to={`/profile/${item.username}`}
-              className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
-            >
-              <Avatar username={item.username} src={item.avatarSrc} size="sm" />
-              <Text>
-                <Status status={item.status} hoverText={item.status} /> {item.username}
-              </Text>
-            </Link>
+            <div className="flex items-center justify-between gap-4">
+              <Link
+                to={`/profile/${item.username}`}
+                className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
+              >
+                <Avatar username={item.username} src={item.avatarSrc} size="sm" />
+                <Text>
+                  <Status status={item.status} hoverText={item.status} /> {item.username}
+                </Text>
+              </Link>
+              {showMsgBtn && (
+                <Btn as={Link} to={`/chat/${item.username}`} variant="ghost" size="sm">
+                  {t('common:message')}
+                </Btn>
+              )}
+            </div>
           )}
         />
       )}
