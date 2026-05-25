@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { tError } from "../i18n";
 
 import { Avatar, Heading, List, Text, Pagination } from "../components";
 import { PageLayout } from "../layout";
@@ -10,6 +12,7 @@ type LeaderboardListItem = LeaderboardEntry & { id: string; [key: string]: unkno
 const LIMIT = 20;
 
 export default function Leaderboard() {
+  const { t } = useTranslation('pages');
   const [players, setPlayers] = useState<LeaderboardListItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -29,7 +32,7 @@ export default function Leaderboard() {
         setTotalPages(response.totalPages);
       })
       .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : "Failed to load leaderboard.");
+        setError(err instanceof Error ? tError(err.message, t) : t('leaderboard.error'));
         setTotalPages(1);
       })
       .finally(() => setLoading(false));
@@ -42,10 +45,10 @@ export default function Leaderboard() {
 
   return (
     <PageLayout maxWidth="max-w-lg">
-      <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">LEADERBOARD</Heading>
+      <Heading level={3} className="mt-10 sm:text-2xl sm:tracking-[0.2em]">{t('leaderboard.title')}</Heading>
       {loading && (
         <Text className="mt-6" variant="muted">
-          Loading...
+          {t('leaderboard.loading')}
         </Text>
       )}
       {error && !loading && (
@@ -55,7 +58,7 @@ export default function Leaderboard() {
       )}
       {!loading && !error && players.length === 0 && (
         <Text className="mt-6" variant="muted">
-          No leaderboard
+          {t('leaderboard.empty')}
         </Text>
       )}
       {!loading && !error && players.length > 0 && (
@@ -73,7 +76,7 @@ export default function Leaderboard() {
                 <div className="min-w-0 flex-1">
                   <Text className="truncate">{item.username}</Text>
                   <Text size="xs" variant="muted">
-                    {item.avgWpm} WPM - level: {item.level} - games: {item.gamesPlayed}
+                    {t('leaderboard.wpm', { wpm: item.avgWpm })} — {t('leaderboard.level', { level: item.level })} — {t('leaderboard.games', { count: item.gamesPlayed })}
                   </Text>
                 </div>
               </Link>

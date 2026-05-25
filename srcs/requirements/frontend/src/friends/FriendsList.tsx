@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Btn, Heading, List, Text } from "@/components";
+import { Avatar, Btn, Heading, List, Status, Text } from "@/components";
+import { useTranslation } from "react-i18next";
+import { tError } from "../i18n";
 import { useIsOwnProfile } from "@/auth";
 import { getFriends } from "@/api/friends";
+import { useStatus } from "@/hooks/useStatus";
 import type { Friend } from "./types";
 
 interface FriendsListProps {
@@ -18,7 +21,9 @@ export default function FriendsList({
   className = "",
   refreshKey,
 }: FriendsListProps) {
+  const { t } = useTranslation('pages');
   const isOwnProfile = useIsOwnProfile(username);
+  const getStatus = useStatus();
 
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(false);
@@ -34,16 +39,19 @@ export default function FriendsList({
       .then((data) => {
         if (cancelled) return;
         setFriends(
-          data.map((item) => ({
-            id: item.id,
-            username: item.username,
-            avatarSrc: item.avatarUrl,
-          })),
+          data.map((item) => {
+            return {
+              id: item.id,
+              username: item.username,
+              avatarSrc: item.avatarUrl,
+              status: getStatus(item.status, item.id, item.username),
+            };
+          }),
         );
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        const message = err instanceof Error ? err.message : "Unable to load friends.";
+        const message = err instanceof Error ? tError(err.message, t) : t('friends.error_load');
         setError(message);
         setFriends([]);
       })
@@ -55,23 +63,23 @@ export default function FriendsList({
     return () => {
       cancelled = true;
     };
-  }, [isOwnProfile, refreshKey, username]);
+  }, [getStatus, isOwnProfile, refreshKey, username]);
 
   const displayedFriends = typeof limit === "number" ? friends.slice(0, limit) : friends;
 
   return (
     <section className={className}>
       <div className="flex items-center justify-between">
-        <Heading level={3}>Friends [{friends.length}]</Heading>
+        <Heading level={3}>{t('friends.list_heading', { count: friends.length })}</Heading>
         {isOwnProfile && (
           <Btn as={Link} to="/friends/requests" variant="ghost" size="sm">
-            Requests
+            {t('nav:requests')}
           </Btn>
         )}
       </div>
       {loading ? (
         <Text className="mt-6" variant="muted">
-          Loading...
+          {t('common:loading')}
         </Text>
       ) : error ? (
         <Text className="mt-6" variant="error">
@@ -79,7 +87,7 @@ export default function FriendsList({
         </Text>
       ) : displayedFriends.length === 0 ? (
         <Text className="mt-6" variant="muted">
-          No friends yet.
+          {t('friends.no_friends')}
         </Text>
       ) : (
         <List
@@ -91,7 +99,9 @@ export default function FriendsList({
               className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
             >
               <Avatar username={item.username} src={item.avatarSrc} size="sm" />
-              <Text>{item.username}</Text>
+              <Text>
+                <Status status={item.status} hoverText={item.status} /> {item.username}
+              </Text>
             </Link>
           )}
         />

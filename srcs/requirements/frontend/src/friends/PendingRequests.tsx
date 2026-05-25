@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { tError } from "../i18n";
 import { Avatar, Btn, Heading, List, Text } from "@/components";
 import { getSentRequests } from "@/api/friends";
 import type { Friend } from "./types";
@@ -9,6 +11,7 @@ interface PendingRequestsProps {
 }
 
 export default function PendingRequests({ className = "" }: PendingRequestsProps) {
+  const { t } = useTranslation('pages');
   const [pending, setPending] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,19 +22,19 @@ export default function PendingRequests({ className = "" }: PendingRequestsProps
       .then((data) =>
         setPending(data.map((item) => ({ id: item.id, username: item.username, avatarSrc: item.avatarUrl })))
       )
-      .catch((err: unknown) => setError(err instanceof Error ? err.message : "Failed to load requests."))
+      .catch((err: unknown) => setError(err instanceof Error ? tError(err.message, t) : t('friends.error_requests')))
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <section className={className}>
-      <Heading level={4}>Pending [{pending.length}]</Heading>
+      <Heading level={4}>{t('friends.pending_heading', { count: pending.length })}</Heading>
       {loading ? (
-        <Text className="mt-4" variant="muted">Loading...</Text>
+        <Text className="mt-4" variant="muted">{t('common:loading')}</Text>
       ) : error ? (
         <Text className="mt-4" variant="error">{error}</Text>
       ) : pending.length === 0 ? (
-        <Text className="mt-4" variant="muted">No pending requests.</Text>
+        <Text className="mt-4" variant="muted">{t('friends.no_pending')}</Text>
       ) : (
         <List
           className="mt-4"
@@ -46,7 +49,7 @@ export default function PendingRequests({ className = "" }: PendingRequestsProps
                 <Text>{item.username}</Text>
               </Link>
               <Btn size="sm" variant="ghost" disabled>
-                Pending
+                {t('friends.pending_btn')}
               </Btn>
             </div>
           )}
