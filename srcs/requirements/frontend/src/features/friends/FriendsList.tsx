@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, Btn, Heading, List, Status, Text } from "@/components";
 import { useTranslation } from "react-i18next";
-import { tError } from "../i18n";
-import { useIsOwnProfile } from "@/auth";
-import { getFriends } from "@/api/friends";
+import { tError } from "@/features/i18n";
+import { useIsOwnProfile } from "@/features/auth";
+import { getFriends } from "@/api/friends.api";
 import { useStatus } from "@/hooks/useStatus";
 import type { Friend } from "./types";
 

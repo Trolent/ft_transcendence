@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Alert } from '@/components';
-import { Message } from './Message';
-import type { ChatMessage } from '@/api/chat';
+import type { ChatMessage } from '@/api/chat.api';
+import { Message } from '.';
 
 interface MessagesProps {
   messages: ChatMessage[];

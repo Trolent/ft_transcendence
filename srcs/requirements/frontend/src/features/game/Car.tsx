@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 
 const PALETTES: [string, string][] = [
   ["#10b981", "#065f46"], // emerald

@@ -1,4 +1,3 @@
-export { default as Demo } from "./Demo";
 export { default as Leaderboard } from "./Leaderboard";
 export { default as Play } from "./Play";
 export { default as Privacy } from "./Privacy";

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { tError } from "../i18n";
-import { AuthForm } from "../components";
-import { PageLayout } from "../layout";
-import { useAuth } from "../auth";
+import { tError } from "@/features/i18n";
+import { AuthForm, PageLayout } from "@/components";
+import { useAuth } from "@/features/auth";
 
 export default function Register() {
   const { register } = useAuth();

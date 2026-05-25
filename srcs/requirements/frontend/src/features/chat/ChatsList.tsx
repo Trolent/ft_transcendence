@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Alert, Avatar, Heading, List, Text } from "@/components";
-import { chatApi, type ChatConversation } from "@/api/chat";
+import { chatApi, type ChatConversation } from "@/api/chat.api";
 
 interface ChatsListProps {
   onSelectChat: (username: string) => void;

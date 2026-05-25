@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Heading } from "@/components";
-import { IncomingRequests, PendingRequests } from "@/friends";
-import { PageLayout } from "@/layout";
+import { Heading, PageLayout } from "@/components";
+import { IncomingRequests, PendingRequests } from "@/features/friends";
 
 export default function FriendRequests() {
   const { t } = useTranslation('pages');

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { pickRandomQuote } from "../quotes";
+import { pickRandomQuote } from "@/features/game/quotes";
 
 function correctPrefixLength(typed: string, word: string): number {
   let i = 0;

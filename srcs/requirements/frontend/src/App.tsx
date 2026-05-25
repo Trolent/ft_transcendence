@@ -13,9 +13,9 @@ import {
   Settings,
   Signin,
   Terms,
-} from "./pages";
-import { Navbar, Footer } from "./layout";
-import { ProtectedRoute, GuestRoute } from "./auth";
+} from "@/pages";
+import { Navbar, Footer } from "@/components";
+import { ProtectedRoute, GuestRoute } from "@/features/auth";
 
 function App() {
   return (

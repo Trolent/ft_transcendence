@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { StatCard, StatItem, StatDivider } from "@/components";
-import type { UserStats } from "@/api/users";
+import type { UserStats } from "@/api/users.api";
 
 interface StatsProps {
   stats: UserStats;

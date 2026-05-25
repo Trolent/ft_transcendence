@@ -1,5 +1,5 @@
 import { Avatar, Text } from '@/components';
-import type { ChatMessage } from '@/api/chat';
+import type { ChatMessage } from '@/api/chat.api';
 
 interface MessageProps {
   message: ChatMessage;

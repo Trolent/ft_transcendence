@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Container, Text } from "@/components";
-import type { HistoryEntry } from "@/api/users";
+import type { HistoryEntry } from "@/api/users.api";
 
 interface HistoryProps {
   history: HistoryEntry[];

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { tError } from "@/i18n";
-import TextArea, { Btn, Container, Text } from "@/components";
-import { updateMyBio } from "@/api/users";
+import { tError } from "@/features/i18n";
+import { TextArea, Btn, Container, Text } from "@/components";
+import { updateMyBio } from "@/api/users.api";
 
 interface BioProps {
   bio: string | null;

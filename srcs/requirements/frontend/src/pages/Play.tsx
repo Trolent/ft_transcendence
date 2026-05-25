@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Btn } from "@/components";
-import { GameArena } from "@/game";
-import { PageLayout } from "@/layout";
 import { useTranslation } from "react-i18next";
+import { Btn, PageLayout } from "@/components";
+import { GameArena } from "@/features/game";
 
 type Phase = "lobby" | "countdown" | "go" | "racing";
 

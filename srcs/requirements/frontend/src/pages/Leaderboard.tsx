@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { tError } from "../i18n";
-
-import { Avatar, Heading, List, Text, Pagination } from "../components";
-import { PageLayout } from "../layout";
-import { getLeaderboard, type LeaderboardEntry } from "../api/leaderboard";
+import { tError } from "@/features/i18n";
+import { Avatar, Heading, List, Text, Pagination, PageLayout } from "@/components";
+import { getLeaderboard, type LeaderboardEntry } from "@/api/leaderboard.api";
 
 type LeaderboardListItem = LeaderboardEntry & { id: string; [key: string]: unknown };
 

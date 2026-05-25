@@ -1,8 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../auth/useAuth";
-import { LanguageSwitcher } from "../components";
+import { useAuth } from "@/features/auth/useAuth";
+import { LanguageSwitcher } from "@/components";
 
 const NAV_LINKS = [
   { key: "play",        href: "/play" },

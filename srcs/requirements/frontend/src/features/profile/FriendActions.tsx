@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { tError } from "@/i18n";
+import { tError } from "@/features/i18n";
 import { Btn, Text } from "@/components";
-import { deleteFriend, sendFriendRequest, getFriendRelationship } from "@/api/friends";
+import { deleteFriend, sendFriendRequest, getFriendRelationship } from "@/api/friends.api";
 
 type FriendRelationship =
   | "NONE"

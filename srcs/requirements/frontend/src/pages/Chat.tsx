@@ -1,5 +1,5 @@
-import { PageWithSidebar } from '@/layout';
-import { ChatBox, ChatsList } from '@/chat';
+import { PageWithSidebar } from '@/components';
+import { ChatBox, ChatsList } from '@/features/chat';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
