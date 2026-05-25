@@ -53,7 +53,7 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
       {loading ? (
         <Alert variant="info">Loading...</Alert>
       ) : error ? (
-        <Alert variant="error">Loading...</Alert>
+        <Alert variant="error">{error}</Alert>
       ) : chats.length === 0 ? (
         <Alert variant="info">No chats yet</Alert>
       ) : (
