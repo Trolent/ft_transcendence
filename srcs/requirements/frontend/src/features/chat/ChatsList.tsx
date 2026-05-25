@@ -4,9 +4,10 @@ import { chatApi, type ChatConversation } from "@/api/chat.api";
 
 interface ChatsListProps {
   onSelectChat: (username: string) => void;
+  refreshKey?: number;
 }
 
-export function ChatsList({ onSelectChat }: ChatsListProps) {
+export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
   const [chats, setChats] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export function ChatsList({ onSelectChat }: ChatsListProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshKey]);
 
   return (
     <>

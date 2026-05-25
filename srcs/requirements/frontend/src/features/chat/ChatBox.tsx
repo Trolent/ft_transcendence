@@ -8,9 +8,10 @@ import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/
 
 interface ChatBoxProps {
   targetUsername?: string | null;
+  onMessageSent?: () => void;
 }
 
-export function ChatBox({ targetUsername }: ChatBoxProps) {
+export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   const auth = useContext(AuthContext);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -102,6 +103,8 @@ export function ChatBox({ targetUsername }: ChatBoxProps) {
         to: targetUsername,
         content,
       });
+
+      onMessageSent?.();
 
       setMessages((prev) => [
         ...prev,
