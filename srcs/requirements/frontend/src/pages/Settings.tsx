@@ -4,6 +4,7 @@ import { Heading, Btn, Container, PageLayout, Input, Alert, LanguageSwitcher } f
 import { updateSettings, type UpdateSettingsPayload } from "@/api/users.api";
 // import { tError, SUPPORTED, LANG_DB_MAP, type Lang } from "@/features/i18n";
 import { tError } from "@/features/i18n";
+import { useAuth } from "@/features/auth";
 
 //const FLAG: Record<Lang, string> = { en: "🇬🇧", fr: "🇫🇷", es: "🇪🇸" };
 //const LABEL: Record<Lang, string> = { en: "English", fr: "Français", es: "Español" };
@@ -19,6 +20,7 @@ export default function Settings() {
   //const { t, i18n } = useTranslation("pages");
   const { t } = useTranslation("pages");
   //const currentLang = (SUPPORTED.includes(i18n.language as Lang) ? i18n.language : "en") as Lang;
+  const { user } = useAuth();
 
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -96,7 +98,7 @@ export default function Settings() {
           <Input
             type="email"
             label={t("settings.email_label")}
-            placeholder={t("settings.email_placeholder")}
+            placeholder={user?.email ?? t("settings.email_placeholder")}
             value={email}
             onChange={(e) => { setEmail(e.target.value); clearFeedback(); }}
             error={errors.email}
