@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Heading, Btn, Container, PageLayout, Input, Alert } from "@/components";
+import { Heading, Btn, Container, PageLayout, Input, Alert, LanguageSwitcher } from "@/components";
 import { updateSettings, type UpdateSettingsPayload } from "@/api/users.api";
-import { tError, SUPPORTED, LANG_DB_MAP, type Lang } from "@/features/i18n";
+// import { tError, SUPPORTED, LANG_DB_MAP, type Lang } from "@/features/i18n";
+import { tError } from "@/features/i18n";
 
-const FLAG: Record<Lang, string> = { en: "🇬🇧", fr: "🇫🇷", es: "🇪🇸" };
-const LABEL: Record<Lang, string> = { en: "English", fr: "Français", es: "Español" };
+//const FLAG: Record<Lang, string> = { en: "🇬🇧", fr: "🇫🇷", es: "🇪🇸" };
+//const LABEL: Record<Lang, string> = { en: "English", fr: "Français", es: "Español" };
 
 type FieldErrors = {
   email?: string;
@@ -15,14 +16,15 @@ type FieldErrors = {
 };
 
 export default function Settings() {
-  const { t, i18n } = useTranslation("pages");
-  const currentLang = (SUPPORTED.includes(i18n.language as Lang) ? i18n.language : "en") as Lang;
+  //const { t, i18n } = useTranslation("pages");
+  const { t } = useTranslation("pages");
+  //const currentLang = (SUPPORTED.includes(i18n.language as Lang) ? i18n.language : "en") as Lang;
 
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [language, setLanguage] = useState<Lang>(currentLang);
+  //const [language, setLanguage] = useState<Lang>(currentLang);
 
   const [errors, setErrors] = useState<FieldErrors>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -63,14 +65,14 @@ export default function Settings() {
     const payload: UpdateSettingsPayload = {};
     if (email) payload.email = email;
     if (password) { payload.currentPassword = currentPassword; payload.password = password; }
-    if (language !== currentLang) payload.language = LANG_DB_MAP[language];
+    //if (language !== currentLang) payload.language = LANG_DB_MAP[language];
 
     if (!Object.keys(payload).length) return;
 
     setLoading(true);
     try {
       await updateSettings(payload);
-      if (payload.language) await i18n.changeLanguage(language);
+      //if (payload.language) await i18n.changeLanguage(language);
       setSuccess(true);
       setEmail("");
       setCurrentPassword("");
@@ -136,24 +138,8 @@ export default function Settings() {
           />
         </Container>
 
-        <Container variant="panel" label={t("settings.change_language")} className="flex flex-col gap-3 mt-1">
-          <div className="flex flex-col gap-1 font-mono w-full">
-            <label className="text-xs uppercase tracking-widest text-dim">
-              {t("settings.language")}
-            </label>
-            <select
-              value={language}
-              onChange={(e) => { setLanguage(e.target.value as Lang); clearFeedback(); }}
-              disabled={loading}
-              className="bg-black border border-dim text-default text-sm px-3 py-2 font-mono focus:outline-none focus:border-default focus:shadow-[0_0_8px_0_rgba(0,255,65,0.25)] transition-colors duration-100 cursor-pointer"
-            >
-              {SUPPORTED.map((lang) => (
-                <option key={lang} value={lang}>
-                  {FLAG[lang]} {LABEL[lang]}
-                </option>
-              ))}
-            </select>
-          </div>
+        <Container variant="panel" label={t("settings.change_language")} className="flex gap-3 mt-1">
+            <LanguageSwitcher />
         </Container>
 
         {globalError && <Alert variant="error">{globalError}</Alert>}
