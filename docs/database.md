@@ -83,7 +83,6 @@
 | matchId | Integer | FK → Match.id (Cascade) | Lien vers la partie |
 | userId | Integer | FK → User.id (Cascade) | Lien vers le joueur |
 | wpm | Float | Nullable | Mots par minute — calculé côté serveur |
-| accuracy | Float | Nullable | Précision en % — calculée côté serveur |
 | position | Integer | Nullable | Classement final dans la course |
 | finishedAt | DateTime | Nullable | Moment où le joueur a terminé |
 
@@ -117,6 +116,6 @@
 ## Notes importantes
 
 - Le host de la base de données dans l'URL de connexion est `postgresql` (nom du service Docker), pas `localhost`.
-- `wpm` et `accuracy` dans `MatchResult` ne sont **jamais envoyés par le client** — ils sont calculés et écrits uniquement par le serveur (anti-triche).
+- `wpm` dans `MatchResult` ne sont **jamais envoyés par le client** — ils sont calculés et écrits uniquement par le serveur (anti-triche).
 - Le leaderboard est calculé dynamiquement depuis `MatchResult` (tri par `wpm` moyen) — pas de table dédiée nécessaire.
 - Le classement d'un joueur est son `position` moyen ou son `wpm` moyen sur l'ensemble de ses `MatchResult`.

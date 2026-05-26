@@ -243,7 +243,6 @@ export class GameService{
                 matchId:    room.matchId,
                 userId:     p.userId,
                 wpm:        p.wpm > MAX_WPM ? 0 : p.wpm,
-                accuracy:   null,
                 position:   i + 1,
                 finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
             })),

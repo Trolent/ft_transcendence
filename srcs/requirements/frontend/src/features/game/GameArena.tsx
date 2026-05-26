@@ -30,7 +30,7 @@ export default function GameArena({ overlay, onReplay, practice = false }: Props
     passage, words, wordIndex, typed,
     handleType, completeWord,
     elapsed, timeLeft, wpm, progress, playerDone,
-    finishTime, accuracy,
+    finishTime,
   } = useGameState(active, allDone, practice);
 
   const effectiveFinish = playerDone;
@@ -67,8 +67,6 @@ export default function GameArena({ overlay, onReplay, practice = false }: Props
                   <StatItem label={t('play.stat_wpm')}      value={wpm} accent />
                   <StatDivider />
                   <StatItem label={t('play.stat_time')}     value={formatTime(finishTime ?? elapsed)} />
-                  <StatDivider />
-                  <StatItem label={t('play.stat_accuracy')} value={`${accuracy}%`} />
                   {!practice && (
                     <>
                       <StatDivider />

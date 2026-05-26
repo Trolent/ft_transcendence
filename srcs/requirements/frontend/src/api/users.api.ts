@@ -18,15 +18,25 @@ export type UserProfile = {
   stats: UserStats;
 };
 
+export type MatchPlayer = {
+  position: number | null;
+  wpm: number | null;
+  user: {
+    id: number;
+    username: string;
+    avatarUrl: string | null;
+  };
+};
+
 export type HistoryEntry = {
   wpm: number | null;
-  accuracy: number | null;
   position: number | null;
   finishedAt: string | null;
   match: {
     id: number;
     startedAt: string;
     textSnippet: string;
+    matchResult: MatchPlayer[];
   };
 };
 

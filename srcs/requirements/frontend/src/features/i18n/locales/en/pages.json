@@ -41,7 +41,11 @@
     "error_add": "Failed to send request.",
     "error_remove": "Failed to remove friend.",
     "avatar_uploading": "Uploading...",
-    "avatar_upload_error": "Failed to upload avatar."
+    "avatar_upload_error": "Failed to upload avatar.",
+    "history_date": "Date",
+    "history_pos": "Pos",
+    "history_wpm": "WPM",
+    "history_players": "Players"
   },
   "friends": {
     "title": "FRIENDS",
@@ -83,7 +87,6 @@
     "results_label": "results",
     "stat_wpm": "WPM",
     "stat_time": "Time",
-    "stat_accuracy": "Accuracy",
     "stat_position": "Position",
     "try_again": "Try Again",
     "race_again": "Race Again",

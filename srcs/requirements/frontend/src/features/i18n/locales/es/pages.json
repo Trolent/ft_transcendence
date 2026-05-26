@@ -41,7 +41,11 @@
     "error_add": "No se pudo enviar la solicitud.",
     "error_remove": "No se pudo eliminar al amigo.",
     "avatar_uploading": "Subiendo...",
-    "avatar_upload_error": "No se pudo subir el avatar."
+    "avatar_upload_error": "No se pudo subir el avatar.",
+    "history_date": "Fecha",
+    "history_pos": "Pos",
+    "history_wpm": "PPM",
+    "history_players": "Jugadores"
   },
   "friends": {
     "title": "AMIGOS",
@@ -83,7 +87,6 @@
     "results_label": "resultados",
     "stat_wpm": "PPM",
     "stat_time": "Tiempo",
-    "stat_accuracy": "Precisión",
     "stat_position": "Posición",
     "try_again": "Intentar de nuevo",
     "race_again": "Correr de nuevo",

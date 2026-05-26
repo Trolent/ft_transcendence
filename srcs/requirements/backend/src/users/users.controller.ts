@@ -107,7 +107,7 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: 'Get match history' })
-    @ApiResponse({ status: 200, schema: { example: [{ wpm: 85, accuracy: 95, position: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox' } }] } })
+    @ApiResponse({ status: 200, schema: { example: [{ wpm: 85, position: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox' } }] } })
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get(':username/history')
     getHistory(@Param('username') username: string) {

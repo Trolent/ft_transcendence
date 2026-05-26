@@ -141,13 +141,27 @@ export class UsersService {
 
   async getHistory(username: string) {
     const user = await this.prisma.user.findUnique({ where: { username } });
-    if (!user) throw new NotFoundException('USER_NOT_FOUND');
+    if (!user)
+      throw new NotFoundException('USER_NOT_FOUND');
 
     return this.prisma.matchResult.findMany({
       where: { userId: user.id },
       select: {
-        wpm: true, accuracy: true, position: true, finishedAt: true,
-        match: { select: { id: true, startedAt: true, textSnippet: true } },
+        wpm: true, position: true, finishedAt: true,
+        match: {
+          select: {
+            id: true, startedAt: true, textSnippet: true,
+            matchResult: {
+              select: {
+                position: true,
+                wpm: true,
+                user: {
+                  select: { id: true, username: true, avatarUrl: true },
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: { finishedAt: 'desc' },
       take: 20,
