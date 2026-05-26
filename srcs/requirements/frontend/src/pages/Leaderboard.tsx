@@ -43,7 +43,7 @@ export default function Leaderboard() {
 
   return (
     <PageLayout maxWidth="max-w-lg">
-      <Heading level={3} className="mt-10 sm:mt-0 sm:text-2xl sm:tracking-[0.2em]">{t('leaderboard.title')}</Heading>
+      <Heading level={3} className="mt-10 sm:text-2xl sm:tracking-[0.2em]">{t('leaderboard.title')}</Heading>
       {loading && (
         <Text className="mt-6" variant="muted">
           {t('leaderboard.loading')}

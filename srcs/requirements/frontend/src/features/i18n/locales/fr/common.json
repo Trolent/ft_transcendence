@@ -28,6 +28,8 @@
     "AVATAR_TOO_LARGE": "Le fichier avatar est trop volumineux.",
     "AVATAR_MIMETYPE_NOT_ALLOWED": "Type de fichier non autorisé.",
     "MISSING_USERS_PARAM": "Paramètre utilisateur manquant.",
-    "USERNAME_CANNOT_CONTAIN_AT": "Le nom d'utilisateur ne peut pas contenir @."
+    "USERNAME_CANNOT_CONTAIN_AT": "Le nom d'utilisateur ne peut pas contenir @.",
+    "INVALID_CURRENT_PASSWORD": "Mot de passe actuel incorrect.",
+    "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis."
   }
 }
