@@ -1,0 +1,35 @@
+{
+  "loading": "Loading...",
+  "save": "Save",
+  "cancel": "Cancel",
+  "please_wait": "Please wait…",
+  "pagination": {
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Invalid email or password.",
+    "USER_ALREADY_EXISTS": "Username already taken.",
+    "USER_NOT_FOUND": "User not found.",
+    "EMAIL_ALREADY_TAKEN": "Email already in use.",
+    "EMAIL_ALREADY_IN_USE": "Email already in use.",
+    "ALREADY_FRIENDS": "You are already friends.",
+    "CANNOT_ADD_YOURSELF": "You cannot add yourself.",
+    "ALREADY_BLOCKED": "This user is already blocked.",
+    "CANNOT_BLOCK_YOURSELF": "You cannot block yourself.",
+    "CANNOT_UNBLOCK_YOURSELF": "You cannot unblock yourself.",
+    "NOT_FRIENDS": "You are not friends.",
+    "NOT_YOUR_BLOCK": "You did not block this user.",
+    "NOT_YOUR_REQUEST": "This request does not belong to you.",
+    "REQUEST_ALREADY_SENT": "Friend request already sent.",
+    "REQUEST_NOT_FOUND": "Friend request not found.",
+    "AVATAR_UPLOAD_FAILED": "Avatar upload failed.",
+    "NO_FILE_PROVIDED": "No file provided.",
+    "AVATAR_TOO_LARGE": "Avatar file is too large.",
+    "AVATAR_MIMETYPE_NOT_ALLOWED": "File type not allowed.",
+    "MISSING_USERS_PARAM": "Missing user parameter.",
+    "USERNAME_CANNOT_CONTAIN_AT": "Username cannot contain @.",
+    "INVALID_CURRENT_PASSWORD": "Incorrect current password.",
+    "CURRENT_PASSWORD_REQUIRED": "Current password is required."
+  }
+}

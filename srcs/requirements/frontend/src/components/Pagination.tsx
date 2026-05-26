@@ -1,5 +1,6 @@
 import { type HTMLAttributes } from "react";
-import Btn from "./Btn";
+import { useTranslation } from "react-i18next";
+import { Btn } from "@/components";
 
 interface PaginationProps extends HTMLAttributes<HTMLDivElement> {
   currentPage: number;
@@ -14,6 +15,7 @@ export function Pagination({
   className = "",
   ...props
 }: PaginationProps) {
+  const { t } = useTranslation('common');
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < totalPages;
 
@@ -27,7 +29,7 @@ export function Pagination({
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={!canGoPrev}
-      > {"\u25C0"} Prev </Btn>
+      > {"\u25C0"} {t('pagination.prev')} </Btn>
 
       <div className="flex gap-1">
         {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
@@ -48,7 +50,7 @@ export function Pagination({
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!canGoNext}
-      > Next {"\u25B6"}
+      > {t('pagination.next')} {"\u25B6"}
       </Btn>
     </div>
   );

@@ -9,5 +9,14 @@ export { AuthForm }                         from "./AuthForm";
 export { List }                             from "./List";
 export { StatCard, StatItem, StatDivider }  from "./StatCard";
 export { Avatar }                           from "./Avatar";
-export { default }                          from "./TextArea";
+export { default as TextArea }              from "./TextArea";
 export { Pagination }                       from "./Pagination";
+export { Status }                           from './Status';
+export { LanguageSwitcher }                 from "./LanguageSwitcher";
+
+/* layout */
+export { default as Footer }                from "./Footer";
+export { default as Navbar }                from "./Navbar";
+export { default as PageLayout }            from "./PageLayout";
+export { default as PageWithSidebar }       from "./PageWithSidebar";
+export { default as Sidebar }               from "./Sidebar";

@@ -1,6 +1,6 @@
-import { FriendsList } from "@/friends";
-import { useAuth } from "@/auth";
-import { PageLayout } from "@/layout";
+import { FriendsList } from "@/features/friends";
+import { useAuth } from "@/features/auth";
+import { PageLayout } from "@/components";
 
 export default function Friends() {
   const { user, loading } = useAuth();
@@ -10,7 +10,7 @@ export default function Friends() {
 
   return (
     <PageLayout maxWidth="max-w-lg">
-        <FriendsList username={user.username} />
+        <FriendsList username={user.username} showMsgBtn showRequestsBtn/>
     </PageLayout>
   )
 }

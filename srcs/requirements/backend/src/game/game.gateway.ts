@@ -29,7 +29,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly LOBBY_MS = 15_000;
 
   async handleConnection(client: Socket) {
-	await this.authService.validateWsClient(client);
+    const ok = await this.authService.validateWsClient(client);
+    if (!ok)
+        return client.disconnect();
   }
 
   async handleDisconnect(client: Socket) {

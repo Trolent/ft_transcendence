@@ -105,7 +105,7 @@ async function main() {
           passwordHash,
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
           language:     randFrom(languages),
-          status:       randFrom(statuses),
+          status:       UserStatus.OFFLINE,
           createdAt:    daysAgo(faker.number.int({ min: 1, max: 90 })),
         },
       }),

@@ -74,7 +74,7 @@ function daysAgo(n: number): Date {
 async function main() {
   const passwordHash = await bcrypt.hash('Password123!', 10);
   const languages = [Language.EN, Language.FR, Language.ES];
-  const statuses  = [UserStatus.ONLINE, UserStatus.OFFLINE, UserStatus.IN_GAME];
+  //const statuses  = [UserStatus.ONLINE, UserStatus.OFFLINE, UserStatus.IN_GAME];
   const friendshipStatuses = [FriendshipStatus.ACCEPTED, FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING];
 
   const achievements = await Promise.all(
@@ -102,7 +102,7 @@ async function main() {
           passwordHash,
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
           language:     randFrom(languages),
-          status:       randFrom(statuses),
+          status:       UserStatus.OFFLINE,
           createdAt:    daysAgo(randInt(1, 60)),
         },
       }),

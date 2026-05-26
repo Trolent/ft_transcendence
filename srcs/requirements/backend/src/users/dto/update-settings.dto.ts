@@ -9,6 +9,10 @@ export class UpdateSettingsDto {
     @IsOptional() @IsEmail()
     email?: string;
 
+    @ApiPropertyOptional({ example: 'OldPassword123!' })
+    @IsOptional() @IsString()
+    currentPassword?: string;
+
     @ApiPropertyOptional({ example: 'NewPassword123!' })
     @IsOptional() @IsString() @MinLength(8)
     password?: string;
