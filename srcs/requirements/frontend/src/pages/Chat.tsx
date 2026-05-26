@@ -8,6 +8,7 @@ export default function ChatPage() {
   const { username } = useParams<{ username: string }>();
 
   const [selectedChat, setSelectedChat] = useState<string | null>(username ?? null);
+  const [chatsRefreshKey, setChatsRefreshKey] = useState(0);
 
   useEffect(() => {
     setSelectedChat(username ?? null);
@@ -24,11 +25,12 @@ export default function ChatPage() {
         <ChatsList
           //selectedUsername={selectedChat}
           onSelectChat={handleSelectChat}
+          refreshKey={chatsRefreshKey}
         />
       }
       maxWidth="max-w-xl"
     >
-      <ChatBox targetUsername={selectedChat} />
+      <ChatBox targetUsername={selectedChat} onMessageSent={() => setChatsRefreshKey((k) => k + 1)} />
     </PageWithSidebar>
   );
 }

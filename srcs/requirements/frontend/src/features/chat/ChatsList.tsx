@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Alert, Avatar, Heading, List, Text } from "@/components";
+import { Alert, Avatar, Btn, Heading, List, Text } from "@/components";
 import { chatApi, type ChatConversation } from "@/api/chat.api";
+import { Link } from "react-router-dom";
 
 interface ChatsListProps {
   onSelectChat: (username: string) => void;
+  refreshKey?: number;
 }
 
-export function ChatsList({ onSelectChat }: ChatsListProps) {
+export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
   const [chats, setChats] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,15 +40,20 @@ export function ChatsList({ onSelectChat }: ChatsListProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshKey]);
 
   return (
     <>
-      <Heading level={3}>Chats</Heading>
+      <div className="flex items-center justify-between">
+        <Heading level={3}>Chats</Heading>
+        <Btn as={Link} to="/chat" variant="primary" size="sm">
+          New Chat
+        </Btn>
+      </div>
       {loading ? (
         <Alert variant="info">Loading...</Alert>
       ) : error ? (
-        <Alert variant="error">Loading...</Alert>
+        <Alert variant="error">{error}</Alert>
       ) : chats.length === 0 ? (
         <Alert variant="info">No chats yet</Alert>
       ) : (
