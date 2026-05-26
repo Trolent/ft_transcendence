@@ -70,7 +70,7 @@ export default function Profile() {
     <PageWithSidebar
       sidebar={
         <Sidebar>
-          <FriendsList username={targetUsername} limit={5} className="h-full" refreshKey={friendsRefreshKey} />
+          <FriendsList username={targetUsername} limit={5} className="h-full" refreshKey={friendsRefreshKey} showRequestsBtn />
         </Sidebar>
       }
       maxWidth="max-w-2xl"

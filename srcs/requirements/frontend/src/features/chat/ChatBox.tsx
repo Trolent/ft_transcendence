@@ -1,22 +1,25 @@
 import { useState, useEffect, useContext } from 'react';
 // @ts-ignore
 import { io, Socket } from 'socket.io-client';
-import { AuthContext, getToken } from '@/features/auth';
-import { Heading, Text, Alert } from '@/components';
+import { AuthContext, getToken, useAuth } from '@/features/auth';
+import { Heading, Alert } from '@/components';
 import { Messages, ChatForm } from '.';
 import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
+import { FriendsList } from '../friends';
 
 interface ChatBoxProps {
   targetUsername?: string | null;
+  onMessageSent?: () => void;
 }
 
-export function ChatBox({ targetUsername }: ChatBoxProps) {
+export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   const auth = useContext(AuthContext);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!targetUsername) {
@@ -103,6 +106,8 @@ export function ChatBox({ targetUsername }: ChatBoxProps) {
         content,
       });
 
+      onMessageSent?.();
+
       setMessages((prev) => [
         ...prev,
         {
@@ -129,7 +134,7 @@ export function ChatBox({ targetUsername }: ChatBoxProps) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col">
       {!targetUsername ? (
-        <Text>Select a chat</Text>
+          <FriendsList username={user.username} showMsgBtn />
       ) : (
         <>
           <Heading level={2}>{targetUsername}</Heading>
