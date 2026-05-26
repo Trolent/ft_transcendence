@@ -42,7 +42,9 @@
     "pending": "Pendiente",
     "message": "Mensaje",
     "error_add": "No se pudo enviar la solicitud.",
-    "error_remove": "No se pudo eliminar al amigo."
+    "error_remove": "No se pudo eliminar al amigo.",
+    "avatar_uploading": "Subiendo...",
+    "avatar_upload_error": "No se pudo subir el avatar."
   },
   "friends": {
     "title": "AMIGOS",

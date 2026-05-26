@@ -42,7 +42,9 @@
     "pending": "En attente",
     "message": "Message",
     "error_add": "Impossible d'envoyer la demande.",
-    "error_remove": "Impossible de retirer l'ami."
+    "error_remove": "Impossible de retirer l'ami.",
+    "avatar_uploading": "Téléchargement...",
+    "avatar_upload_error": "Impossible de télécharger l'avatar."
   },
   "friends": {
     "title": "AMIS",

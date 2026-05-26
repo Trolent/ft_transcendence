@@ -6,7 +6,7 @@ import { tError } from "@/features/i18n";
 import { useAuth, useIsOwnProfile } from "@/features/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "@/api/users.api";
 import { FriendsList } from "@/features/friends";
-import { FriendActions, Bio, Stats, History } from "@/features/profile";
+import { FriendActions, Bio, Stats, History, AvatarUpload } from "@/features/profile";
 import { useStatus } from "@/hooks/useStatus";
 
 export default function Profile() {
@@ -78,7 +78,15 @@ export default function Profile() {
       <div className="flex flex-col gap-6">
 
         <div className="flex flex-col sm:flex-row items-start gap-5">
-          <Avatar username={profile.username} src={profile.avatarUrl ?? undefined} size="xl" />
+          {isOwnProfile ? (
+            <AvatarUpload
+              username={profile.username}
+              src={profile.avatarUrl}
+              onAvatarChange={(url) => setProfile((prev) => prev ? { ...prev, avatarUrl: url } : prev)}
+            />
+          ) : (
+            <Avatar username={profile.username} src={profile.avatarUrl ?? undefined} size="xl" />
+          )}
 
           <div className="flex flex-col gap-4 flex-1">
             <div>

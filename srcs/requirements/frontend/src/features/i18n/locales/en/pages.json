@@ -42,7 +42,9 @@
     "pending": "Pending",
     "message": "Message",
     "error_add": "Failed to send request.",
-    "error_remove": "Failed to remove friend."
+    "error_remove": "Failed to remove friend.",
+    "avatar_uploading": "Uploading...",
+    "avatar_upload_error": "Failed to upload avatar."
   },
   "friends": {
     "title": "FRIENDS",
