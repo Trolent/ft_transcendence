@@ -55,4 +55,19 @@ export async function updateMyBio(bio: string): Promise<{ bio: string | null }> 
   });
 
   return handleResponse<{ bio: string | null }>(res);
+
+  
 }
+
+export async function uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
+  const formData = new FormData();
+  formData.append('avatar', file);
+
+  const res = await fetch(`${API_USERS}/me/avatar`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: formData,
+  });
+  return handleResponse<{ avatarUrl: string }>(res);
+}
+
