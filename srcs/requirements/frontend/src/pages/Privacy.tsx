@@ -1,12 +1,10 @@
-import { Heading, Text } from "../components";
-import { PageLayout } from "../layout";
+import { Heading, Text, PageLayout } from "@/components";
 
 export default function Privacy() {
   return (
     <PageLayout>
       <Heading level={2}>Privacy</Heading>
-      <Text variant="dim"><u>Vos données:</u> Lorsque vous créez un compte, les données collectées sont les suivants : nom d'utilisateur, adresse e-mail et mot de passe (masqué). Les autres données recueillies par la suite sont : les statistiques du jeu, l'historique des parties, l'adresse IP, le navigateur utilisé, la liste d'amis et les demandes d'amis envoyees/recues. Nous nous engageons à garder une totale transparence quand aux données recueillies et si vous supprimez votre compte, toutes vos données disparaissent.</Text>
-      <Text variant="dim"><u>Utilisation des données:</u> Nous nous engageons .</Text>
+      <Text variant="dim">Nous utilisons les services PostgreSQL et Prisma pour collecter vos données qui sont les suivants : nom d'utilisateur et adresse e-mail.</Text>
     </PageLayout>
   );
 }

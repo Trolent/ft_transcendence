@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Btn } from "@/components";
-import { GameArena } from "@/game";
-import { PageLayout } from "@/layout";
+import { useTranslation } from "react-i18next";
+import { Btn, PageLayout } from "@/components";
+import { GameArena } from "@/features/game";
 
 type Phase = "lobby" | "countdown" | "go" | "racing";
 
 export default function Play() {
+  const { t } = useTranslation('pages');
   const [phase, setPhase] = useState<Phase>("lobby");
   const [countdown, setCountdown] = useState(10);
   const [gameKey, setGameKey] = useState(0);
@@ -14,15 +15,15 @@ export default function Play() {
   useEffect(() => {
     if (phase === "countdown") {
       if (countdown === 1) {
-        const t = setTimeout(() => setPhase("go"), 1000);
-        return () => clearTimeout(t);
+        const time = setTimeout(() => setPhase("go"), 1000);
+        return () => clearTimeout(time);
       }
-      const t = setTimeout(() => setCountdown((c: number) => c - 1), 1000);
-      return () => clearTimeout(t);
+      const time = setTimeout(() => setCountdown((c: number) => c - 1), 1000);
+      return () => clearTimeout(time);
     }
     if (phase === "go") {
-      const t = setTimeout(() => setPhase("racing"), 700);
-      return () => clearTimeout(t);
+      const time = setTimeout(() => setPhase("racing"), 700);
+      return () => clearTimeout(time);
     }
   }, [phase, countdown]);
 
@@ -43,15 +44,15 @@ export default function Play() {
         <div className="flex flex-col items-center gap-8">
           <div className="text-center flex flex-col gap-3">
             <h1 className="text-3xl sm:text-5xl font-bold font-mono tracking-widest uppercase text-default">
-              Ready to Race?
+              {t('play.ready_to_race')}
             </h1>
             <p className="text-dim font-mono text-sm">
-              Type faster than your opponents to cross the finish line.
+              {t('play.race_description')}
             </p>
           </div>
           <div className="flex flex-col items-center gap-3">
-            <Btn size="lg" onClick={enterRace}>Enter Race</Btn>
-            <Btn size="lg" variant="secondary" onClick={enterPractice}>Practice</Btn>
+            <Btn size="lg" onClick={enterRace}>{t('play.enter_race')}</Btn>
+            <Btn size="lg" variant="secondary" onClick={enterPractice}>{t('play.practice_mode')}</Btn>
           </div>
         </div>
       </PageLayout>
@@ -76,7 +77,7 @@ export default function Play() {
   return (
     <div className="w-full flex flex-col items-center gap-3">
       <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start">
-        <Btn size="sm" variant="ghost" onClick={() => setPhase("lobby")}>← Main Menu</Btn>
+        <Btn size="sm" variant="ghost" onClick={() => setPhase("lobby")}>{t('play.main_menu')}</Btn>
       </div>
       <GameArena key={gameKey} overlay={overlay} onReplay={replay} practice={practice} />
     </div>

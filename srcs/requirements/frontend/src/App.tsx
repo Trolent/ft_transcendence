@@ -1,9 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 
 import {
+  Chat,
   FriendRequests,
   FriendsPage,
   Leaderboard,
+  OAuthCallback,
   Play,
   Privacy,
   Profile,
@@ -11,9 +13,9 @@ import {
   Settings,
   Signin,
   Terms,
-} from "./pages";
-import { Navbar, Footer } from "./layout";
-import { ProtectedRoute, GuestRoute } from "./auth";
+} from "@/pages";
+import { Navbar, Footer } from "@/components";
+import { ProtectedRoute, GuestRoute } from "@/features/auth";
 
 function App() {
   return (
@@ -26,9 +28,12 @@ function App() {
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/signin" element={<GuestRoute><Signin /></GuestRoute>} />
           <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+          <Route path="/auth/callback" element={<OAuthCallback />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/chat/:username" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
