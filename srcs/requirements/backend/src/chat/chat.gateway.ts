@@ -25,16 +25,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   async handleConnection(client: Socket) {
-    const ok = await this.authService.validateWsClient(client);
-    if(!ok)
-      return ;
-    this.chatService.registerClient(client.data.user.id, client);
+      const ok = await this.authService.validateWsClient(client);
+      if (!ok)
+        return client.disconnect();
+      this.chatService.registerClient(client.data.user.id, client);
   }
-
+  
   async handleDisconnect(client: Socket) {
-    if(client.data.user){
-      this.chatService.unregisterClient(client.data.user.id);
-    }
+      if (client.data.user)
+        this.chatService.unregisterClient(client.data.user.id, client.id);
   }
 
   @UseGuards(WsJwtGuard)
