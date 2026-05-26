@@ -15,6 +15,8 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer() server: Server;
 
+    private connectionCount = new Map<number, number>();
+
     constructor(
         private authService: AuthService,
         private prisma: PrismaService,
@@ -26,23 +28,46 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async handleConnection(client: Socket) {
         const ok = await this.authService.validateWsClient(client);
-        if (!ok) return;
+        if (!ok)
+            return client.disconnect();
         const userId = client.data.user.id;
         client.data.userId = userId;
-        await this.prisma.user.update({
-            where: { id: userId },
-            data: { status: UserStatus.ONLINE },
-        });
-        this.broadcastStatus(userId, UserStatus.ONLINE);
+
+        const count = (this.connectionCount.get(userId) ?? 0) + 1;
+        this.connectionCount.set(userId, count);
+
+        if (count === 1) {
+
+            const current = await this.prisma.user.findUnique({
+                where: { id: userId },
+                select: { status: true },
+            });
+            if (current?.status !== UserStatus.IN_GAME) {
+                await this.prisma.user.update({
+                    where: { id: userId },
+                    data: { status: UserStatus.ONLINE },
+                });
+                this.broadcastStatus(userId, UserStatus.ONLINE);
+            }
+        }
     }
 
     async handleDisconnect(client: Socket) {
         const userId = client.data.userId;
-        if (!userId) return;
-        await this.prisma.user.update({
-            where: { id: userId },
-            data: { status: UserStatus.OFFLINE },
-        });
-        this.broadcastStatus(userId, UserStatus.OFFLINE);
+        if(!userId)
+            return;
+
+        const count = (this.connectionCount.get(userId) ?? 1) - 1;
+
+        if (count <= 0) {
+            this.connectionCount.delete(userId);
+            await this.prisma.user.update({
+                where: { id: userId },
+                data: { status: UserStatus.OFFLINE },
+            });
+            this.broadcastStatus(userId, UserStatus.OFFLINE);
+        } else {
+            this.connectionCount.set(userId, count);
+        }
     }
 }

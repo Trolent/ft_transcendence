@@ -19,10 +19,12 @@ export class ChatService {
         this.clients.set(userId, client);
     }
 
-    unregisterClient(userId:number){
-        this.clients.delete(userId);
+    unregisterClient(userId: number, socketId: string) {
+        if (this.clients.get(userId)?.id === socketId) {
+            this.clients.delete(userId);
+            this.lastMessage.delete(userId);
+        }
     }
-
     async sendMessage(userId: number, senderUsername: string, toUsername: string , content: string){
         
         const last = this.lastMessage.get(userId) ?? 0;
