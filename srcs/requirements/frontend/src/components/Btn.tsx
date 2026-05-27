@@ -40,19 +40,19 @@ const variantClasses: Record<BtnVariant, string> = {
     "bg-default text-black border border-default " +
     "hover:bg-glow hover:border-glow " +
     "active:bg-dim " +
-    "disabled:bg-muted disabled:text-muted disabled:border-muted disabled:cursor-not-allowed",
+    "disabled:opacity-40 disabled:bg-default disabled:text-black disabled:border-default disabled:cursor-not-allowed disabled:saturate-0",
 
   secondary:
     "bg-transparent text-default border border-default " +
     "hover:bg-muted " +
     "active:bg-dim " +
-    "disabled:text-muted disabled:border-dim disabled:cursor-not-allowed",
+    "disabled:opacity-30 disabled:cursor-not-allowed",
 
   ghost:
     "bg-transparent text-default border border-transparent " +
     "hover:border-dim hover:bg-muted " +
     "active:bg-dim " +
-    "disabled:text-muted disabled:cursor-not-allowed",
+    "disabled:opacity-30 disabled:cursor-not-allowed",
 
   danger:
     "bg-transparent text-danger border border-danger " +
@@ -79,7 +79,7 @@ export default function Btn<E extends ElementType = "button">({
   return (
     <Component
       className={[
-        "font-mono uppercase tracking-widest cursor-pointer transition-colors duration-100",
+        "font-mono uppercase tracking-widest cursor-pointer transition-all duration-100 disabled:pointer-events-none",
         variantClasses[variant],
         sizeClasses[size],
         className,
