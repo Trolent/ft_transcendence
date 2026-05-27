@@ -121,5 +121,11 @@
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"
+  },
+  "chat": {
+    "new_chat": "Nouveau chat",
+    "new_chat_title": "Nouveau chat",
+    "open": "Ouvrir",
+    "no_chat_selected": "Aucune conversation sélectionnée."
   }
 }

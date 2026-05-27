@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { AuthContext, getToken } from '@/features/auth';
-import { Heading, Alert } from '@/components';
+import { useTranslation } from 'react-i18next';
+import { Heading, Text } from '@/components';
 import { Messages, ChatForm } from '.';
 import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
 
@@ -12,6 +13,7 @@ interface ChatBoxProps {
 
 export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   const auth = useContext(AuthContext);
+  const { t } = useTranslation('pages');
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -131,13 +133,13 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col">
       {!targetUsername ? (
-          <Alert>No chat selected.</Alert>
+          <Text>{t('chat.no_chat_selected')}</Text>
       ) : (
         <>
           <Heading level={2}>{targetUsername}</Heading>
 
           {isLoading ? (
-            <div><Alert variant='info'>Loading chat...</Alert></div>
+            <div><Text>Loading...</Text></div>
           ) : (
             <>
               <Messages messages={messages}/>
