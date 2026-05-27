@@ -1,10 +1,50 @@
 import { Heading, Text, PageLayout } from "@/components";
+import { useTranslation } from "react-i18next";
 
 export default function Privacy() {
-  return (
-    <PageLayout>
-      <Heading level={2}>Privacy</Heading>
-      <Text variant="dim">Nous utilisons les services PostgreSQL et Prisma pour collecter vos données qui sont les suivants : nom d'utilisateur et adresse e-mail.</Text>
-    </PageLayout>
-  );
+  const { i18n } = useTranslation();
+  if (i18n.language === "en") {
+    return (
+      <PageLayout>
+        <Heading level={2}>Privacy</Heading>
+        <Text><u>Your data:</u> When you create an account, the data collected is as follows: username, email address and password (hidden). Other data collected later includes: game statistics, match history, IP addresses, browser used, logs, friends list, and sent/received friend requests. If you delete your account, all your data is removed.</Text>
+        <Text><u>Use of your data:</u> All collected data allows us to maintain the real-time leaderboard, secure your connections, and manage the friend system. We are committed to maintaining full transparency regarding the data collected.</Text>
+        <Text><u>Sharing with third parties:</u> We do not sell your data under any circumstances.</Text>
+        <Text><u>Minors:</u> Individuals under the age of 13 are not allowed to register. We do not knowingly collect their data.</Text>
+        <Text><u>Changes to our privacy policy:</u> If our privacy policy is modified, you will be notified by email.</Text>
+        <br />
+        <Text><i><br />Last updated on May 27th, 2026</i></Text>
+      </PageLayout>
+    );
+  }
+
+  else if (i18n.language === "fr") {
+    return (
+      <PageLayout>
+        <Heading level={2}>Confidentialité</Heading>
+        <Text><u>Vos données:</u> Lorsque vous créez un compte, les données collectées sont les suivants : nom d'utilisateur, adresse e-mail et mot de passe (masqué). Les autres données recueillies par la suite sont : les statistiques du jeu, l'historique des parties, les adresses IP, le navigateur utilisé, les logs, la liste d'amis et les demandes d'amis envoyees/recues. Si vous supprimez votre compte, toutes vos données disparaissent.</Text>
+        <Text><u>Utilisation de vos données:</u> L'ensemble des données collectées nous permettent d'établir le leaderboard en temps réel, de sécuriser vos connexions, et de gérer le système d'amis. Nous nous engageons à garder une totale transparence quand aux données recueillies.</Text>
+        <Text><u>Partage avec des tiers:</u> Nous ne vendons vos données en aucun cas.</Text>
+        <Text><u>Mineurs:</u> Les personnes ayant moins de 13 ans ne sont pas autorisés a s'inscrire. Nous ne souhaitons pas recueillir volontairement leurs données.</Text>
+        <Text><u>Modification de notre politique de confidentialité :</u> En cas de modification de notre politique de confidentialité, vous en serez informés par mail.</Text>
+        <br />
+        <Text><i><br />Dernière mise à jour le 27 mai 2026</i></Text>
+      </PageLayout>
+    );
+  }
+
+  else {
+    return (
+      <PageLayout>
+        <Heading level={2}>Privacidad</Heading>
+        <Text><u>Tus datos:</u> Cuando creas una cuenta, los datos recopilados son los siguientes: nombre de usuario, dirección de correo electrónico y contraseña (oculta). Los demás datos recopilados posteriormente son: estadísticas del juego, historial de partidas, direcciones IP, navegador utilizado, registros, lista de amigos y solicitudes de amistad enviadas/recibidas. Si eliminas tu cuenta, todos tus datos desaparecen.</Text>
+        <Text><u>Uso de tus datos:</u> El conjunto de datos recopilados nos permite establecer la clasificación en tiempo real, asegurar tus conexiones y gestionar el sistema de amigos. Nos comprometemos a mantener total transparencia en cuanto a los datos recopilados.</Text>
+        <Text><u>Compartir con terceros:</u> No vendemos tus datos bajo ninguna circunstancia.</Text>
+        <Text><u>Menores:</u> Las personas menores de 13 años no están autorizadas a registrarse. No recopilamos voluntariamente sus datos.</Text>
+        <Text><u>Modificación de nuestra política de privacidad:</u> En caso de modificación de nuestra política de privacidad, será notificado por correo electrónico.</Text>
+        <br />
+        <Text><i><br />Última actualización el 27 de mayo de 2026</i></Text>
+      </PageLayout>
+    );
+  }
 }
