@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { MatchResult } from '@prisma/client';
@@ -9,14 +9,16 @@ export class AchievementService implements OnModuleInit {
 
     constructor(
         private prisma: PrismaService,
-        private users: UsersService) {}
+        @Inject(forwardRef(() => UsersService))
+        private users: UsersService,
+    ) {}
 
     async onModuleInit() {
         for (const a of ACHIEVEMENTS) {
             await this.prisma.achievement.upsert({
                 where:  { key: a.key },
                 update: {},
-                create: { ...a, iconUrl: null },
+                create: { ...a },
             });
         }
     }
