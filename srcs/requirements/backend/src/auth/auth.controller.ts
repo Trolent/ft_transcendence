@@ -69,8 +69,8 @@ export class AuthController {
   @Redirect()
   redirectTo42(){
     const params = new URLSearchParams({
-      client_id:      process.env.FORTYTWO_CLIENT_ID,
-      redirect_uri:   process.env.FORTYTWO_CALLBACK_URL,
+      client_id:      process.env.FORTYTWO_CLIENT_ID as string,
+      redirect_uri:   process.env.FORTYTWO_CALLBACK_URL as string,
       response_type:  'code',
       scope:          'public',
     });

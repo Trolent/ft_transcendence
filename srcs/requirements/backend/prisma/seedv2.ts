@@ -157,7 +157,6 @@ async function main() {
         matchId:    match.id,
         userId:     user.id,
         wpm:        parseFloat(faker.number.float({ min: 30, max: 150, fractionDigits: 2 }).toFixed(2)),
-        accuracy:   parseFloat(faker.number.float({ min: 80, max: 100, fractionDigits: 2 }).toFixed(2)),
         position:   0,
         finishedAt: endedAt,
       }))
