@@ -40,7 +40,7 @@ const variantClasses: Record<BtnVariant, string> = {
     "bg-default text-black border border-default " +
     "hover:bg-glow hover:border-glow " +
     "active:bg-dim " +
-    "disabled:opacity-40 disabled:bg-default disabled:text-black disabled:border-default disabled:cursor-not-allowed disabled:saturate-0",
+     "disabled:opacity-40 disabled:bg-default disabled:text-black disabled:border-default disabled:cursor-not-allowed disabled:saturate-0",
 
   secondary:
     "bg-transparent text-default border border-default " +

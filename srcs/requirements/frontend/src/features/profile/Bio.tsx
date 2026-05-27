@@ -55,7 +55,7 @@ export default function Bio({ bio, isOwnProfile, onBioChange }: BioProps) {
               <Btn size="sm" variant="ghost" onClick={() => { setBioDraft(bio ?? ""); setError(null); setIsEditing(false); }}>
                 {t('common:cancel')}
               </Btn>
-              <Btn size="sm" variant="primary" onClick={handleSave} disabled={saving}>
+              <Btn size="sm" variant="primary" onClick={handleSave} disabled={saving || bioDraft === (bio ?? "")}>
                 {t('profile.bio_save')}
               </Btn>
             </div>
