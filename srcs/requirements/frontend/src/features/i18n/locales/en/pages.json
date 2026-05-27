@@ -91,12 +91,6 @@
     "enter_race": "Enter race",
     "practice_mode": "Practice",
     "main_menu": "← Main Menu",
-    "start": "Start",
-    "waiting": "Waiting for players…",
-    "countdown": "Get ready!",
-    "finished": "Race finished!",
-    "your_wpm": "Your WPM: {{wpm}}",
-    "position": "Position: {{pos}}/{{total}}",
     "results_label": "results",
     "stat_wpm": "WPM",
     "stat_time": "Time",
@@ -114,7 +108,14 @@
     "you": "You",
     "player": "Player {{n}}",
     "type_here": "Type here...",
-    "waiting_start": "Waiting for race to start..."
+    "waiting_start": "Waiting for race to start...",
+    "connecting": "Connecting…",
+    "waiting_for_players": "Waiting for players…",
+    "cancel": "Cancel",
+    "player_left": "{{name}} left the race.",
+    "race_voided": "Race cancelled — not enough players.",
+    "guest": "Guest",
+    "starting_in": "Starting in {{n}}…"
   },
   "oauth_callback": {
     "connecting": "Connecting…"

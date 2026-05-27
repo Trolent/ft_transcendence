@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Car, { CAR_COUNT } from "./Car";
+import type { Racer } from "@/hooks/useRaceSocket";
 
 const LANES = [0, 1, 2];
 const SEGMENT_DURATION = 2;
@@ -67,6 +68,11 @@ function finishedWpm(curve: Waypoint[], passageLength: number): number
 
 type Props =
 {
+  // --- multiplayer (server-driven) ---
+  multiplayer?: boolean;
+  racers?: Racer[];        // ordered list of participants from the server
+  youPid?: string | null;  // local player's pid, to label "You"
+  // --- practice / cosmetic (client-driven fake bots) ---
   playerProgress: number;
   playerWpm: number;
   elapsed: number;
@@ -76,8 +82,67 @@ type Props =
   onFinishOrderChange?: (order: number[]) => void;
 };
 
-export default function RaceTrack(
-{
+export default function RaceTrack(props: Props) {
+  if (props.multiplayer) return <MultiplayerTrack {...props} />;
+  return <CosmeticTrack {...props} />;
+}
+
+// ---------------------------------------------------------------------------
+//  Multiplayer: one lane per server participant, all data from the server.
+// ---------------------------------------------------------------------------
+function MultiplayerTrack({ racers = [], youPid }: Props) {
+  const { t } = useTranslation('pages');
+  const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
+  const [variants] = useState<number[]>(() => randomUniqueVariants(CAR_COUNT));
+
+  // Standings among finished racers (progress >= 1), ordered by who is ahead.
+  const finished = [...racers]
+    .filter(r => r.progress >= 1)
+    .sort((a, b) => b.progress - a.progress);
+  const placeFor = (pid: string): string | null => {
+    const i = finished.findIndex(r => r.pid === pid);
+    return i >= 0 ? (ordinals[i] ?? `${i + 1}th`) : null;
+  };
+
+  return (
+    <div className="w-full">
+      {racers.map((r, idx) => {
+        const isYou = r.pid === youPid;
+        const place = placeFor(r.pid);
+        return (
+          <div key={r.pid} className="flex items-center h-14 mb-3">
+            <div className="w-20 sm:w-32 text-right pr-3 sm:pr-4 text-sm truncate flex flex-col items-end justify-center">
+              <span className={isYou ? "text-default font-bold" : "text-dim"}>
+                {r.kind === 'user' ? r.username : t('play.guest')}
+              </span>
+              {isYou && (
+                <span className="text-xs text-dim">({t('play.you')})</span>
+              )}
+            </div>
+
+            <div className="flex-1 relative">
+              <div className="bg-black/30 h-10 rounded-md relative overflow-hidden">
+                <Car progress={r.progress} variant={variants[idx % variants.length]} />
+              </div>
+            </div>
+
+            <div className="w-14 sm:w-20 pl-2 sm:pl-3 font-mono text-right flex flex-col items-end">
+              {place && (
+                <span className="text-xs text-dim uppercase tracking-widest">{place}</span>
+              )}
+              <span className="text-xs sm:text-sm text-default">{Math.round(r.wpm)} WPM</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+//  Cosmetic: practice (single lane) or legacy fake-bot view (3 lanes).
+// ---------------------------------------------------------------------------
+function CosmeticTrack({
   playerProgress, playerWpm,
   elapsed, active, passageLength, practice = false, onFinishOrderChange,
 }: Props) {

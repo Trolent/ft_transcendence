@@ -91,12 +91,6 @@
     "enter_race": "Entrer dans la course",
     "practice_mode": "Pratique",
     "main_menu": "← Menu principal",
-    "start": "Démarrer",
-    "waiting": "En attente de joueurs…",
-    "countdown": "Prêt ?",
-    "finished": "Course terminée !",
-    "your_wpm": "Votre MPM : {{wpm}}",
-    "position": "Position : {{pos}}/{{total}}",
     "results_label": "résultats",
     "stat_wpm": "MPM",
     "stat_time": "Temps",
@@ -114,7 +108,14 @@
     "you": "Vous",
     "player": "Joueur {{n}}",
     "type_here": "Tapez ici...",
-    "waiting_start": "En attente du départ de la course..."
+    "waiting_start": "En attente du départ de la course...",
+    "connecting": "Connexion…",
+    "waiting_for_players": "En attente de joueurs…",
+    "cancel": "Annuler",
+    "player_left": "{{name}} a quitté la course.",
+    "race_voided": "Course annulée — pas assez de joueurs.",
+    "guest": "Invité",
+    "starting_in": "Départ dans {{n}}…"
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"

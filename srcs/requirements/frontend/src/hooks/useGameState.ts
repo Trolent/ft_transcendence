@@ -12,10 +12,10 @@ function calcMaxTime(passageLength: number): number {
   return Math.max(20, Math.ceil(passageLength / 2.5));
 }
 
-export function useGameState(active: boolean, forcedEnd = false, practice = false, initialText?: string) {
+export function useGameState(active: boolean, forcedEnd = false, practice = false, initialText?: string, maxTimeOverride?: number) {
   const [passage] = useState<string>(() => initialText ?? pickRandomQuote());
   const words = passage.split(" ");
-  const maxTime = calcMaxTime(passage.length);
+  const maxTime = maxTimeOverride ?? calcMaxTime(passage.length);
 
   const [wordIndex, setWordIndex] = useState(0);
   const [typed, setTyped] = useState("");

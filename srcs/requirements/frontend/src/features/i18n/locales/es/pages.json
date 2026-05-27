@@ -91,12 +91,6 @@
     "enter_race": "Entrar en la carrera",
     "practice_mode": "Práctica",
     "main_menu": "← Menú principal",
-    "start": "Empezar",
-    "waiting": "Esperando jugadores…",
-    "countdown": "¡Prepárate!",
-    "finished": "¡Carrera terminada!",
-    "your_wpm": "Tus PPM: {{wpm}}",
-    "position": "Posición: {{pos}}/{{total}}",
     "results_label": "resultados",
     "stat_wpm": "PPM",
     "stat_time": "Tiempo",
@@ -114,7 +108,14 @@
     "you": "Tú",
     "player": "Jugador {{n}}",
     "type_here": "Escribe aquí...",
-    "waiting_start": "Esperando el inicio de la carrera..."
+    "waiting_start": "Esperando el inicio de la carrera...",
+    "connecting": "Conectando…",
+    "waiting_for_players": "Esperando jugadores…",
+    "cancel": "Cancelar",
+    "player_left": "{{name}} abandonó la carrera.",
+    "race_voided": "Carrera cancelada — no hay suficientes jugadores.",
+    "guest": "Invitado",
+    "starting_in": "Comienza en {{n}}…"
   },
   "oauth_callback": {
     "connecting": "Conectando…"
