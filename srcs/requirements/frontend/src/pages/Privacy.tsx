@@ -6,8 +6,7 @@ export default function Privacy() {
   const { i18n } = useTranslation();
   if (i18n.language === "en") {
     return (
-      <div className="mx-auto w-220">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-220">
           <Heading level={2}>Privacy</Heading>
           <Text variant="accent">Your data belongs to you. Here is what we collect, why, and how you stay in control.</Text>
           <Text><u>Your data :</u> When you create an account, the data collected is as follows: username, email address and password (hidden). Other data collected later includes: game statistics, match history, IP addresses, browser used, logs, friends list, and sent/received friend requests. If you delete your account, all your data is removed.</Text>
@@ -20,15 +19,13 @@ export default function Privacy() {
           <Text>To learn more about our terms of service, <Link to="/terms" className="hover:text-glow"><u>click here</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Last updated on May 27th, 2026</i></Text>
-        </PageLayout>
-      </div>
+      </PageLayout>
     );
   }
 
   else if (i18n.language === "fr") {
     return (
-      <div className="mx-auto w-220">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-220">
           <Heading level={2}>Confidentialité</Heading>
           <Text variant="accent">Vos données vous appartiennent. Voici ce que nous collectons, pourquoi, et comment vous gardez le contrôle.</Text>
           <Text><u>Vos données :</u> Lorsque vous créez un compte, les données collectées sont : nom d'utilisateur, adresse e-mail et mot de passe (masqué). Les autres données recueillies par la suite sont : les statistiques de jeu, l'historique des parties, les adresses IP, le navigateur utilisé, les logs, la liste d'amis et les demandes d'amis envoyées/reçues. Si vous supprimez votre compte, toutes vos données disparaissent.</Text>
@@ -41,15 +38,13 @@ export default function Privacy() {
           <Text>Pour en savoir plus sur nos conditions d'utilisation, <Link to="/terms" className="hover:text-glow"><u>cliquez ici</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Dernière mise à jour le 27 mai 2026</i></Text>
-        </PageLayout>
-      </div>
+      </PageLayout>
     );
   }
 
   else {
     return (
-      <div className="mx-auto w-220">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-220">
           <Heading level={2}>Privacidad</Heading>
           <Text variant="accent">Tus datos te pertenecen. Aquí tienes qué recopilamos, por qué y cómo mantienes el control.</Text>
           <Text><u>Tus datos :</u> Cuando creas una cuenta, los datos recopilados son los siguientes: nombre de usuario, dirección de correo electrónico y contraseña (oculta). Los demás datos recopilados posteriormente son: estadísticas del juego, historial de partidas, direcciones IP, navegador utilizado, registros, lista de amigos y solicitudes de amistad enviadas/recibidas. Si eliminas tu cuenta, todos tus datos desaparecen.</Text>
@@ -62,8 +57,7 @@ export default function Privacy() {
           <Text>Para saber más sobre nuestras condiciones de uso, <Link to="/terms" className="hover:text-glow"><u>haz clic aquí</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Última actualización el 27 de mayo de 2026</i></Text>
-        </PageLayout>
-      </div>
+      </PageLayout>
     );
   }
 }
