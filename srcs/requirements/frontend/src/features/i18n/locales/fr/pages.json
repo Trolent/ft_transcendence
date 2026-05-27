@@ -58,7 +58,11 @@
     "error_add": "Impossible d'envoyer la demande.",
     "error_remove": "Impossible de retirer l'ami.",
     "avatar_uploading": "Téléchargement...",
-    "avatar_upload_error": "Impossible de télécharger l'avatar."
+    "avatar_upload_error": "Impossible de télécharger l'avatar.",
+    "history_date": "Date",
+    "history_pos": "Pos",
+    "history_wpm": "WPM",
+    "history_players": "Joueurs"
   },
   "friends": {
     "title": "AMIS",
@@ -94,7 +98,6 @@
     "results_label": "résultats",
     "stat_wpm": "MPM",
     "stat_time": "Temps",
-    "stat_accuracy": "Précision",
     "stat_position": "Position",
     "try_again": "Réessayer",
     "race_again": "Rejouer",

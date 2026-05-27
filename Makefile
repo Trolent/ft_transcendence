@@ -35,6 +35,9 @@ down:
 
 re: down hosts up
 
+# make re for dev
+redev: down dev
+
 clean: down
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) down -v --rmi local
 
@@ -75,4 +78,4 @@ seedv2:
 seedclean:
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npx prisma migrate reset --force
 
-.PHONY: all up dev down re clean fclean logs ps hosts home trust-cert seed seedv2 seedclean
+.PHONY: all up dev down re redev clean fclean logs ps hosts home trust-cert seed seedv2 seedclean
