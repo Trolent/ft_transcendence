@@ -57,8 +57,8 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
       ) : (
         <List
           className="mt-4"
-          items={chats}
-          renderItem={(item: ChatConversation) => {
+          items={chats.map((c) => ({ ...c, id: c.user.id }))}
+          renderItem={(item) => {
             return (
               <button
                 onClick={() => onSelectChat(item.user.username)}
