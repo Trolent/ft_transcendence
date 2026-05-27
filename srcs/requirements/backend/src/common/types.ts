@@ -9,4 +9,6 @@ export type SafeUser = {
   status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
+  hasPassword: boolean;
+  isOAuthOnly: boolean;
 };

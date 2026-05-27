@@ -42,14 +42,24 @@ export class UsersService {
   }
 
   async findById(id: number) {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
         id: true, username: true, email: true,
         avatarUrl: true, bio: true, language: true,
         status: true, createdAt: true, updatedAt: true,
+        passwordHash: true,
+        oauthAccounts: { select: { provider: true } },
       },
     });
+    if (!user)
+      return null;
+    const { passwordHash, oauthAccounts, ...rest } = user;
+    return {
+      ...rest,
+      hasPassword: passwordHash !== null,
+      isOAuthOnly: oauthAccounts.length > 0 && passwordHash === null,
+    };
   }
 
   async findByUsername(username: string) {
@@ -186,18 +196,17 @@ export class UsersService {
 
   async updateSettings(username : string, dto: UpdateSettingsDto) {
     if (dto.password) {
-      if (!dto.currentPassword)
-        throw new BadRequestException('CURRENT_PASSWORD_REQUIRED');
-
       const user = await this.prisma.user.findUnique({
         where: { username },
         select: { passwordHash: true },
       });
-      const valid = user?.passwordHash
-        ? await bcrypt.compare(dto.currentPassword, user.passwordHash)
-        : false;
-      if (!valid)
-        throw new UnauthorizedException('INVALID_CURRENT_PASSWORD');
+      if (user?.passwordHash) {
+        if (!dto.currentPassword)
+          throw new BadRequestException('CURRENT_PASSWORD_REQUIRED');
+        const valid = await bcrypt.compare(dto.currentPassword, user.passwordHash);
+        if (!valid)
+          throw new UnauthorizedException('INVALID_CURRENT_PASSWORD');
+      }
     }
 
     const passHashed = await this.HashThePass(dto.password);
