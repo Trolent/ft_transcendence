@@ -14,6 +14,9 @@
     "change_email": "Change email",
     "email_label": "New email",
     "email_placeholder": "new@example.com",
+    "set_password": "Set a password",
+    "alert_set_password": "Your account is linked to 42 OAuth only. Set a password to avoid losing access if your 42 account becomes unavailable.",
+    "email_managed_by_oauth": "Your email is managed by your 42 account and cannot be changed here.",
     "change_password": "Change password",
     "current_password_label": "Current password",
     "current_password_placeholder": "Your current password",
@@ -24,7 +27,6 @@
     "change_language": "Change language",
     "saved": "Saved successfully.",
     "error_email_invalid": "Please enter a valid email.",
-    "error_current_password_required": "Please enter your current password.",
     "error_passwords_mismatch": "Passwords do not match.",
     "error_password_too_short": "Password must be at least 8 characters.",
     "default_bio": "No bio yet.",
@@ -58,7 +60,11 @@
     "error_add": "Failed to send request.",
     "error_remove": "Failed to remove friend.",
     "avatar_uploading": "Uploading...",
-    "avatar_upload_error": "Failed to upload avatar."
+    "avatar_upload_error": "Failed to upload avatar.",
+    "history_date": "Date",
+    "history_pos": "Pos",
+    "history_wpm": "WPM",
+    "history_players": "Players"
   },
   "friends": {
     "title": "FRIENDS",
@@ -100,7 +106,6 @@
     "results_label": "results",
     "stat_wpm": "WPM",
     "stat_time": "Time",
-    "stat_accuracy": "Accuracy",
     "stat_position": "Position",
     "try_again": "Try Again",
     "race_again": "Race Again",

@@ -38,7 +38,7 @@ export class CloudinaryService {
                     if (error) {
                         return reject(error);
                     }
-                return resolve(uploadResult);
+                return resolve(uploadResult!);
                 }).end(file.buffer);
             });
 

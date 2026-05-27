@@ -14,6 +14,9 @@
     "change_email": "Cambiar correo",
     "email_label": "Nuevo correo",
     "email_placeholder": "nuevo@ejemplo.com",
+    "set_password": "Establecer una contraseña",
+    "alert_set_password": "Tu cuenta está vinculada únicamente a OAuth de 42. Establece una contraseña para no perder el acceso si tu cuenta 42 deja de estar disponible.",
+    "email_managed_by_oauth": "Tu correo está gestionado por tu cuenta 42 y no se puede cambiar aquí.",
     "change_password": "Cambiar contraseña",
     "current_password_label": "Contraseña actual",
     "current_password_placeholder": "Tu contraseña actual",
@@ -24,7 +27,6 @@
     "change_language": "Cambiar idioma",
     "saved": "Guardado con éxito.",
     "error_email_invalid": "Por favor, introduce un correo válido.",
-    "error_current_password_required": "Por favor, introduce tu contraseña actual.",
     "error_passwords_mismatch": "Las contraseñas no coinciden.",
     "error_password_too_short": "La contraseña debe tener al menos 8 caracteres.",
     "default_bio": "Sin biografía aún.",
@@ -58,7 +60,11 @@
     "error_add": "No se pudo enviar la solicitud.",
     "error_remove": "No se pudo eliminar al amigo.",
     "avatar_uploading": "Subiendo...",
-    "avatar_upload_error": "No se pudo subir el avatar."
+    "avatar_upload_error": "No se pudo subir el avatar.",
+    "history_date": "Fecha",
+    "history_pos": "Pos",
+    "history_wpm": "PPM",
+    "history_players": "Jugadores"
   },
   "friends": {
     "title": "AMIGOS",
@@ -100,7 +106,6 @@
     "results_label": "resultados",
     "stat_wpm": "PPM",
     "stat_time": "Tiempo",
-    "stat_accuracy": "Precisión",
     "stat_position": "Posición",
     "try_again": "Intentar de nuevo",
     "race_again": "Correr de nuevo",

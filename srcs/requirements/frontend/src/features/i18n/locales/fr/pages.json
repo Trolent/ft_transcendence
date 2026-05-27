@@ -14,6 +14,9 @@
     "change_email": "Changer l'e-mail",
     "email_label": "Nouvel e-mail",
     "email_placeholder": "nouveau@exemple.com",
+    "set_password": "Définir un mot de passe",
+    "alert_set_password": "Votre compte est lié uniquement à l'OAuth 42. Définissez un mot de passe pour ne pas perdre l'accès si votre compte 42 devient indisponible.",
+    "email_managed_by_oauth": "Votre e-mail est géré par votre compte 42 et ne peut pas être modifié ici.",
     "change_password": "Changer le mot de passe",
     "current_password_label": "Mot de passe actuel",
     "current_password_placeholder": "Votre mot de passe actuel",
@@ -24,7 +27,6 @@
     "change_language": "Changer la langue",
     "saved": "Enregistré avec succès.",
     "error_email_invalid": "Veuillez entrer un e-mail valide.",
-    "error_current_password_required": "Veuillez entrer votre mot de passe actuel.",
     "error_passwords_mismatch": "Les mots de passe ne correspondent pas.",
     "error_password_too_short": "Le mot de passe doit contenir au moins 8 caractères.",
     "default_bio": "Aucune bio pour le moment.",
@@ -58,7 +60,11 @@
     "error_add": "Impossible d'envoyer la demande.",
     "error_remove": "Impossible de retirer l'ami.",
     "avatar_uploading": "Téléchargement...",
-    "avatar_upload_error": "Impossible de télécharger l'avatar."
+    "avatar_upload_error": "Impossible de télécharger l'avatar.",
+    "history_date": "Date",
+    "history_pos": "Pos",
+    "history_wpm": "WPM",
+    "history_players": "Joueurs"
   },
   "friends": {
     "title": "AMIS",
@@ -100,7 +106,6 @@
     "results_label": "résultats",
     "stat_wpm": "MPM",
     "stat_time": "Temps",
-    "stat_accuracy": "Précision",
     "stat_position": "Position",
     "try_again": "Réessayer",
     "race_again": "Rejouer",

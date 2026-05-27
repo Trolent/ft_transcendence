@@ -115,7 +115,6 @@ model MatchResult {
     userId              Int
     user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
     wpm                 Float?
-    accuracy            Float?
     position            Int?
     finishedAt          DateTime?
 

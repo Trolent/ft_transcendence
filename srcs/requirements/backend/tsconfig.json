@@ -10,7 +10,8 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "strict": false,
+    "strict": true,
+    "strictPropertyInitialization": false,
     "skipLibCheck": true
   },
   "exclude": ["node_modules", "dist", "prisma/seed.ts", "prisma/seedv2.ts"]
