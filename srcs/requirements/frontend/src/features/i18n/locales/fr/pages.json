@@ -52,6 +52,7 @@
     "history_label": "historique",
     "history_empty": "Aucune partie jouée.",
     "add_friend": "+ Ajouter en ami",
+    "add_friend_short": "Ajouter",
     "remove_friend": "Retirer des amis",
     "pending": "En attente",
     "message": "Message",

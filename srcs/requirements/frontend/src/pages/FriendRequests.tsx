@@ -11,7 +11,7 @@ export default function FriendRequests() {
       <section>
         <Heading level={3}>{t('friends.requests_title')}</Heading>
         <FindUser
-          actionBtnText="Add"
+          actionBtnText={t('profile.add_friend_short')}
           onAction={sendFriendRequest}
           className="mt-6"
         />

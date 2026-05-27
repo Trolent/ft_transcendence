@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Input, Btn } from ".";
 import { getUserProfile } from "@/api/users.api";
 
@@ -12,6 +13,7 @@ export function FindUser({ actionBtnText, onAction, className = "" }: FindUserPr
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation("auth");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +45,7 @@ export function FindUser({ actionBtnText, onAction, className = "" }: FindUserPr
     <form onSubmit={handleSubmit} className={`flex flex-col gap-3 ${className}`}>
       <div className="flex gap-2 items-start">
         <Input
-          placeholder="username"
+          placeholder={t("username")}
           value={username}
           onChange={(e) => {
             setUsername(e.target.value);

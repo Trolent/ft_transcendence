@@ -13,7 +13,7 @@ interface ChatBoxProps {
 
 export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   const auth = useContext(AuthContext);
-  const { t } = useTranslation('pages');
+  const { t } = useTranslation(['pages', 'common']);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -139,7 +139,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
           <Heading level={2}>{targetUsername}</Heading>
 
           {isLoading ? (
-            <div><Text>Loading...</Text></div>
+            <div><Text>{t('common:loading')}</Text></div>
           ) : (
             <>
               <Messages messages={messages}/>
