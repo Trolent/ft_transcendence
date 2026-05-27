@@ -133,13 +133,13 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col">
       {!targetUsername ? (
-          <Text>{t('chat.no_chat_selected')}</Text>
+          <Text variant="dim">{t('chat.no_chat_selected')}</Text>
       ) : (
         <>
           <Heading level={2}>{targetUsername}</Heading>
 
           {isLoading ? (
-            <div><Text>{t('common:loading')}</Text></div>
+            <div><Text variant="dim">{t('common:loading')}</Text></div>
           ) : (
             <>
               <Messages messages={messages}/>
