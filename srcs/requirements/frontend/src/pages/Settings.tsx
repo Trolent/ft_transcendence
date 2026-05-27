@@ -22,6 +22,8 @@ export default function Settings() {
   //const currentLang = (SUPPORTED.includes(i18n.language as Lang) ? i18n.language : "en") as Lang;
   const { user } = useAuth();
 
+  const isOAuthOnly = user?.isOAuthOnly ?? false;
+
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
@@ -51,8 +53,8 @@ export default function Settings() {
     }
 
     if (password) {
-      if (!currentPassword)
-        next.currentPassword = t("settings.error_current_password_required");
+      if (!isOAuthOnly && !currentPassword)
+        next.currentPassword = t("common:errors.CURRENT_PASSWORD_REQUIRED");
       if (password.length < 8)
         next.password = t("settings.error_password_too_short");
       if (password !== confirm)
@@ -93,6 +95,10 @@ export default function Settings() {
         {t("settings.title")}
       </Heading>
 
+      {isOAuthOnly && !user?.hasPassword && (
+        <Alert variant="warning" className="mt-4">{t("settings.alert_set_password")}</Alert>
+      )}
+
       <form onSubmit={handleSave} className="flex flex-col gap-6 mt-3">
         <Container variant="panel" label={t("settings.change_email")} className="flex flex-col gap-3 mt-1">
           <Input
@@ -102,22 +108,31 @@ export default function Settings() {
             value={email}
             onChange={(e) => { setEmail(e.target.value); clearFeedback(); }}
             error={errors.email}
-            disabled={loading}
+            disabled={isOAuthOnly || loading}
             autoComplete="email"
           />
+          {isOAuthOnly && (
+            <p className="text-xs text-red-400">{t("settings.email_managed_by_oauth")}</p>
+          )}
         </Container>
 
-        <Container variant="panel" label={t("settings.change_password")} className="flex flex-col gap-3 mt-1">
-          <Input
-            type="password"
-            label={t("settings.current_password_label")}
-            placeholder={t("settings.current_password_placeholder")}
-            value={currentPassword}
-            onChange={(e) => { setCurrentPassword(e.target.value); clearFeedback(); }}
-            error={errors.currentPassword}
-            disabled={loading}
-            autoComplete="current-password"
-          />
+        <Container
+          variant="panel"
+          label={isOAuthOnly ? t("settings.set_password") : t("settings.change_password")}
+          className="flex flex-col gap-3 mt-1"
+        >
+          {!isOAuthOnly && (
+            <Input
+              type="password"
+              label={t("settings.current_password_label")}
+              placeholder={t("settings.current_password_placeholder")}
+              value={currentPassword}
+              onChange={(e) => { setCurrentPassword(e.target.value); clearFeedback(); }}
+              error={errors.currentPassword}
+              disabled={loading}
+              autoComplete="current-password"
+            />
+          )}
           <Input
             type="password"
             label={t("settings.new_password_label")}
