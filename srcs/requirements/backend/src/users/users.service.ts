@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { UpdateProfileDto, UpdateSettingsDto } from './dto'
@@ -185,20 +185,35 @@ export class UsersService {
   }
 
   async updateSettings(username : string, dto: UpdateSettingsDto) {
-    const passHashed = await this.HashThePass(dto.password)
-    try {
-      return this.prisma.user.update({
+    if (dto.password) {
+      if (!dto.currentPassword)
+        throw new BadRequestException('CURRENT_PASSWORD_REQUIRED');
+
+      const user = await this.prisma.user.findUnique({
         where: { username },
-        data: { email:dto.email,
-                ...(dto.password && { passwordHash: passHashed }),
-                language : dto.language
+        select: { passwordHash: true },
+      });
+      const valid = user?.passwordHash
+        ? await bcrypt.compare(dto.currentPassword, user.passwordHash)
+        : false;
+      if (!valid)
+        throw new UnauthorizedException('INVALID_CURRENT_PASSWORD');
+    }
+
+    const passHashed = await this.HashThePass(dto.password);
+    try {
+      return await this.prisma.user.update({
+        where: { username },
+        data: {
+          email: dto.email,
+          ...(dto.password && { passwordHash: passHashed }),
+          language: dto.language,
         },
-        select: { email:true, language:true }
-      })
+        select: { email: true, language: true },
+      });
     } catch (error) {
-      if (error.code === 'P2002') {
+      if (error.code === 'P2002')
         throw new ConflictException('EMAIL_ALREADY_TAKEN');
-      }
       throw error;
     }
   }

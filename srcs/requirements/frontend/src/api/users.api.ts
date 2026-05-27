@@ -69,6 +69,24 @@ export async function updateMyBio(bio: string): Promise<{ bio: string | null }> 
   
 }
 
+export type UpdateSettingsPayload = {
+  email?: string;
+  currentPassword?: string;
+  password?: string;
+  language?: string;
+};
+
+export async function updateSettings(
+  payload: UpdateSettingsPayload,
+): Promise<{ email?: string; language?: string }> {
+  const res = await fetch(`${API_USERS}/me/settings`, {
+    method: "PATCH",
+    headers: { ...authHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse<{ email?: string; language?: string }>(res);
+}
+
 export async function uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
   const formData = new FormData();
   formData.append('avatar', file);
