@@ -1,7 +1,7 @@
-import type { UserStatus } from "@backend/common/types";
+//import type { UserStatus } from "@backend/common/types";
 
 interface StatusProps {
-  status: UserStatus;
+  status: string;
   hoverText?: string;
 }
 

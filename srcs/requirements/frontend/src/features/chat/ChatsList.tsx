@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Alert, Avatar, Btn, Heading, List, Text } from "@/components";
+import { Alert, Avatar, Heading, List, Text } from "@/components";
 import { chatApi, type ChatConversation } from "@/api/chat.api";
-import { Link } from "react-router-dom";
+import { NewChat } from ".";
 
 interface ChatsListProps {
   onSelectChat: (username: string) => void;
@@ -46,9 +46,7 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
     <>
       <div className="flex items-center justify-between">
         <Heading level={3}>Chats</Heading>
-        <Btn as={Link} to="/chat" variant="primary" size="sm">
-          New Chat
-        </Btn>
+        <NewChat onSelectChat={onSelectChat} />
       </div>
       {loading ? (
         <Alert variant="info">Loading...</Alert>
@@ -59,8 +57,8 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
       ) : (
         <List
           className="mt-4"
-          items={chats}
-          renderItem={(item: ChatConversation) => {
+          items={chats.map((c) => ({ ...c, id: c.user.id }))}
+          renderItem={(item) => {
             return (
               <button
                 onClick={() => onSelectChat(item.user.username)}

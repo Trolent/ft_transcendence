@@ -54,6 +54,7 @@
     "history_label": "historique",
     "history_empty": "Aucune partie jouée.",
     "add_friend": "+ Ajouter en ami",
+    "add_friend_short": "Ajouter",
     "remove_friend": "Retirer des amis",
     "pending": "En attente",
     "message": "Message",
@@ -123,5 +124,11 @@
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"
+  },
+  "chat": {
+    "new_chat": "Nouveau chat",
+    "new_chat_title": "Nouveau chat",
+    "open": "Ouvrir",
+    "no_chat_selected": "Aucune conversation sélectionnée."
   }
 }
