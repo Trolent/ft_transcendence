@@ -416,7 +416,6 @@ export class GameService {
 					matchId: room.matchId,
 					userId: p.userId as number,
 					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
-					accuracy: null,
 					position,
 					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
 				})),

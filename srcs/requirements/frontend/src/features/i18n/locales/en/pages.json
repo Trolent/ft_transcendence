@@ -98,6 +98,7 @@
     "results_label": "results",
     "stat_wpm": "WPM",
     "stat_time": "Time",
+    "stat_accuracy": "Accuracy",
     "stat_position": "Position",
     "try_again": "Try Again",
     "race_again": "Race Again",

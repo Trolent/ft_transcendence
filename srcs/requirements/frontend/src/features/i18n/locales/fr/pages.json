@@ -98,6 +98,7 @@
     "results_label": "résultats",
     "stat_wpm": "MPM",
     "stat_time": "Temps",
+    "stat_accuracy": "Précision",
     "stat_position": "Position",
     "try_again": "Réessayer",
     "race_again": "Rejouer",
