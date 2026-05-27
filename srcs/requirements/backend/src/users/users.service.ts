@@ -211,7 +211,7 @@ export class UsersService {
         },
         select: { email: true, language: true },
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === 'P2002')
         throw new ConflictException('EMAIL_ALREADY_TAKEN');
       throw error;

@@ -123,7 +123,7 @@ export class UsersController {
     @UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
     @Post('me/avatar')
     async uploadAvatar(@UploadedFile() file: Express.Multer.File, @CurrentUser() user: SafeUser) {
-        const url = await this.CloudinaryService.uploadAvatar(file, user.avatarUrl);
+        const url = await this.CloudinaryService.uploadAvatar(file, user.avatarUrl ?? undefined);
         await this.UsersService.updateAvatar(user.username, url);
         return { avatarUrl: url };
     }
