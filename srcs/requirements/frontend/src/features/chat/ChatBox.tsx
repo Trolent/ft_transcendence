@@ -1,7 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { io, Socket } from 'socket.io-client';
-import { AuthContext, getToken, useAuth } from '@/features/auth';
+import { getToken, useAuth } from '@/features/auth';
 import { Heading, Alert } from '@/components';
 import { Messages, ChatForm } from '.';
 import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
@@ -13,13 +14,13 @@ interface ChatBoxProps {
 }
 
 export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
-  const auth = useContext(AuthContext);
+  const { t } = useTranslation('pages');
+  const { user } = useAuth();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
 
   useEffect(() => {
     if (!targetUsername) {
@@ -70,7 +71,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
         {
           id: Date.now(),
           senderId: data.from,
-          receiverId: auth?.user?.id ?? 0,
+          receiverId: user?.id ?? 0,
           content: data.content,
           sentAt: data.sentAt,
           sender: {
@@ -79,8 +80,8 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
             avatarUrl: null,
           },
           receiver: {
-            id: auth?.user?.id ?? 0,
-            username: auth?.user?.username ?? 'You',
+            id: user?.id ?? 0,
+            username: user?.username ?? t('chat.you'),
             avatarUrl: null,
           },
         },
@@ -97,7 +98,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
     return () => {
       newSocket.disconnect();
     };
-  }, [auth, targetUsername]);
+  }, [user, targetUsername]);
 
   const handleSendMessage = (content: string) => {
     if (socket && targetUsername) {
@@ -112,13 +113,13 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
         ...prev,
         {
           id: Date.now(),
-          senderId: auth?.user?.id || 0,
+          senderId: user?.id ?? 0,
           receiverId: 0,
           content,
           sentAt: new Date().toISOString(),
           sender: {
-            id: auth?.user?.id || 0,
-            username: auth?.user?.username || 'You',
+            id: user?.id ?? 0,
+            username: user?.username ?? t('chat.you'),
             avatarUrl: null,
           },
           receiver: {
@@ -140,7 +141,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
           <Heading level={2}>{targetUsername}</Heading>
 
           {isLoading ? (
-            <div><Alert variant='info'>Loading chat...</Alert></div>
+            <div><Alert variant='info'>{t('chat.loading')}</Alert></div>
           ) : (
             <>
               <Messages messages={messages}/>

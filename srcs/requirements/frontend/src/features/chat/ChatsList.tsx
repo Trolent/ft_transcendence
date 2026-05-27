@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Alert, Avatar, Btn, Heading, List, Text } from "@/components";
+import { useTranslation } from "react-i18next";
+import { Alert, Avatar, Btn, Heading, Text } from "@/components";
 import { chatApi, type ChatConversation } from "@/api/chat.api";
 import { Link } from "react-router-dom";
 
@@ -9,6 +10,7 @@ interface ChatsListProps {
 }
 
 export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
+  const { t } = useTranslation('pages');
   const [chats, setChats] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
       .catch((err: unknown) => {
         if (cancelled) return;
         const message =
-          err instanceof Error ? err.message : "Unable to load chats";
+          err instanceof Error ? err.message : t('chat.error_load');
         setError(message);
         setChats([]);
       })
@@ -45,23 +47,21 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading level={3}>Chats</Heading>
+        <Heading level={3}>{t('chat.title')}</Heading>
         <Btn as={Link} to="/chat" variant="primary" size="sm">
-          New Chat
+          {t('chat.new_chat')}
         </Btn>
       </div>
       {loading ? (
-        <Alert variant="info">Loading...</Alert>
+        <Alert variant="info">{t('common:loading')}</Alert>
       ) : error ? (
         <Alert variant="error">{error}</Alert>
       ) : chats.length === 0 ? (
-        <Alert variant="info">No chats yet</Alert>
+        <Alert variant="info">{t('chat.no_chats')}</Alert>
       ) : (
-        <List
-          className="mt-4"
-          items={chats}
-          renderItem={(item: ChatConversation) => {
-            return (
+        <ul className="flex flex-col gap-3 mt-4">
+          {chats.map((item) => (
+            <li key={item.user.username}>
               <button
                 onClick={() => onSelectChat(item.user.username)}
                 className="w-full text-left"
@@ -78,9 +78,9 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
                   </div>
                 </div>
               </button>
-            );
-          }}
-        />
+            </li>
+          ))}
+        </ul>
       )}
     </>
   );

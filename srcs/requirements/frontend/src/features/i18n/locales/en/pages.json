@@ -50,7 +50,7 @@
     "stat_level": "Level",
     "stat_played": "Played",
     "history_label": "history",
-    "history_empty": "No game played.",
+    "history_empty": "No games played.",
     "add_friend": "+ Add friend",
     "remove_friend": "Remove friend",
     "pending": "Pending",
@@ -93,7 +93,7 @@
     "ready_to_race": "Ready to race?",
     "race_description": "Type faster than your opponents to cross the finish line.",
     "enter_race": "Enter race",
-    "practice_mode": "Practice",
+    "practice_mode": "Training",
     "main_menu": "← Main Menu",
     "start": "Start",
     "waiting": "Waiting for players…",
@@ -105,8 +105,8 @@
     "stat_wpm": "WPM",
     "stat_time": "Time",
     "stat_position": "Position",
-    "try_again": "Try Again",
-    "race_again": "Race Again",
+    "try_again": "Try again",
+    "race_again": "Race again",
     "hud_time": "Time",
     "hud_wpm": "WPM",
     "ordinals": [
@@ -116,10 +116,21 @@
     ],
     "you": "You",
     "player": "Player {{n}}",
-    "type_here": "Type here...",
-    "waiting_start": "Waiting for race to start..."
+    "type_here": "Type here…",
+    "waiting_start": "Waiting for race to start…"
   },
   "oauth_callback": {
     "connecting": "Connecting…"
+  },
+  "chat": {
+    "title": "Chats",
+    "new_chat": "New chat",
+    "loading": "Loading chat…",
+    "no_messages": "No messages yet",
+    "no_chats": "No chats yet",
+    "error_load": "Unable to load chats",
+    "message_placeholder": "Type a message…",
+    "send": "Send",
+    "you": "You"
   }
 }
