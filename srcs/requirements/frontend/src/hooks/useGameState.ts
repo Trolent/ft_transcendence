@@ -37,9 +37,6 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   const timeLeft = Math.max(0, maxTime - elapsed);
   const minutes = elapsed / 60;
   const wpm = lockedWpm ?? (minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
-  const accuracy = totalTyped > 0
-    ? Math.min(100, Math.round((completedChars / totalTyped) * 100))
-    : 0;
 
   const handleType = (newValue: string) => {
     if (newValue.length > typed.length) {
@@ -85,6 +82,5 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
     handleType, completeWord,
     elapsed, timeLeft, wpm, progress, finished, playerDone,
     finishTime: lockedElapsed,
-    accuracy,
   };
 }

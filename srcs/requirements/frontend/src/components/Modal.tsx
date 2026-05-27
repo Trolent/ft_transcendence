@@ -1,0 +1,48 @@
+import { type HTMLAttributes, useEffect } from "react";
+import { Heading } from "./Heading";
+
+interface ModalProps extends HTMLAttributes<HTMLDivElement> {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+}
+
+export default function Modal({ isOpen, onClose, title, children, className = "" }: ModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+      onClick={onClose}
+    >
+      <div
+        className={[
+          "relative bg-black border border-default font-mono",
+          "w-full max-w-md mx-4 p-6 flex flex-col gap-4",
+          "shadow-[0_0_24px_0_rgba(0,255,65,0.15)]",
+          className,
+        ].join(" ")}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          {title && <Heading level={3}>{title}</Heading>}
+          <button
+            onClick={onClose}
+            className="text-muted hover:text-default transition-colors cursor-pointer ml-auto"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+        <div>{children}</div>
+      </div>
+    </div>
+  );
+}

@@ -152,7 +152,6 @@ async function main() {
         matchId:    match.id,
         userId:     user.id,
         wpm:        randFloat(40, 140),
-        accuracy:   randFloat(85, 100),
         position:   0,
         finishedAt: endedAt,
       }))
