@@ -41,3 +41,6 @@ export const BOT_WPM_FALLBACK_MIN = 30;
 export const BOT_WPM_FALLBACK_MAX = 60;
 // How often the bot simulation advances each bot's progress.
 export const BOT_TICK_MS = 250;
+
+// Minimum ms between accepted player_progress messages per socket.
+export const PROGRESS_MIN_INTERVAL_MS = 200;

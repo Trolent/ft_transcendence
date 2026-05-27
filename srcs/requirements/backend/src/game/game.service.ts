@@ -317,7 +317,11 @@ export class GameService {
 		const p = this.participantOf(room, socketId);
 		if (!p || p.finished) return null;
 
-		const safe = Math.min(chars, room.text.length);
+		if (chars < p.chars) return null;
+
+		const elapsedSec = (Date.now() - room.startedAt!) / 1000;
+		const maxReachable = Math.ceil(elapsedSec * (MAX_WPM * 5 / 60));
+		const safe = Math.min(chars, room.text.length, maxReachable);
 		p.chars = safe;
 		p.progress = room.text.length > 0 ? safe / room.text.length : 1;
 		p.wpm = this.calcWpm(safe, room.startedAt);
