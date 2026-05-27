@@ -32,7 +32,7 @@ export function NewChat({ onSelectChat }: NewChatProps) {
           actionBtnText={t("chat.open")}
           onAction={handleAction}
         />
-        <FriendsList username={user.username} showMsgBtn className="mt-3"/>
+        <FriendsList username={user?.username ?? ""} showMsgBtn className="mt-3"/>
       </Modal>
     </>
   );
