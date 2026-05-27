@@ -20,7 +20,7 @@ export default function Settings() {
   //const { t, i18n } = useTranslation("pages");
   const { t } = useTranslation("pages");
   //const currentLang = (SUPPORTED.includes(i18n.language as Lang) ? i18n.language : "en") as Lang;
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
 
   const isOAuthOnly = user?.isOAuthOnly ?? false;
 
@@ -76,6 +76,7 @@ export default function Settings() {
     setLoading(true);
     try {
       await updateSettings(payload);
+      await refreshUser();
       //if (payload.language) await i18n.changeLanguage(language);
       setSuccess(true);
       setEmail("");
@@ -109,7 +110,9 @@ export default function Settings() {
             onChange={(e) => { setEmail(e.target.value); clearFeedback(); }}
             error={errors.email}
             disabled={isOAuthOnly || loading}
-            autoComplete="email"
+            autoComplete="off"
+            readOnly={!isOAuthOnly}
+            onFocus={(e) => e.currentTarget.removeAttribute("readonly")}
           />
           {isOAuthOnly && (
             <p className="text-xs text-red-400">{t("settings.email_managed_by_oauth")}</p>
