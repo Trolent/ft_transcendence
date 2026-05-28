@@ -23,7 +23,7 @@ export default function ChatPage() {
     <PageWithSidebar
       sidebar={
         <ChatsList
-          //selectedUsername={selectedChat}
+          selectedUsername={selectedChat}
           onSelectChat={handleSelectChat}
           refreshKey={chatsRefreshKey}
         />
