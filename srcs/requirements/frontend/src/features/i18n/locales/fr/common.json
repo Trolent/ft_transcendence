@@ -1,5 +1,5 @@
 {
-  "loading": "Chargement...",
+  "loading": "Chargement…",
   "save": "Enregistrer",
   "cancel": "Annuler",
   "please_wait": "Veuillez patienter…",
@@ -23,13 +23,14 @@
     "NOT_YOUR_REQUEST": "Cette demande ne vous appartient pas.",
     "REQUEST_ALREADY_SENT": "Demande d'ami déjà envoyée.",
     "REQUEST_NOT_FOUND": "Demande d'ami introuvable.",
-    "AVATAR_UPLOAD_FAILED": "Échec du téléchargement de l'avatar.",
+    "AVATAR_UPLOAD_FAILED": "Échec de l'envoi de l'avatar.",
     "NO_FILE_PROVIDED": "Aucun fichier fourni.",
     "AVATAR_TOO_LARGE": "Le fichier avatar est trop volumineux.",
     "AVATAR_MIMETYPE_NOT_ALLOWED": "Type de fichier non autorisé.",
     "MISSING_USERS_PARAM": "Paramètre utilisateur manquant.",
     "USERNAME_CANNOT_CONTAIN_AT": "Le nom d'utilisateur ne peut pas contenir @.",
     "INVALID_CURRENT_PASSWORD": "Mot de passe actuel incorrect.",
-    "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis."
+    "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis.",
+    "ACTION_FAILED": "Une erreur est survenue."
   }
 }

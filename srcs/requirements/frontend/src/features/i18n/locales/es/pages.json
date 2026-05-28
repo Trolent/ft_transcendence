@@ -96,7 +96,7 @@
     "ready_to_race": "¿Listo para correr?",
     "race_description": "Escribe más rápido que tus oponentes para cruzar la línea de meta.",
     "enter_race": "Entrar en la carrera",
-    "practice_mode": "Práctica",
+    "practice_mode": "Entrenamiento",
     "main_menu": "← Menú principal",
     "start": "Empezar",
     "waiting": "Esperando jugadores…",
@@ -119,15 +119,22 @@
     ],
     "you": "Tú",
     "player": "Jugador {{n}}",
-    "type_here": "Escribe aquí...",
-    "waiting_start": "Esperando el inicio de la carrera..."
+    "type_here": "Escribe aquí…",
+    "waiting_start": "Esperando el inicio de la carrera…"
   },
   "oauth_callback": {
     "connecting": "Conectando…"
   },
   "chat": {
+    "title": "Chats",
     "new_chat": "Nuevo chat",
-    "new_chat_title": "Nuevo chat",
+    "loading": "Cargando chat…",
+    "no_messages": "Aún no hay mensajes",
+    "no_chats": "Aún no hay conversaciones",
+    "error_load": "No se pudieron cargar las conversaciones",
+    "message_placeholder": "Escribe un mensaje…",
+    "send": "Enviar",
+    "you": "Tú",
     "open": "Abrir",
     "no_chat_selected": "Ninguna conversación seleccionada."
   }

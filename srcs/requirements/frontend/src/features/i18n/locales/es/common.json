@@ -1,5 +1,5 @@
 {
-  "loading": "Cargando...",
+  "loading": "Cargando…",
   "save": "Guardar",
   "cancel": "Cancelar",
   "please_wait": "Por favor espera…",
@@ -13,12 +13,12 @@
     "USER_NOT_FOUND": "Usuario no encontrado.",
     "EMAIL_ALREADY_TAKEN": "Email ya en uso.",
     "EMAIL_ALREADY_IN_USE": "Email ya en uso.",
-    "ALREADY_FRIENDS": "Ya son amigos.",
+    "ALREADY_FRIENDS": "Ya sois amigos.",
     "CANNOT_ADD_YOURSELF": "No puedes añadirte a ti mismo.",
     "ALREADY_BLOCKED": "Este usuario ya está bloqueado.",
     "CANNOT_BLOCK_YOURSELF": "No puedes bloquearte a ti mismo.",
     "CANNOT_UNBLOCK_YOURSELF": "No puedes desbloquearte a ti mismo.",
-    "NOT_FRIENDS": "No son amigos.",
+    "NOT_FRIENDS": "No sois amigos.",
     "NOT_YOUR_BLOCK": "No has bloqueado a este usuario.",
     "NOT_YOUR_REQUEST": "Esta solicitud no te pertenece.",
     "REQUEST_ALREADY_SENT": "Solicitud de amistad ya enviada.",
@@ -30,6 +30,7 @@
     "MISSING_USERS_PARAM": "Parámetro de usuario faltante.",
     "USERNAME_CANNOT_CONTAIN_AT": "El nombre de usuario no puede contener @.",
     "INVALID_CURRENT_PASSWORD": "Contraseña actual incorrecta.",
-    "CURRENT_PASSWORD_REQUIRED": "La contraseña actual es obligatoria."
+    "CURRENT_PASSWORD_REQUIRED": "La contraseña actual es obligatoria.",
+    "ACTION_FAILED": "La acción ha fallado."
   }
 }
