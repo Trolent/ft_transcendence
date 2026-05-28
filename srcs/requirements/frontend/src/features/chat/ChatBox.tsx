@@ -1,7 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { AuthContext, getToken } from '@/features/auth';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+// @ts-ignore
+import { io, Socket } from 'socket.io-client';
+import { getToken, useAuth } from '@/features/auth';
 import { Heading, Text } from '@/components';
 import { Messages, ChatForm } from '.';
 import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
@@ -12,8 +13,8 @@ interface ChatBoxProps {
 }
 
 export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
-  const auth = useContext(AuthContext);
   const { t } = useTranslation(['pages', 'common']);
+  const { user } = useAuth();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -69,7 +70,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
         {
           id: Date.now(),
           senderId: data.from,
-          receiverId: auth?.user?.id ?? 0,
+          receiverId: user?.id ?? 0,
           content: data.content,
           sentAt: data.sentAt,
           sender: {
@@ -78,8 +79,8 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
             avatarUrl: null,
           },
           receiver: {
-            id: auth?.user?.id ?? 0,
-            username: auth?.user?.username ?? 'You',
+            id: user?.id ?? 0,
+            username: user?.username ?? t('chat.you'),
             avatarUrl: null,
           },
         },
@@ -96,7 +97,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
     return () => {
       newSocket.disconnect();
     };
-  }, [auth, targetUsername]);
+  }, [user, targetUsername]);
 
   const handleSendMessage = (content: string) => {
     if (socket && targetUsername) {
@@ -111,13 +112,13 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
         ...prev,
         {
           id: Date.now(),
-          senderId: auth?.user?.id || 0,
+          senderId: user?.id ?? 0,
           receiverId: 0,
           content,
           sentAt: new Date().toISOString(),
           sender: {
-            id: auth?.user?.id || 0,
-            username: auth?.user?.username || 'You',
+            id: user?.id ?? 0,
+            username: user?.username ?? t('chat.you'),
             avatarUrl: null,
           },
           receiver: {
