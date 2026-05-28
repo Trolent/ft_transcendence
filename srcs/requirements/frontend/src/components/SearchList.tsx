@@ -37,7 +37,6 @@ export function SearchList<T extends ListItem>({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder ?? t('search.placeholder')}
-        disabled={loading}
         error={error ?? undefined}
       />
 
