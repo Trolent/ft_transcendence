@@ -171,8 +171,11 @@ export class UsersService {
             id: true, startedAt: true, textSnippet: true,
             matchResult: {
               select: {
-                position: true, wpm: true,
-                user: { select: { id: true, username: true, avatarUrl: true } },
+                position: true,
+                wpm: true,
+                user: {
+                  select: { id: true, username: true, avatarUrl: true }
+                },
               },
             },
           },

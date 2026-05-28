@@ -37,9 +37,9 @@ export async function getUserProfile(username: string): Promise<UserProfile> {
 
 export async function getUserHistory( username: string, page = 1, limit = 10): Promise<{ data: HistoryEntry[]; total: number; totalPages: number }> {
   const res = await fetch(
-    `${API_USERS}/${encodeURIComponent(username)}/history?page=${page}&limit=${limit}`,
-    { headers: authHeaders() },
-  );
+    `${API_USERS}/${encodeURIComponent(username)}/history?page=${page}&limit=${limit}`, {
+      headers: authHeaders()
+    });
   return handleResponse<{ data: HistoryEntry[]; total: number; totalPages: number }>(res);
 }
 
