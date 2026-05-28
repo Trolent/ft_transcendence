@@ -7,6 +7,7 @@
     "prev": "Ant",
     "next": "Sig"
   },
+  "find": "Buscar",
   "errors": {
     "INVALID_CREDENTIALS": "Email o contraseña incorrectos.",
     "USER_ALREADY_EXISTS": "Nombre de usuario ya en uso.",

@@ -7,6 +7,7 @@
     "prev": "Préc",
     "next": "Suiv"
   },
+  "find": "Trouver",
   "errors": {
     "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
     "USER_ALREADY_EXISTS": "Nom d'utilisateur déjà pris.",

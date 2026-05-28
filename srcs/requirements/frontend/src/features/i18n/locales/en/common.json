@@ -7,6 +7,7 @@
     "prev": "Prev",
     "next": "Next"
   },
+  "find": "Find",
   "errors": {
     "INVALID_CREDENTIALS": "Invalid email or password.",
     "USER_ALREADY_EXISTS": "Username already taken.",

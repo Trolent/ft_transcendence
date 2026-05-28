@@ -5,12 +5,11 @@ import { tError } from "@/features/i18n";
 import { getUserProfile } from "@/api/users.api";
 
 interface FindUserProps {
-  actionBtnText: string;
   onAction: (username: string) => void | Promise<void>;
   className?: string;
 }
 
-export function FindUser({ actionBtnText, onAction, className = "" }: FindUserProps) {
+export function FindUser({ onAction, className = "" }: FindUserProps) {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +55,7 @@ export function FindUser({ actionBtnText, onAction, className = "" }: FindUserPr
           error={error ?? undefined}
         />
         <Btn type="submit" variant="primary" disabled={loading || !username.trim()}>
-          {actionBtnText}
+          {t("common:find")}
         </Btn>
       </div>
     </form>
