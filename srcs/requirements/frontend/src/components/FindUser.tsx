@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Input, Btn } from ".";
+import { tError } from "@/features/i18n";
 import { getUserProfile } from "@/api/users.api";
 
 interface FindUserProps {
-  actionBtnText: string;
   onAction: (username: string) => void | Promise<void>;
   className?: string;
 }
 
-export function FindUser({ actionBtnText, onAction, className = "" }: FindUserProps) {
+export function FindUser({ onAction, className = "" }: FindUserProps) {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useTranslation("auth");
+  const { t } = useTranslation(["auth", "common"]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ export function FindUser({ actionBtnText, onAction, className = "" }: FindUserPr
     try {
       await getUserProfile(trimmed);
     } catch {
-      setError("User not found");
+      setError(t("common:errors.USER_NOT_FOUND"));
       setLoading(false);
       return;
     }
@@ -35,7 +35,7 @@ export function FindUser({ actionBtnText, onAction, className = "" }: FindUserPr
       await onAction(trimmed);
       setUsername("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Action failed");
+      setError(tError(err instanceof Error ? err.message : "ACTION_FAILED", t));
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ export function FindUser({ actionBtnText, onAction, className = "" }: FindUserPr
           error={error ?? undefined}
         />
         <Btn type="submit" variant="primary" disabled={loading || !username.trim()}>
-          {actionBtnText}
+          {t("common:find")}
         </Btn>
       </div>
     </form>

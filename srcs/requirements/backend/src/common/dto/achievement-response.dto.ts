@@ -5,11 +5,10 @@ class AchievementDto {
     @ApiProperty({ example: 'first_race' }) key: string;
     @ApiProperty({ example: 'First Race' }) label: string;
     @ApiProperty({ example: 'Complete your first race' }) description: string;
-    @ApiProperty({ example: null, nullable: true }) iconUrl: string | null;
+    @ApiProperty({ example: '🏆', nullable: true }) icon: string | null;
 }
 
 export class UserAchievementDto {
-    @ApiProperty({ example: 1 }) id: number;
-    @ApiProperty({ example: '2026-01-01T00:00:00.000Z' }) unlockedAt: string;
+    @ApiProperty({ example: '2026-01-01T00:00:00.000Z', nullable: true }) unlockedAt: string | null;
     @ApiProperty({ type: AchievementDto }) achievement: AchievementDto;
 }

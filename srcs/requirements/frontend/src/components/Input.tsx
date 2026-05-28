@@ -19,16 +19,15 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-const variantClasses: Record<InputVariant, string> = {
+const wrapperClasses: Record<InputVariant, string> = {
   default:
-    "bg-black border border-dim text-default " +
-    "placeholder-muted " +
-    "focus:outline-none focus:border-default focus:shadow-[0_0_8px_0_rgba(0,255,65,0.25)]",
-
+    "bg-black border border-dim " +
+    "transition-colors duration-100 " +
+    "focus-within:border-default focus-within:shadow-[0_0_8px_0_rgba(0,255,65,0.25)]",
   ghost:
-    "bg-transparent border-b border-dim text-default " +
-    "placeholder-muted " +
-    "focus:outline-none focus:border-default",
+    "bg-transparent border-b border-dim " +
+    "transition-colors duration-100 " +
+    "focus-within:border-default",
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -43,17 +42,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </label>
       )}
 
-      <div className="relative flex items-center">
-        <span className="absolute left-3 text-default select-none pointer-events-none opacity-70">
-          &gt;
-        </span>
+      <div className={[
+        "flex items-center",
+        wrapperClasses[variant],
+        error ? "border-danger focus-within:border-danger focus-within:shadow-[0_0_8px_0_rgba(255,49,49,0.25)]" : "",
+        className,
+      ].join(" ")}>
+        <span className="shrink-0 pl-3 pr-2 text-sm text-default select-none pointer-events-none opacity-70">{">"}</span>
         <input
           ref={ref}
           className={[
-            "w-full pl-7 pr-3 py-2 text-sm transition-colors duration-100 caret-default",
-            variantClasses[variant],
-            error ? "border-danger focus:border-danger focus:shadow-[0_0_8px_0_rgba(255,49,49,0.25)]" : "",
-            className,
+            "w-full pr-3 py-2 text-sm caret-default bg-transparent text-default placeholder-muted focus:outline-none",
           ].join(" ")}
           {...props}
         />

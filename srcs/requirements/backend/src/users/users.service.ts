@@ -1,12 +1,17 @@
-import { Injectable, ConflictException, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, UnauthorizedException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { UpdateProfileDto, UpdateSettingsDto } from './dto'
+import { UpdateProfileDto, UpdateSettingsDto } from './dto';
+import { AchievementService } from '../achievement/achievement.service';
 
 @Injectable()
 export class UsersService {
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => AchievementService))
+    private achievementService: AchievementService,
+  ) {}
 
   private async HashThePass(password? : string) {
     const passwordHash = password ? await bcrypt.hash(password, 10) : null;
@@ -134,8 +139,9 @@ export class UsersService {
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
 
     const stats = await this.calculateStats(username);
+    const achievements = await this.achievementService.getUserAchievements(username);
 
-    return { ...user, stats };
+    return { ...user, stats, achievements };
   }
 
   async getProfiles(usernames: string[]) {

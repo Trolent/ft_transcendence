@@ -27,11 +27,8 @@ export function NewChat({ onSelectChat }: NewChatProps) {
         {t("chat.new_chat")}
       </Btn>
 
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title={t("chat.new_chat_title")}>
-        <FindUser
-          actionBtnText={t("chat.open")}
-          onAction={handleAction}
-        />
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title={t("chat.title")}>
+        <FindUser onAction={handleAction} />
         <FriendsList username={user?.username ?? ""} showMsgBtn className="mt-3"/>
       </Modal>
     </>

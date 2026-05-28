@@ -1,5 +1,5 @@
 {
-  "loading": "Loading...",
+  "loading": "Loading…",
   "save": "Save",
   "cancel": "Cancel",
   "please_wait": "Please wait…",
@@ -7,6 +7,7 @@
     "prev": "Prev",
     "next": "Next"
   },
+  "find": "Find",
   "errors": {
     "INVALID_CREDENTIALS": "Invalid email or password.",
     "USER_ALREADY_EXISTS": "Username already taken.",
@@ -30,6 +31,7 @@
     "MISSING_USERS_PARAM": "Missing user parameter.",
     "USERNAME_CANNOT_CONTAIN_AT": "Username cannot contain @.",
     "INVALID_CURRENT_PASSWORD": "Incorrect current password.",
-    "CURRENT_PASSWORD_REQUIRED": "Current password is required."
+    "CURRENT_PASSWORD_REQUIRED": "Current password is required.",
+    "ACTION_FAILED": "Action failed."
   }
 }

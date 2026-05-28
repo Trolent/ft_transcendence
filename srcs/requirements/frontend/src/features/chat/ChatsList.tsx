@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Alert, Avatar, Heading, List, Text } from "@/components";
+import { useTranslation } from "react-i18next";
+import { Alert, Avatar, List, Heading, Text } from "@/components";
 import { chatApi, type ChatConversation } from "@/api/chat.api";
 import { NewChat } from ".";
 
@@ -9,6 +10,7 @@ interface ChatsListProps {
 }
 
 export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
+  const { t } = useTranslation('pages');
   const [chats, setChats] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
       .catch((err: unknown) => {
         if (cancelled) return;
         const message =
-          err instanceof Error ? err.message : "Unable to load chats";
+          err instanceof Error ? err.message : t('chat.error_load');
         setError(message);
         setChats([]);
       })
@@ -45,15 +47,15 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading level={3}>Chats</Heading>
+        <Heading level={3}>{t('chat.title')}</Heading>
         <NewChat onSelectChat={onSelectChat} />
       </div>
       {loading ? (
-        <Alert variant="info">Loading...</Alert>
+        <Alert variant="info">{t('common:loading')}</Alert>
       ) : error ? (
         <Alert variant="error">{error}</Alert>
       ) : chats.length === 0 ? (
-        <Alert variant="info">No chats yet</Alert>
+        <Alert variant="info">{t('chat.no_chats')}</Alert>
       ) : (
         <List
           className="mt-4"

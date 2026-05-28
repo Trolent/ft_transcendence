@@ -1,22 +1,10 @@
 import { API_USERS, authHeaders, handleResponse } from '@/api/config.api'
+import type { UserAchievementDto } from '@backend/common/dto/achievement-response.dto';
+import type { UserProfileDto, UserStatsDto } from '@backend/common/dto/users-response.dto';
 
-export type UserStats = {
-  rank: number;
-  avgWpm: number;
-  level: number;
-  gamesPlayed: number;
-};
-
-export type UserProfile = {
-  id: number;
-  username: string;
-  avatarUrl: string | null;
-  bio: string | null;
-  status: string;
-  language: string;
-  createdAt?: string;
-  stats: UserStats;
-};
+export type UserStats = UserStatsDto;
+export type UserAchievement = UserAchievementDto;
+export type UserProfile = UserProfileDto;
 
 export type MatchPlayer = {
   position: number | null;
