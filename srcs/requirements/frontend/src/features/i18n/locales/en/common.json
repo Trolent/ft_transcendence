@@ -32,6 +32,7 @@
     "USERNAME_CANNOT_CONTAIN_AT": "Username cannot contain @.",
     "INVALID_CURRENT_PASSWORD": "Incorrect current password.",
     "CURRENT_PASSWORD_REQUIRED": "Current password is required.",
-    "ACTION_FAILED": "Action failed."
+    "ACTION_FAILED": "Action failed.",
+    "TOKEN_STALE": "Your session has expired, please log in again."
   }
 }

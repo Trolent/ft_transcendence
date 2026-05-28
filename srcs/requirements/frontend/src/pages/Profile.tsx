@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Heading, Text, Avatar, Alert, Status, PageLayout, PageWithSidebar, Sidebar } from "@/components";
 import { tError } from "@/features/i18n";
 import { useAuth, useIsOwnProfile } from "@/features/auth";
-import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "@/api/users.api";
+import { getUserProfile, type UserProfile } from "@/api/users.api";
 import { FriendsList } from "@/features/friends";
 import { FriendActions, Bio, Stats, History, AvatarUpload, Achievements } from "@/features/profile";
 import { useStatus } from "@/hooks/useStatus";
@@ -15,7 +15,6 @@ export default function Profile() {
   const { user: me } = useAuth();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [friendsRefreshKey, setFriendsRefreshKey] = useState(0);
@@ -30,13 +29,9 @@ export default function Profile() {
     setLoading(true);
     setError(null);
 
-    Promise.all([
-      getUserProfile(targetUsername),
-      getUserHistory(targetUsername),
-    ])
-      .then(([prof, hist]) => {
+    getUserProfile(targetUsername)
+      .then((prof) => {
         setProfile(prof);
-        setHistory(hist);
       })
       .catch((err) => setError(tError(err.message, t)))
       .finally(() => setLoading(false));
@@ -114,7 +109,7 @@ export default function Profile() {
 
         <Achievements achievements={profile.achievements} />
 
-        <History history={history} />
+        <History username={targetUsername} />
 
       </div>
     </PageWithSidebar>
