@@ -10,11 +10,7 @@ export default function FriendRequests() {
     <PageLayout maxWidth="max-w-lg">
       <section>
         <Heading level={3}>{t('friends.requests_title')}</Heading>
-        <FindUser
-          actionBtnText={t('profile.add_friend_short')}
-          onAction={sendFriendRequest}
-          className="mt-6"
-        />
+        <FindUser onAction={sendFriendRequest} className="mt-6"/>
         <IncomingRequests className="mt-8" />
         <PendingRequests className="mt-6" />
       </section>
