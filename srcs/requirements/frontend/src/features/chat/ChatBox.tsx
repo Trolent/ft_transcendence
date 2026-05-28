@@ -33,7 +33,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
     const fetchHistory = async () => {
       try {
         const history = await chatApi.getHistory(targetUsername);
-        setMessages(history);
+        setMessages([...history].reverse());
       } catch (error) {
         console.error('failed to fetch history:', error);
       }
