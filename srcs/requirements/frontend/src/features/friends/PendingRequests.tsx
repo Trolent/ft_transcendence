@@ -21,7 +21,7 @@ export default function PendingRequests({ className = "", refreshKey = 0 }: Pend
     setLoading(true);
     getSentRequests()
       .then((data) =>
-        setPending(data.map((item) => ({ id: item.id, username: item.username, avatarSrc: item.avatarUrl })))
+        setPending(data.map((item) => ({ id: item.id, username: item.username, avatarSrc: item.avatarUrl, status: "OFFLINE" })))
       )
       .catch((err: unknown) => setError(err instanceof Error ? tError(err.message, t) : t('friends.error_requests')))
       .finally(() => setLoading(false));
