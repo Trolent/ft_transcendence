@@ -64,7 +64,11 @@
     "history_date": "Date",
     "history_pos": "Pos",
     "history_wpm": "WPM",
-    "history_players": "Players"
+    "history_players": "Players",
+    "achievements": "Achievements",
+    "no_achievements": "No achievements yet.",
+    "achievements_show_all": "Show locked",
+    "achievements_hide_locked": "Hide locked"
   },
   "friends": {
     "title": "FRIENDS",

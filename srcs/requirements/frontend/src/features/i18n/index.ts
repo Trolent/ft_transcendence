@@ -6,18 +6,21 @@ import enCommon  from './locales/en/common.json';
 import enAuth    from './locales/en/auth.json';
 import enNav     from './locales/en/nav.json';
 import enPages   from './locales/en/pages.json';
+import enAchievements from './locales/en/achievements.json';
 
 // FR
 import frCommon  from './locales/fr/common.json';
 import frAuth    from './locales/fr/auth.json';
 import frNav     from './locales/fr/nav.json';
 import frPages   from './locales/fr/pages.json';
+import frAchievements from './locales/fr/achievements.json';
 
 // ES
 import esCommon  from './locales/es/common.json';
 import esAuth    from './locales/es/auth.json';
 import esNav     from './locales/es/nav.json';
 import esPages   from './locales/es/pages.json';
+import esAchievements from './locales/es/achievements.json';
 
 export const SUPPORTED   = ['en', 'fr', 'es'] as const;
 export type  Lang        = (typeof SUPPORTED)[number];
@@ -52,12 +55,12 @@ i18n
   .init({
     lng: detectGuestLanguage(),
     fallbackLng: 'en',
-    ns: ['common', 'auth', 'nav', 'pages'],
+    ns: ['common', 'auth', 'nav', 'pages', 'achievements'],
     defaultNS: 'common',
     resources: {
-      en: { common: enCommon, auth: enAuth, nav: enNav, pages: enPages },
-      fr: { common: frCommon, auth: frAuth, nav: frNav, pages: frPages },
-      es: { common: esCommon, auth: esAuth, nav: esNav, pages: esPages },
+      en: { common: enCommon, auth: enAuth, nav: enNav, pages: enPages, achievements: enAchievements },
+      fr: { common: frCommon, auth: frAuth, nav: frNav, pages: frPages, achievements: frAchievements },
+      es: { common: esCommon, auth: esAuth, nav: esNav, pages: esPages, achievements: esAchievements },
     },
     interpolation: {
       escapeValue: false,

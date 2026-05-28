@@ -126,7 +126,7 @@ model Achievement {
     key                 String
     label               String
     description         String
-    iconUrl             String?
+    icon                String?
     userAchievement     UserAchievement[]
 
     @@unique([key])
