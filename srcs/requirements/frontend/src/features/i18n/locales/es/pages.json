@@ -67,7 +67,9 @@
     "history_wpm": "PPM",
     "history_players": "Jugadores",
     "achievements": "Logros",
-    "no_achievements": "Aún no hay logros."
+    "no_achievements": "Aún no hay logros.",
+    "achievements_show_all": "Ver bloqueados",
+    "achievements_hide_locked": "Ocultar bloqueados"
   },
   "friends": {
     "title": "AMIGOS",

@@ -67,7 +67,9 @@
     "history_wpm": "WPM",
     "history_players": "Joueurs",
     "achievements": "Succès",
-    "no_achievements": "Pas de succès débloqués."
+    "no_achievements": "Pas de succès débloqués.",
+    "achievements_show_all": "Voir tous les succès",
+    "achievements_hide_locked": "Masquer"
   },
   "friends": {
     "title": "AMIS",
