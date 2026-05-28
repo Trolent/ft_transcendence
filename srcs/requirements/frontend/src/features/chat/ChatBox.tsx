@@ -84,6 +84,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
           },
         },
       ]);
+      onMessageSent?.();
     });
 
     newSocket.on('disconnect', () => {
