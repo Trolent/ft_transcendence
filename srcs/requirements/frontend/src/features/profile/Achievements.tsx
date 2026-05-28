@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function Achievements({ achievements }: Props) {
-      const { t } = useTranslation(['pages']);
+      const { t } = useTranslation(['pages', 'achievements']);
   return (
     <Container label={t('profile.achievements')}>
       {achievements.length === 0 ? (
@@ -20,8 +20,8 @@ export default function Achievements({ achievements }: Props) {
             className="flex flex-col gap-1 border border-dim p-3"
           >
             <span className="text-2xl">{achievement.icon}</span>
-            <span className="text-xs font-bold text-default uppercase tracking-wide">{achievement.label}</span>
-            <span className="text-xs text-dim">{achievement.description}</span>
+            <span className="text-xs font-bold text-default uppercase tracking-wide">{t(`${achievement.key}.label`, { ns: 'achievements', defaultValue: achievement.label })}</span>
+            <span className="text-xs text-dim">{t(`${achievement.key}.description`, { ns: 'achievements', defaultValue: achievement.description })}</span>
           </li>
         ))}
       </ul>

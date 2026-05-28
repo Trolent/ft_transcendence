@@ -1,0 +1,42 @@
+{
+  "first_race": {
+    "label": "Primera Carrera",
+    "description": "Completa tu primera carrera"
+  },
+  "first_win": {
+    "label": "Primera Victoria",
+    "description": "Gana tu primera carrera"
+  },
+  "speed_50": {
+    "label": "Cada Vez Más Rápido",
+    "description": "Alcanza 50 WPM en una carrera"
+  },
+  "speed_80": {
+    "label": "Mecanógrafo Rápido",
+    "description": "Alcanza 80 WPM en una carrera"
+  },
+  "speed_100": {
+    "label": "Centuria",
+    "description": "Alcanza 100 WPM en una carrera"
+  },
+  "veteran_10": {
+    "label": "Regular",
+    "description": "Completa 10 carreras"
+  },
+  "veteran_50": {
+    "label": "Veterano",
+    "description": "Completa 50 carreras"
+  },
+  "podium_3": {
+    "label": "Cazador de Podio",
+    "description": "Termina 1º en 3 carreras diferentes"
+  },
+  "social_1": {
+    "label": "Social",
+    "description": "Agrega tu primer amigo"
+  },
+  "speed_150": {
+    "label": "Maestro Mecanógrafo",
+    "description": "Alcanza 150 WPM en una carrera"
+  }
+}
