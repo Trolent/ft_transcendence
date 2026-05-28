@@ -6,7 +6,7 @@ import { tError } from "@/features/i18n";
 import { useAuth, useIsOwnProfile } from "@/features/auth";
 import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "@/api/users.api";
 import { FriendsList } from "@/features/friends";
-import { FriendActions, Bio, Stats, History, AvatarUpload } from "@/features/profile";
+import { FriendActions, Bio, Stats, History, AvatarUpload, Achievements } from "@/features/profile";
 import { useStatus } from "@/hooks/useStatus";
 
 export default function Profile() {
@@ -111,6 +111,8 @@ export default function Profile() {
         />
 
         <Stats stats={profile.stats} />
+
+        <Achievements achievements={profile.achievements} />
 
         <History history={history} />
 

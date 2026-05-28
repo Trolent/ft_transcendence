@@ -65,7 +65,9 @@
     "history_date": "Date",
     "history_pos": "Pos",
     "history_wpm": "WPM",
-    "history_players": "Joueurs"
+    "history_players": "Joueurs",
+    "achievements": "Succès",
+    "no_achievements": "Pas de succès débloqués."
   },
   "friends": {
     "title": "AMIS",

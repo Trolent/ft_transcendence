@@ -65,7 +65,9 @@
     "history_date": "Fecha",
     "history_pos": "Pos",
     "history_wpm": "PPM",
-    "history_players": "Jugadores"
+    "history_players": "Jugadores",
+    "achievements": "Logros",
+    "no_achievements": "Aún no hay logros."
   },
   "friends": {
     "title": "AMIGOS",
