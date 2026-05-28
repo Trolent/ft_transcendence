@@ -143,7 +143,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
             <div><Text variant="dim">{t('common:loading')}</Text></div>
           ) : (
             <>
-              <Messages messages={messages}/>
+              <Messages messages={messages} currentUserId={user?.id} />
               <ChatForm onSendMessage={handleSendMessage} />
             </>
           )}

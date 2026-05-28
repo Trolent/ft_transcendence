@@ -6,9 +6,10 @@ import { Message } from '.';
 
 interface MessagesProps {
   messages: ChatMessage[];
+  currentUserId?: number;
 }
 
-export function Messages({ messages }: MessagesProps) {
+export function Messages({ messages, currentUserId }: MessagesProps) {
   const { t } = useTranslation('pages');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +31,7 @@ export function Messages({ messages }: MessagesProps) {
         <>
           {messages.map((msg, idx) => {
             return (
-              <Message key={msg.id ?? idx} message={msg} />
+              <Message key={msg.id ?? idx} message={msg} isOwn={currentUserId !== undefined && msg.senderId === currentUserId} />
             );
           })}
           <div ref={messagesEndRef} />
