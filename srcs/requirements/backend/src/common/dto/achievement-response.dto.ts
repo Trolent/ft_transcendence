@@ -9,7 +9,6 @@ class AchievementDto {
 }
 
 export class UserAchievementDto {
-    @ApiProperty({ example: 1 }) id: number;
-    @ApiProperty({ example: '2026-01-01T00:00:00.000Z' }) unlockedAt: string;
+    @ApiProperty({ example: '2026-01-01T00:00:00.000Z', nullable: true }) unlockedAt: string | null;
     @ApiProperty({ type: AchievementDto }) achievement: AchievementDto;
 }

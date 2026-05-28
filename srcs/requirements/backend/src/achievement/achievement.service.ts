@@ -90,13 +90,24 @@ export class AchievementService implements OnModuleInit {
         const user = await this.users.findByUsername(username);
         if (!user) return [];
 
-        return this.prisma.userAchievement.findMany({
-            where: { userId: user.id },
-            include: {
-                achievement: true,
-            },
-            orderBy: { unlockedAt: 'desc' },
-        });
+        const [allAchievements, userAchievements] = await Promise.all([
+            this.prisma.achievement.findMany(),
+            this.prisma.userAchievement.findMany({ where: { userId: user.id } }),
+        ]);
+
+        const unlockedMap = new Map(userAchievements.map(ua => [ua.achievementId, ua.unlockedAt]));
+
+        return allAchievements
+            .map(achievement => ({
+                achievement,
+                unlockedAt: unlockedMap.get(achievement.id) ?? null,
+            }))
+            .sort((a, b) => {
+                if (a.unlockedAt && b.unlockedAt) return b.unlockedAt.getTime() - a.unlockedAt.getTime();
+                if (a.unlockedAt) return -1;
+                if (b.unlockedAt) return 1;
+                return 0;
+            });
     }
 
 }
