@@ -155,13 +155,15 @@ export class UsersService {
     });
   }
 
-  async getHistory(username: string) {
+  async getHistory(username: string, page = 1, limit = 20) {
     const user = await this.prisma.user.findUnique({ where: { username } });
     if (!user)
       throw new NotFoundException('USER_NOT_FOUND');
 
-    return this.prisma.matchResult.findMany({
-      where: { userId: user.id },
+    const where = { userId: user.id };
+    const total = await this.prisma.matchResult.count({ where });
+    const data  = await this.prisma.matchResult.findMany({
+      where,
       select: {
         wpm: true, position: true, finishedAt: true,
         match: {
@@ -172,7 +174,7 @@ export class UsersService {
                 position: true,
                 wpm: true,
                 user: {
-                  select: { id: true, username: true, avatarUrl: true },
+                  select: { id: true, username: true, avatarUrl: true }
                 },
               },
             },
@@ -180,8 +182,11 @@ export class UsersService {
         },
       },
       orderBy: { finishedAt: 'desc' },
-      take: 20,
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    return { data, total, totalPages: Math.ceil(total / limit) };
   }
 
   async updateAvatar(username: string, avatarUrl: string) {

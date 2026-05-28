@@ -93,7 +93,6 @@ async function main() {
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
           language:     randFrom(languages),
           status:       UserStatus.OFFLINE,
-          createdAt:    daysAgo(randInt(1, 60)),
         },
       }),
     ),
