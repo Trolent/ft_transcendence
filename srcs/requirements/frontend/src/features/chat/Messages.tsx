@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@/components';
+import { Text } from '@/components';
 import type { ChatMessage } from '@/api/chat.api';
 import { Message } from '.';
 
@@ -25,7 +25,7 @@ export function Messages({ messages, currentUserId }: MessagesProps) {
     <div className="min-h-0 flex-1 overflow-y-auto p-4">
       {messages.length === 0 ? (
         <div className="flex items-center justify-center h-full">
-          <Alert variant='info'>{t('chat.no_messages')}</Alert>
+          <Text variant="dim">{t('chat.no_messages')}</Text>
         </div>
       ) : (
         <>

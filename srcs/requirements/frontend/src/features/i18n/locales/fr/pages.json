@@ -139,6 +139,7 @@
     "send": "Envoyer",
     "you": "Moi",
     "open": "Ouvrir",
-    "no_chat_selected": "Aucune conversation sélectionnée."
+    "no_chat_selected": "Aucune conversation sélectionnée.",
+    "view_profile": "Voir le profil"
   }
 }

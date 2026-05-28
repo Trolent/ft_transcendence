@@ -139,6 +139,7 @@
     "send": "Send",
     "you": "Me",
     "open": "Open",
-    "no_chat_selected": "No chat selected."
+    "no_chat_selected": "No chat selected.",
+    "view_profile": "View Profile"
   }
 }

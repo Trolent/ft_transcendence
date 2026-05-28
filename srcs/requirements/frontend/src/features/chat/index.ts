@@ -4,3 +4,4 @@ export { Messages } from './Messages';
 export { ChatForm } from './ChatForm';
 export { ChatsList } from './ChatsList';
 export { NewChat } from './NewChat';
+export { ChatHeader } from './ChatHeader';

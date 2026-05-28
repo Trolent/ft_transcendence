@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-// @ts-ignore
 import { io, Socket } from 'socket.io-client';
 import { getToken, useAuth } from '@/features/auth';
-import { Heading, Text } from '@/components';
-import { Messages, ChatForm } from '.';
+import { Text, Container } from '@/components';
+import { Messages, ChatForm, ChatHeader } from '.';
 import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
 
 interface ChatBoxProps {
@@ -35,7 +34,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
         const history = await chatApi.getHistory(targetUsername);
         setMessages([...history].reverse());
       } catch (error) {
-        console.error('failed to fetch history:', error);
+        console.error('Failed to fetch chat history:', error);
       }
       setIsLoading(false);
     };
@@ -132,20 +131,20 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   };
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
+    <div className="flex h-full min-h-0 w-full flex-col gap-4">
       {!targetUsername ? (
           <Text variant="dim">{t('chat.no_chat_selected')}</Text>
       ) : (
         <>
-          <Heading level={2}>{targetUsername}</Heading>
+          <ChatHeader username={targetUsername} />
 
           {isLoading ? (
             <div><Text variant="dim">{t('common:loading')}</Text></div>
           ) : (
-            <>
+            <Container>
               <Messages messages={messages} currentUserId={user?.id} />
               <ChatForm onSendMessage={handleSendMessage} />
-            </>
+            </Container>
           )}
         </>
       )}
