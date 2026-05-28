@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Btn, Heading, List, Status, Text } from "@/components";
+import { Avatar, Btn, Heading, Input, List, Pagination, Status, Text } from "@/components";
 import { useTranslation } from "react-i18next";
 import { tError } from "@/features/i18n";
 import { useIsOwnProfile } from "@/features/auth";
 import { getFriends } from "@/api/friends.api";
 import { useStatus } from "@/hooks/useStatus";
 import type { Friend } from "./types";
+
+const PAGE_SIZE = 20;
 
 interface FriendsListProps {
   username: string;
@@ -32,6 +34,8 @@ export default function FriendsList({
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,14 +47,12 @@ export default function FriendsList({
       .then((data) => {
         if (cancelled) return;
         setFriends(
-          data.map((item) => {
-            return {
-              id: item.id,
-              username: item.username,
-              avatarSrc: item.avatarUrl,
-              status: getStatus(item.status, item.id, item.username),
-            };
-          }),
+          data.map((item) => ({
+            id: item.id,
+            username: item.username,
+            avatarSrc: item.avatarUrl,
+            status: getStatus(item.status, item.id, item.username),
+          })),
         );
       })
       .catch((err: unknown) => {
@@ -64,12 +66,26 @@ export default function FriendsList({
         setLoading(false);
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [getStatus, isOwnProfile, refreshKey, username]);
 
-  const displayedFriends = typeof limit === "number" ? friends.slice(0, limit) : friends;
+  // Reset page when query changes
+  useEffect(() => { setPage(1); }, [query]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return q ? friends.filter((f) => f.username.toLowerCase().includes(q)) : friends;
+  }, [friends, query]);
+
+  const paginated = useMemo(() => {
+    if (typeof limit === 'number') return filtered.slice(0, limit);
+    const start = (page - 1) * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, limit, page]);
+
+  const totalPages = typeof limit === 'number' ? 1 : Math.ceil(filtered.length / PAGE_SIZE);
+  const showSearch = !limit;
+  const showPagination = !limit && totalPages > 1;
 
   return (
     <section className={className}>
@@ -81,22 +97,28 @@ export default function FriendsList({
           </Btn>
         )}
       </div>
+
+      {showSearch && friends.length > 0 && (
+        <Input
+          className="mt-4"
+          placeholder={t('friends.search_placeholder')}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      )}
+
       {loading ? (
-        <Text className="mt-6" variant="muted">
-          {t('common:loading')}
-        </Text>
+        <Text className="mt-6" variant="muted">{t('common:loading')}</Text>
       ) : error ? (
-        <Text className="mt-6" variant="error">
-          {error}
-        </Text>
-      ) : displayedFriends.length === 0 ? (
+        <Text className="mt-6" variant="error">{error}</Text>
+      ) : paginated.length === 0 ? (
         <Text className="mt-6" variant="muted">
-          {t('friends.no_friends')}
+          {query.trim() ? t('friends.search_empty') : t('friends.no_friends')}
         </Text>
       ) : (
         <List
           className="mt-6"
-          items={displayedFriends}
+          items={paginated}
           renderItem={(item: Friend) => (
             <div className="flex items-center justify-between gap-4">
               <Link
@@ -115,6 +137,15 @@ export default function FriendsList({
               )}
             </div>
           )}
+        />
+      )}
+
+      {showPagination && (
+        <Pagination
+          className="mt-4"
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
         />
       )}
     </section>

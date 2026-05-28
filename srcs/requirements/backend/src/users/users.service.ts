@@ -1,7 +1,13 @@
 import { Injectable, ConflictException, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UpdateProfileDto, UpdateSettingsDto } from './dto'
+import { PaginatedResponse } from '../common/dto/paginated-response.dto';
+import { UserSearchDto } from '../common/dto/users-response.dto';
+
+const SEARCH_DEFAULT_LIMIT = 10;
+const SEARCH_MAX_LIMIT = 50;
 
 @Injectable()
 export class UsersService {
@@ -192,6 +198,29 @@ export class UsersService {
       data: { bio:dto.bio },
       select: { bio:true }
     })
+  }
+
+  async searchUsers(query: string, page: number, limit: number): Promise<PaginatedResponse<UserSearchDto>> {
+    const safeLimit = Math.min(limit, SEARCH_MAX_LIMIT);
+    const offset = (page - 1) * safeLimit;
+    const where: Prisma.UserWhereInput = {
+      username: { contains: query, mode: Prisma.QueryMode.insensitive },
+    };
+
+    const [data, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        select: { id: true, username: true, avatarUrl: true, status: true },
+        skip: offset,
+        take: safeLimit,
+        orderBy: { username: 'asc' },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / safeLimit);
+
+    return { data, total, page, limit: safeLimit, totalPages, hasNext: page < totalPages };
   }
 
   async updateSettings(username : string, dto: UpdateSettingsDto) {

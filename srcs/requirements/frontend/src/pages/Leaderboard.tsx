@@ -1,40 +1,63 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tError } from "@/features/i18n";
-import { Avatar, Heading, List, Text, Pagination, PageLayout } from "@/components";
+import { Avatar, Heading, Input, List, Text, Pagination, PageLayout } from "@/components";
 import { getLeaderboard, type LeaderboardEntry } from "@/api/leaderboard.api";
 
 type LeaderboardListItem = LeaderboardEntry & { id: string; [key: string]: unknown };
 
 const LIMIT = 20;
+const DEBOUNCE_MS = 300;
 
 export default function Leaderboard() {
-  const { t } = useTranslation('pages');
+  const { t } = useTranslation(['pages', 'common']);
   const [players, setPlayers] = useState<LeaderboardListItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const tooShort = query.trim().length > 0 && query.trim().length < 3;
+
+  // Debounce query and reset to page 1
+  useEffect(() => {
+    if (tooShort) {
+      setDebouncedQuery('');
+      setCurrentPage(1);
+      return;
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedQuery(query);
+      setCurrentPage(1);
+    }, DEBOUNCE_MS);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [query, tooShort]);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     setError(null);
 
-    getLeaderboard(currentPage, LIMIT)
+    getLeaderboard(currentPage, LIMIT, debouncedQuery)
       .then((response) => {
-        setPlayers(response.data.map((entry) => ({
-          ...entry,
-          id: entry.username,
-        })));
+        if (cancelled) return;
+        setPlayers(response.data.map((entry) => ({ ...entry, id: entry.username })));
         setTotalPages(response.totalPages);
       })
       .catch((err: unknown) => {
+        if (cancelled) return;
         setError(err instanceof Error ? tError(err.message, t) : t('leaderboard.error'));
         setTotalPages(1);
       })
-      .finally(() => setLoading(false));
-  }, [currentPage]);
+      .finally(() => { if (!cancelled) setLoading(false); });
+
+    return () => { cancelled = true; };
+  }, [currentPage, debouncedQuery]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -44,19 +67,26 @@ export default function Leaderboard() {
   return (
     <PageLayout maxWidth="max-w-lg">
       <Heading level={3} className="mt-10 sm:text-2xl sm:tracking-[0.2em]">{t('leaderboard.title')}</Heading>
-      {loading && (
-        <Text className="mt-6" variant="muted">
-          {t('leaderboard.loading')}
-        </Text>
+
+      <Input
+        className="mt-6"
+        placeholder={t('leaderboard.search_placeholder')}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+
+      {tooShort && (
+        <Text className="mt-6" variant="muted">{t('common:search.min_chars')}</Text>
       )}
-      {error && !loading && (
-        <Text className="mt-6" variant="error">
-          {error}
-        </Text>
+      {!tooShort && loading && (
+        <Text className="mt-6" variant="muted">{t('leaderboard.loading')}</Text>
       )}
-      {!loading && !error && players.length === 0 && (
+      {!tooShort && error && !loading && (
+        <Text className="mt-6" variant="error">{error}</Text>
+      )}
+      {!tooShort && !loading && !error && players.length === 0 && (
         <Text className="mt-6" variant="muted">
-          {t('leaderboard.empty')}
+          {debouncedQuery.trim() ? t('leaderboard.search_empty') : t('leaderboard.empty')}
         </Text>
       )}
       {!loading && !error && players.length > 0 && (
@@ -80,7 +110,7 @@ export default function Leaderboard() {
               </Link>
             )}
           />
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
       )}
     </PageLayout>

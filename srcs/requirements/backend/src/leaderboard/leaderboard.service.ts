@@ -11,13 +11,29 @@ export class LeaderBoardService {
   constructor(private prisma: PrismaService) {}
 
   // wrap LeaderboardEntry in PaginatedResponse to get the total nb of pages
-  async getLeaderboard(page: number, limit: number): Promise<PaginatedResponse<LeaderboardEntryDto>> {
+  async getLeaderboard(page: number, limit: number, query?: string): Promise<PaginatedResponse<LeaderboardEntryDto>> {
     const safeLimit = Math.min(limit, LEADERBOARD_MAX_LIMIT);
     const offset   = (page - 1) * safeLimit;
+
+    // When filtering by username, fetch matching userIds first
+    let filteredUserIds: number[] | undefined;
+    if (query?.trim()) {
+      const matches = await this.prisma.user.findMany({
+        where: { username: { contains: query.trim(), mode: 'insensitive' } },
+        select: { id: true },
+      });
+      filteredUserIds = matches.map((u: { id: number }) => u.id);
+      if (filteredUserIds.length === 0) {
+        return { data: [], total: 0, page, limit: safeLimit, totalPages: 0, hasNext: false };
+      }
+    }
+
+    const groupByWhere = filteredUserIds ? { userId: { in: filteredUserIds } } : undefined;
 
     const [grouped, total] = await Promise.all([
       this.prisma.matchResult.groupBy({
         by: ['userId'],
+        where: groupByWhere,
         _avg: { wpm: true },
         _count: { id: true },
         orderBy: { _avg: { wpm: 'desc' } },
@@ -26,6 +42,7 @@ export class LeaderBoardService {
       }),
       this.prisma.matchResult.groupBy({
         by: ['userId'],
+        where: groupByWhere,
         _avg: { wpm: true },
       }).then((results) => results.length),
     ]);
@@ -64,6 +81,7 @@ export class LeaderBoardService {
       page,
       limit: safeLimit,
       totalPages,
+      hasNext: page < totalPages,
     };
   }
 }

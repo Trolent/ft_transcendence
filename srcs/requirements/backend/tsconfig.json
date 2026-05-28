@@ -12,7 +12,8 @@
     "baseUrl": "./",
     "strict": true,
     "strictPropertyInitialization": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"]
   },
   "exclude": ["node_modules", "dist", "prisma/seed.ts", "prisma/seedv2.ts"]
 }

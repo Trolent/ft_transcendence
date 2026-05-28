@@ -1,5 +1,21 @@
 import { API_USERS, authHeaders, handleResponse } from '@/api/config.api'
 
+export type PaginatedResponse<T> = {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNext: boolean;
+};
+
+export type UserSearchResult = {
+  id: number;
+  username: string;
+  avatarUrl: string | null;
+  status: string;
+};
+
 export type UserStats = {
   rank: number;
   avgWpm: number;
@@ -85,6 +101,18 @@ export async function updateSettings(
     body: JSON.stringify(payload),
   });
   return handleResponse<{ email?: string; language?: string }>(res);
+}
+
+export async function searchUsers(
+  q: string,
+  page: number,
+  limit = 10,
+): Promise<PaginatedResponse<UserSearchResult>> {
+  const params = new URLSearchParams({ q, page: String(page), limit: String(limit) });
+  const res = await fetch(`${API_USERS}/search?${params}`, {
+    headers: authHeaders(),
+  });
+  return handleResponse<PaginatedResponse<UserSearchResult>>(res);
 }
 
 export async function uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
