@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { io, Socket } from 'socket.io-client';
 import { getToken, useAuth } from '@/features/auth';
-import { Heading, Alert } from '@/components';
+import { Heading, Text } from '@/components';
 import { Messages, ChatForm } from '.';
 import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
-import { FriendsList } from '../friends';
 
 interface ChatBoxProps {
   targetUsername?: string | null;
@@ -14,7 +13,7 @@ interface ChatBoxProps {
 }
 
 export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
-  const { t } = useTranslation('pages');
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -135,13 +134,13 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col">
       {!targetUsername ? (
-          <FriendsList username={user.username} showMsgBtn />
+          <Text variant="dim">{t('chat.no_chat_selected')}</Text>
       ) : (
         <>
           <Heading level={2}>{targetUsername}</Heading>
 
           {isLoading ? (
-            <div><Alert variant='info'>{t('chat.loading')}</Alert></div>
+            <div><Text variant="dim">{t('common:loading')}</Text></div>
           ) : (
             <>
               <Messages messages={messages}/>
