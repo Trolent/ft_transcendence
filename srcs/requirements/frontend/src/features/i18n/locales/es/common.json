@@ -30,6 +30,7 @@
     "MISSING_USERS_PARAM": "Parámetro de usuario faltante.",
     "USERNAME_CANNOT_CONTAIN_AT": "El nombre de usuario no puede contener @.",
     "INVALID_CURRENT_PASSWORD": "Contraseña actual incorrecta.",
-    "CURRENT_PASSWORD_REQUIRED": "La contraseña actual es obligatoria."
+    "CURRENT_PASSWORD_REQUIRED": "La contraseña actual es obligatoria.",
+    "ACTION_FAILED": "La acción ha fallado."
   }
 }

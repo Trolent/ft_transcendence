@@ -53,14 +53,9 @@
     "stat_played": "Joués",
     "history_label": "historique",
     "history_empty": "Aucune partie jouée.",
-<<<<<<< HEAD
-    "add_friend": "+ Ajouter comme ami",
-    "remove_friend": "Supprimer de mes amis",
-=======
     "add_friend": "+ Ajouter en ami",
     "add_friend_short": "Ajouter",
     "remove_friend": "Retirer des amis",
->>>>>>> origin
     "pending": "En attente",
     "message": "Message",
     "error_add": "Impossible d'envoyer la demande.",

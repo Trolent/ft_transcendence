@@ -30,6 +30,7 @@
     "MISSING_USERS_PARAM": "Paramètre utilisateur manquant.",
     "USERNAME_CANNOT_CONTAIN_AT": "Le nom d'utilisateur ne peut pas contenir @.",
     "INVALID_CURRENT_PASSWORD": "Mot de passe actuel incorrect.",
-    "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis."
+    "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis.",
+    "ACTION_FAILED": "Une erreur est survenue."
   }
 }
