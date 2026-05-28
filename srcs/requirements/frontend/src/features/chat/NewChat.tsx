@@ -43,7 +43,7 @@ export function NewChat({ onSelectChat }: NewChatProps) {
         {t("chat.new_chat")}
       </Btn>
 
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title={t("chat.new_chat_title")}>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title={t("chat.new_chat")}>
         <SearchList
           fetchFn={searchUsers}
           renderItem={renderItem}

@@ -17,6 +17,7 @@ interface FriendsListProps {
   refreshKey?: number;
   showMsgBtn?: boolean;
   showRequestsBtn?: boolean;
+  showSearchBar?: boolean;
 }
 
 export default function FriendsList({
@@ -26,6 +27,7 @@ export default function FriendsList({
   refreshKey,
   showMsgBtn,
   showRequestsBtn,
+  showSearchBar
 }: FriendsListProps) {
   const { t } = useTranslation('pages');
   const isOwnProfile = useIsOwnProfile(username);
@@ -98,7 +100,7 @@ export default function FriendsList({
         )}
       </div>
 
-      {showSearch && friends.length > 0 && (
+      {showSearchBar && showSearch && friends.length > 0 && (
         <Input
           className="mt-4"
           placeholder={t('friends.search_placeholder')}
