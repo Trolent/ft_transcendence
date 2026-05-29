@@ -52,7 +52,7 @@ export function SearchList<T extends ListItem>({
         <p className="text-dim text-sm text-center font-mono">{t('loading')}</p>
       )}
 
-      {!loading && !tooShort && query.trim() && items.length === 0 && (
+      {!loading && !tooShort && query.trim() && visibleItems.length === 0 && (
         <p className="text-dim text-sm text-center font-mono">
           {emptyMessage ?? t('search.empty')}
         </p>
