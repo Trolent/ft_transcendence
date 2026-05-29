@@ -7,10 +7,7 @@ import { Btn, Container, StatCard, StatItem, StatDivider } from "@/components";
 import { useGameState } from "@/hooks/useGameState";
 import type { Racer, RaceResult } from "@/hooks/useRaceSocket";
 
-// Mirrors the backend race-duration formula (backend game.constant.ts) so the
-// visible countdown matches the server's force-finish deadline.
-const MIN_RACE_SECONDS = 20;
-const MIN_CHARS_PER_SEC = 1.5;
+import { MIN_RACE_SECONDS, MIN_CHARS_PER_SEC } from "@backend/common/game.constant";
 
 function formatTime(s: number): string {
   const mm = String(Math.floor(s / 60)).padStart(2, "0");

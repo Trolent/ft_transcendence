@@ -21,7 +21,7 @@ export const QUOTES = [
 
 ];
 export const MIN_RACE_SECONDS = 20;
-export const MIN_CHARS_PER_SEC = 1.5;
+export const MIN_CHARS_PER_SEC = 2.5;
 
 // --- Lobby / matchmaking timings ---
 // A freshly created lobby waits this long for a 2nd human before falling back to bots.
