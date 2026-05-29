@@ -58,15 +58,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   async handleDisconnect(client: Socket) {
 	this.lastProgress.delete(client.id);
-	const left = await this.gameService.handleDisconnect(client.id);
-	if (!left)
-		return;
-	for (const socketId of left.others)
-		this.server.sockets.get(socketId)?.emit('participant_left', {
-			pid: left.pid,
-			username: left.username,
-			cancelled: left.cancelled,
-		});
+	await this.gameService.handleDisconnect(client.id);
   }
 
   // Identity comes from the JWT (client.data.user) or the guest handshake
@@ -102,12 +94,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	if (!left)
 		return;
 	client.leave(left.roomId);
-	for (const socketId of left.others)
-		this.server.sockets.get(socketId)?.emit('participant_left', {
-			pid: left.pid,
-			username: left.username,
-			cancelled: left.cancelled,
-		});
   }
 
   @UseGuards(WsJwtGuard)

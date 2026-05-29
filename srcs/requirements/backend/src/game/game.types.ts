@@ -116,9 +116,3 @@ export type YouFinishedPayload = {
 	playerCount: number;
 };
 
-// 'participant_left' — someone disconnected; `cancelled` true if the race was voided.
-export type ParticipantLeftPayload = {
-	pid: string;
-	username: string;
-	cancelled: boolean;
-};

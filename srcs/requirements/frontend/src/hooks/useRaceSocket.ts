@@ -9,7 +9,6 @@ import type {
 	RaceUpdatePayload,
 	RaceFinishedPayload,
 	YouFinishedPayload,
-	ParticipantLeftPayload,
 	RaceResult,
 } from "@backend/game/game.types";
 
@@ -20,7 +19,6 @@ export type {
 	RaceResult,
 	RaceStartPayload,
 	RaceFinishedPayload,
-	ParticipantLeftPayload,
 } from "@backend/game/game.types";
 
 // Live per-participant race state, keyed by pid. Seeded from the lobby roster
@@ -32,15 +30,9 @@ export type Racer = {
 	avatarUrl: string | null;
 	progress: number; // 0..1
 	wpm: number;
-	left?: boolean; // disconnected mid-race: car stays frozen where it stopped
 };
 
 export type RacePhase = "idle" | "waiting" | "countdown" | "racing" | "finished";
-
-export type LeftNotice = {
-	username: string;
-	cancelled: boolean;
-};
 
 export function useRaceSocket() {
 	const socketRef = useRef<Socket | null>(null);
@@ -55,7 +47,6 @@ export function useRaceSocket() {
 	const [racers, setRacers]             = useState<Record<string, Racer>>({});
 	const [results, setResults]           = useState<RaceResult[] | null>(null);
 	const [myPosition, setMyPosition]     = useState<number | null>(null);
-	const [leftNotice, setLeftNotice]     = useState<LeftNotice | null>(null);
 	const [rejected, setRejected]         = useState<string | null>(null);
 
 	const teardown = useCallback(() => {
@@ -78,7 +69,6 @@ export function useRaceSocket() {
 		setRacers({});
 		setResults(null);
 		setMyPosition(null);
-		setLeftNotice(null);
 		setRejected(null);
 	}, []);
 
@@ -174,25 +164,6 @@ export function useRaceSocket() {
 			setPhase("finished");
 		});
 
-		socket.on("participant_left", (payload: ParticipantLeftPayload) => {
-			setLeftNotice({ username: payload.username, cancelled: payload.cancelled });
-			if (payload.cancelled) {
-				// Race voided — drop back to a waiting lobby state.
-				setRacers({});
-				setResults(null);
-				setStartedAt(null);
-				setCountdownEndsAt(null);
-				setPhase("waiting");
-			} else {
-				// Freeze their car in place: keep it on the track at its last
-				// progress, just flag it as left (no more race_update will come).
-				setRacers((prev) => {
-					const cur = prev[payload.pid];
-					if (!cur) return prev;
-					return { ...prev, [payload.pid]: { ...cur, left: true } };
-				});
-			}
-		});
 	}, [teardown, resetState]);
 
 	// Tell the server we left; disconnect tears the socket down.
@@ -211,9 +182,6 @@ export function useRaceSocket() {
 		if (s && s.connected) s.emit("player_progress", { chars, accuracy });
 	}, []);
 
-	// Clear the transient "someone left" banner once the UI has shown it.
-	const clearLeftNotice = useCallback(() => setLeftNotice(null), []);
-
 	// Tear the socket down when the consuming component unmounts.
 	useEffect(() => () => { teardown(); }, [teardown]);
 
@@ -228,11 +196,9 @@ export function useRaceSocket() {
 		racers,
 		results,
 		myPosition,
-		leftNotice,
 		rejected,
 		joinQueue,
 		leaveQueue,
 		sendProgress,
-		clearLeftNotice,
 	};
 }

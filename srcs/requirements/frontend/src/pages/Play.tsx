@@ -115,16 +115,6 @@ export default function Play() {
     </div>
   );
 
-  const leftBanner = race.leftNotice && (
-    <div className="w-full max-w-3xl px-2 sm:px-4">
-      <Alert variant={race.leftNotice.cancelled ? "error" : "info"}>
-        {race.leftNotice.cancelled
-          ? t('play.race_voided')
-          : t('play.player_left', { name: race.leftNotice.username })}
-      </Alert>
-    </div>
-  );
-
   // Server refused the join (e.g. this account is already racing in another
   // tab). Show why and offer a way back; don't sit on the joining screen.
   if (race.rejected) {
@@ -147,8 +137,7 @@ export default function Play() {
     return (
       <div className="w-full flex flex-col items-center gap-3">
         {topBar(t('play.cancel'), backToMenu)}
-        {leftBanner}
-        <PageLayout centerY>
+          <PageLayout centerY>
           <p className="text-dim font-mono text-sm">{t('play.connecting')}</p>
         </PageLayout>
       </div>
@@ -177,7 +166,6 @@ export default function Play() {
   return (
     <div className="w-full flex flex-col items-center gap-3">
       {topBar(preRace ? t('play.cancel') : t('play.main_menu'), backToMenu)}
-      {leftBanner}
       <GameArena
         key={gameKey}
         multiplayer

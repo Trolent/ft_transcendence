@@ -469,40 +469,27 @@ export class GameService {
 	}
 
 	// --------------------------------------------------------------- disconnect
-	async handleDisconnect(socketId: string): Promise<{
-		roomId: string;
-		pid: string;
-		username: string;
-		cancelled: boolean;
-		others: string[];
-	} | null> {
+	async handleDisconnect(socketId: string): Promise<{ roomId: string } | null> {
 		const room = this.roomOf(socketId);
 		if (!room) return null;
 
 		const p = this.participantOf(room, socketId);
 		if (!p) return null;
 
-		const others = [...room.players.values()]
-			.filter((o) => o.socketId && o.socketId !== socketId)
-			.map((o) => o.socketId as string);
-
 		this.socketToRoom.delete(socketId);
 
 		if (room.phase === 'waiting' || room.phase === 'countdown') {
-			// Pre-race there is no car yet: drop them from the lobby. Scrap the
-			// lobby if the last human left.
 			room.players.delete(p.pid);
 			if (this.humanCount(room) === 0) {
 				this.cleanRoom(room.id);
-				return { roomId: room.id, pid: p.pid, username: p.username, cancelled: true, others };
+				return { roomId: room.id };
 			}
 			this.emitLobbyUpdate(room);
-			return { roomId: room.id, pid: p.pid, username: p.username, cancelled: false, others };
+			return { roomId: room.id };
 		}
 
 		if (room.phase !== 'racing') {
-			// Already finished/finalizing: nothing to do but drop the mapping.
-			return { roomId: room.id, pid: p.pid, username: p.username, cancelled: false, others };
+			return { roomId: room.id };
 		}
 
 		// Racing: keep the leaver in place so their car freezes where it stopped
@@ -517,8 +504,6 @@ export class GameService {
 			}).catch(() => undefined);
 		}
 
-		// No real players left to watch: cancel — unless a finalize is already
-		// running (avoids racing the in-flight match write).
 		if (this.connectedHumanCount(room) === 0) {
 			if (!this.finalizing.has(room.id)) {
 				this.finalizing.add(room.id);
@@ -533,11 +518,11 @@ export class GameService {
 				await this.releaseUsers(room);
 				this.cleanRoom(room.id);
 			}
-			return { roomId: room.id, pid: p.pid, username: p.username, cancelled: true, others };
+			return { roomId: room.id };
 		}
 
 		if (this.allFinished(room)) await this.finalizeRace(room.id);
-		return { roomId: room.id, pid: p.pid, username: p.username, cancelled: false, others };
+		return { roomId: room.id };
 	}
 
 	// -------------------------------------------------------------------- utils
