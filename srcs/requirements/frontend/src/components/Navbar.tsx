@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/useAuth";
 import { LanguageSwitcher } from "@/components";
+import { ChatNotif } from "@/features/chat";
 
 const NAV_LINKS = [
   { key: "play",        href: "/play" },
@@ -33,7 +34,7 @@ function NavLink({ href, label, pathname }: { href: string; label: string; pathn
 
 // == USERMENU ==
 
-function UserMenu({ username, onLogout }: { username: string; onLogout: () => void }) {
+function UserMenu({ username, onLogout, unreadMessages }: { username: string; onLogout: () => void; unreadMessages: number }) {
   const { t } = useTranslation('nav');
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -62,7 +63,7 @@ function UserMenu({ username, onLogout }: { username: string; onLogout: () => vo
       {isOpen && (
         <ul className="absolute right-0 top-full mt-1 min-w-[10rem] bg-black border border-muted z-50">
           <li><Link to="/profile"          onClick={() => setIsOpen(false)} className={itemClass}>{t('profile')}</Link></li>
-          <li><Link to="/chat" onClick={() => setIsOpen(false)} className={itemClass}>Chat</Link></li>
+          <li><Link to="/chat"             onClick={() => setIsOpen(false)} className={itemClass}>{t('chat')}</Link></li>
           <li><Link to="/friends"          onClick={() => setIsOpen(false)} className={itemClass}>{t('friends')}</Link></li>
           <li><Link to="/friends/requests" onClick={() => setIsOpen(false)} className={itemClass}>{t('requests')}</Link></li>
           <li><Link to="/settings"         onClick={() => setIsOpen(false)} className={itemClass}>{t('settings')}</Link></li>
@@ -82,10 +83,11 @@ function UserMenu({ username, onLogout }: { username: string; onLogout: () => vo
 
 // == MOBILEMENU ==
 
-function MobileMenu({ pathname, user, onLogout }: {
+function MobileMenu({ pathname, user, onLogout, unreadMessages }: {
   pathname: string;
   user: { username: string } | null;
   onLogout: () => void;
+  unreadMessages: number;
 }) {
   const { t } = useTranslation('nav');
   const linkClass = "block w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-100";
@@ -110,7 +112,7 @@ function MobileMenu({ pathname, user, onLogout }: {
         {user ? (
           <>
             <Link to="/profile"          className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('profile')}</Link>
-            <Link to="/chat" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>Chat</Link>
+            <Link to="/chat"             className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('chat')}</Link>
             <Link to="/friends"          className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('friends')}</Link>
             <Link to="/friends/requests" className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('requests')}</Link>
             <Link to="/settings"         className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('settings')}</Link>
@@ -132,7 +134,7 @@ export default function Navbar() {
   const { t } = useTranslation('nav');
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, unreadMessages } = useAuth();
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
@@ -142,6 +144,7 @@ export default function Navbar() {
         <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none">🚗 Typerun</Link>
 
         <div className="sm:hidden flex items-center gap-2">
+          <ChatNotif/>
           <LanguageSwitcher />
           <button
             type="button"
@@ -160,9 +163,10 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden sm:flex items-center gap-1">
+          <ChatNotif/>
           <LanguageSwitcher />
           {user ? (
-            <UserMenu username={user.username} onLogout={logout} />
+            <UserMenu username={user.username} onLogout={logout} unreadMessages={unreadMessages} />
           ) : (
             <Link to="/signin"
               className="px-3 py-1 text-xs uppercase tracking-widest text-dim hover:text-default hover:bg-muted transition-colors duration-100">
@@ -173,7 +177,7 @@ export default function Navbar() {
 
       </div>
 
-      {menuOpen && <MobileMenu pathname={pathname} user={user} onLogout={logout} />}
+      {menuOpen && <MobileMenu pathname={pathname} user={user} onLogout={logout} unreadMessages={unreadMessages} />}
     </nav>
   );
 }

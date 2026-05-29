@@ -5,12 +5,18 @@ import './index.css'
 import '@/features/i18n/index.ts'
 import App from './App.tsx'
 import { AuthProvider } from '@/features/auth'
+import { StatusProvider } from '@/features/status'
+import { ChatProvider } from '@/features/chat'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <StatusProvider>
+          <ChatProvider>
+            <App />
+          </ChatProvider>
+        </StatusProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
