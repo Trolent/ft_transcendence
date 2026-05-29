@@ -11,7 +11,12 @@ export function ChatNotif() {
       to="/chat"
       className="flex items-center gap-1 px-3 py-1 text-xs uppercase tracking-widest text-dim hover:text-default hover:bg-muted transition-colors duration-100"
     >
-      ✉️ [{unreadMessages}]
+      <span className="relative">
+        ✉️
+        {unreadMessages > 0 && (
+          <span className="absolute -top-1 -right-1.5 w-2 h-2 bg-red-500" />
+        )}
+      </span>
     </Link>
   );
 }
