@@ -6,6 +6,22 @@ export type UserStats = UserStatsDto;
 export type UserAchievement = UserAchievementDto;
 export type UserProfile = UserProfileDto;
 
+export type PaginatedResponse<T> = {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNext: boolean;
+};
+
+export type UserSearchResult = {
+  id: number;
+  username: string;
+  avatarUrl: string | null;
+  status: string;
+};
+
 export type MatchPlayer = {
   position: number | null;
   wpm: number | null;
@@ -35,12 +51,14 @@ export async function getUserProfile(username: string): Promise<UserProfile> {
   return handleResponse<UserProfile>(res);
 }
 
-export async function getUserHistory(username: string): Promise<HistoryEntry[]> {
-  const res = await fetch(`${API_USERS}/${encodeURIComponent(username)}/history`, {
-    headers: authHeaders(),
-  });
-  return handleResponse<HistoryEntry[]>(res);
+export async function getUserHistory( username: string, page = 1, limit = 10): Promise<{ data: HistoryEntry[]; total: number; totalPages: number }> {
+  const res = await fetch(
+    `${API_USERS}/${encodeURIComponent(username)}/history?page=${page}&limit=${limit}`, {
+      headers: authHeaders()
+    });
+  return handleResponse<{ data: HistoryEntry[]; total: number; totalPages: number }>(res);
 }
+
 
 export async function updateMyBio(bio: string): Promise<{ bio: string | null }> {
   const res = await fetch(`${API_USERS}/me`, {
@@ -73,6 +91,18 @@ export async function updateSettings(
     body: JSON.stringify(payload),
   });
   return handleResponse<{ email?: string; language?: string }>(res);
+}
+
+export async function searchUsers(
+  q: string,
+  page: number,
+  limit = 10,
+): Promise<PaginatedResponse<UserSearchResult>> {
+  const params = new URLSearchParams({ q, page: String(page), limit: String(limit) });
+  const res = await fetch(`${API_USERS}/search?${params}`, {
+    headers: authHeaders(),
+  });
+  return handleResponse<PaginatedResponse<UserSearchResult>>(res);
 }
 
 export async function uploadAvatar(file: File): Promise<{ avatarUrl: string }> {

@@ -1,8 +1,14 @@
 import { Injectable, ConflictException, NotFoundException, UnauthorizedException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { UpdateProfileDto, UpdateSettingsDto } from './dto';
+import { UpdateProfileDto, UpdateSettingsDto } from './dto'
 import { AchievementService } from '../achievement/achievement.service';
+import { PaginatedResponse } from '../common/dto/paginated-response.dto';
+import { UserSearchDto } from '../common/dto/users-response.dto';
+
+const SEARCH_DEFAULT_LIMIT = 10;
+const SEARCH_MAX_LIMIT = 50;
 
 @Injectable()
 export class UsersService {
@@ -155,13 +161,15 @@ export class UsersService {
     });
   }
 
-  async getHistory(username: string) {
+  async getHistory(username: string, page = 1, limit = 20) {
     const user = await this.prisma.user.findUnique({ where: { username } });
     if (!user)
       throw new NotFoundException('USER_NOT_FOUND');
 
-    return this.prisma.matchResult.findMany({
-      where: { userId: user.id },
+    const where = { userId: user.id };
+    const total = await this.prisma.matchResult.count({ where });
+    const data  = await this.prisma.matchResult.findMany({
+      where,
       select: {
         wpm: true, position: true, finishedAt: true,
         match: {
@@ -172,7 +180,7 @@ export class UsersService {
                 position: true,
                 wpm: true,
                 user: {
-                  select: { id: true, username: true, avatarUrl: true },
+                  select: { id: true, username: true, avatarUrl: true }
                 },
               },
             },
@@ -180,8 +188,11 @@ export class UsersService {
         },
       },
       orderBy: { finishedAt: 'desc' },
-      take: 20,
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    return { data, total, totalPages: Math.ceil(total / limit) };
   }
 
   async updateAvatar(username: string, avatarUrl: string) {
@@ -198,6 +209,29 @@ export class UsersService {
       data: { bio:dto.bio },
       select: { bio:true }
     })
+  }
+
+  async searchUsers(query: string, page: number, limit: number): Promise<PaginatedResponse<UserSearchDto>> {
+    const safeLimit = Math.min(limit, SEARCH_MAX_LIMIT);
+    const offset = (page - 1) * safeLimit;
+    const where: Prisma.UserWhereInput = {
+      username: { contains: query, mode: Prisma.QueryMode.insensitive },
+    };
+
+    const [data, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        select: { id: true, username: true, avatarUrl: true, status: true },
+        skip: offset,
+        take: safeLimit,
+        orderBy: { username: 'asc' },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / safeLimit);
+
+    return { data, total, page, limit: safeLimit, totalPages, hasNext: page < totalPages };
   }
 
   async updateSettings(username : string, dto: UpdateSettingsDto) {

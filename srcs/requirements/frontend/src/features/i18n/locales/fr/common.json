@@ -7,6 +7,11 @@
     "prev": "Préc",
     "next": "Suiv"
   },
+  "search": {
+    "placeholder": "Rechercher un joueur...",
+    "empty": "Aucun joueur trouvé.",
+    "min_chars": "Saisissez au moins 3 caractères pour rechercher."
+  },
   "find": "Trouver",
   "errors": {
     "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
@@ -28,10 +33,12 @@
     "NO_FILE_PROVIDED": "Aucun fichier fourni.",
     "AVATAR_TOO_LARGE": "Le fichier avatar est trop volumineux.",
     "AVATAR_MIMETYPE_NOT_ALLOWED": "Type de fichier non autorisé.",
+    "MISSING_SEARCH_QUERY": "La recherche ne peut pas être vide.",
     "MISSING_USERS_PARAM": "Paramètre utilisateur manquant.",
     "USERNAME_CANNOT_CONTAIN_AT": "Le nom d'utilisateur ne peut pas contenir @.",
     "INVALID_CURRENT_PASSWORD": "Mot de passe actuel incorrect.",
     "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis.",
-    "ACTION_FAILED": "Une erreur est survenue."
+    "ACTION_FAILED": "Une erreur est survenue.",
+    "TOKEN_STALE": "Votre session a expiré, veuillez vous reconnecter."
   }
 }

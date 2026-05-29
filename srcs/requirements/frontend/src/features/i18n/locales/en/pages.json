@@ -3,10 +3,14 @@
     "title": "LEADERBOARD",
     "loading": "Loading...",
     "empty": "No players yet",
+    "search_placeholder": "Search a player...",
+    "search_empty": "No players match your search.",
     "error": "Failed to load leaderboard.",
     "wpm": "{{wpm}} WPM",
     "level": "level: {{level}}",
-    "games": "games: {{count}}"
+    "games": "games: {{count}}",
+    "sort_desc": "Highest WPM first",
+    "sort_asc": "Lowest WPM first"
   },
   "settings": {
     "title": "SETTINGS",
@@ -75,6 +79,8 @@
     "requests_title": "FRIEND REQUESTS",
     "list_heading": "Friends [{{count}}]",
     "no_friends": "No friends yet.",
+    "search_placeholder": "Search a friend...",
+    "search_empty": "No friends match your search.",
     "error_load": "Unable to load friends.",
     "incoming_heading": "Incoming [{{count}}]",
     "pending_heading": "Pending [{{count}}]",
@@ -137,8 +143,9 @@
     "error_load": "Unable to load chats",
     "message_placeholder": "Type a message…",
     "send": "Send",
-    "you": "You",
+    "you": "Me",
     "open": "Open",
-    "no_chat_selected": "No chat selected."
+    "no_chat_selected": "No chat selected.",
+    "view_profile": "View Profile"
   }
 }
