@@ -37,7 +37,7 @@ export default function FriendRequests() {
         <Status status={getStatus(item.status, item.id as number, item.username)} />
       </Link>
       <Btn variant="primary" size="sm" onClick={() => handleAddFriend(item)}>
-        {t('profile.add_friend_short')}
+        {t('profile.add_friend')}
       </Btn>
     </div>
   ), [t, getStatus, handleAddFriend]);
