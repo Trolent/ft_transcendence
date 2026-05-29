@@ -56,6 +56,7 @@ export function useRaceSocket() {
 	const [results, setResults]           = useState<RaceResult[] | null>(null);
 	const [myPosition, setMyPosition]     = useState<number | null>(null);
 	const [leftNotice, setLeftNotice]     = useState<LeftNotice | null>(null);
+	const [rejected, setRejected]         = useState<string | null>(null);
 
 	const teardown = useCallback(() => {
 		const s = socketRef.current;
@@ -78,6 +79,7 @@ export function useRaceSocket() {
 		setResults(null);
 		setMyPosition(null);
 		setLeftNotice(null);
+		setRejected(null);
 	}, []);
 
 	// Connect, join matchmaking and wire all server -> client events.
@@ -106,6 +108,14 @@ export function useRaceSocket() {
 
 		socket.on("disconnect", () => {
 			setConnected(false);
+		});
+
+		// Server refused this socket (e.g. this account is already racing in
+		// another tab). Tear down and surface why; the active tab is untouched.
+		socket.on("join_rejected", (payload: { reason: string }) => {
+			setRejected(payload?.reason ?? "rejected");
+			setPhase("idle");
+			teardown();
 		});
 
 		socket.on("lobby_update", (payload: LobbyUpdatePayload) => {
@@ -219,6 +229,7 @@ export function useRaceSocket() {
 		results,
 		myPosition,
 		leftNotice,
+		rejected,
 		joinQueue,
 		leaveQueue,
 		sendProgress,

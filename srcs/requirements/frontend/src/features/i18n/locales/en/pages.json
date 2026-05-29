@@ -118,6 +118,8 @@
     "cancel": "Cancel",
     "player_left": "{{name}} left the race.",
     "race_voided": "Race cancelled — not enough players.",
+    "already_in_game": "You're already in a race in another tab.",
+    "join_failed": "Couldn't join the race. Please try again.",
     "guest": "Guest",
     "starting_in": "Starting in {{n}}…"
   },

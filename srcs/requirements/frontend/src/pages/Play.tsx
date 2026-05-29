@@ -125,6 +125,23 @@ export default function Play() {
     </div>
   );
 
+  // Server refused the join (e.g. this account is already racing in another
+  // tab). Show why and offer a way back; don't sit on the joining screen.
+  if (race.rejected) {
+    return (
+      <div className="w-full flex flex-col items-center gap-3">
+        {topBar(t('play.main_menu'), backToMenu)}
+        <div className="w-full max-w-3xl px-2 sm:px-4">
+          <Alert variant="error">
+            {race.rejected === "duplicate_session"
+              ? t('play.already_in_game')
+              : t('play.join_failed')}
+          </Alert>
+        </div>
+      </div>
+    );
+  }
+
   // Still connecting / no lobby snapshot yet: brief joining screen.
   if (race.phase === "idle" || race.matchText == null) {
     return (

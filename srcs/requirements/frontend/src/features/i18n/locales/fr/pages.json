@@ -118,6 +118,8 @@
     "cancel": "Annuler",
     "player_left": "{{name}} a quitté la course.",
     "race_voided": "Course annulée — pas assez de joueurs.",
+    "already_in_game": "Vous êtes déjà dans une course dans un autre onglet.",
+    "join_failed": "Impossible de rejoindre la course. Veuillez réessayer.",
     "guest": "Invité",
     "starting_in": "Départ dans {{n}}…"
   },

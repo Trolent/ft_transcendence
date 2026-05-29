@@ -88,9 +88,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	const input = this.resolveJoin(client);
 	if (!input)
 		return;
-	const room = this.gameService.assign(input);
-	if (room)
-		client.join(room.id);
+	const result = this.gameService.assign(input);
+	if (result.status === 'joined')
+		client.join(result.room.id);
+	else if (result.status === 'duplicate_session')
+		client.emit('join_rejected', { reason: 'duplicate_session' });
   }
 
   @UseGuards(WsJwtGuard)

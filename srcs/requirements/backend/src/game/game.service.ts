@@ -33,6 +33,14 @@ export type JoinInput = {
 	avatarUrl: string | null;
 };
 
+// Outcome of a matchmaking request. 'busy' = this socket is already in a room;
+// 'duplicate_session' = this logged-in user is already live in a room (e.g. a
+// second browser tab), so the new socket is refused.
+export type AssignResult =
+	| { status: 'joined'; room: RoomState }
+	| { status: 'busy' }
+	| { status: 'duplicate_session' };
+
 function generateRoomID(): string {
 	return Math.random().toString(36).substring(2, 7).toUpperCase();
 }
@@ -94,6 +102,17 @@ export class GameService {
 		return n;
 	}
 
+	// A logged-in user may only occupy one live slot at a time (prevents the
+	// same account joining a room from two tabs). Mid-race leavers have a null
+	// socketId and so don't block a fresh join.
+	private userInRoom(userId: number): boolean {
+		for (const room of this.rooms.values())
+			for (const p of room.players.values())
+				if (p.kind === 'user' && p.userId === userId && p.socketId !== null)
+					return true;
+		return false;
+	}
+
 	private makePid(kind: ParticipantKind, userId: number | null): string {
 		if (kind === 'user') return `u${userId}`;
 		if (kind === 'guest') return `g${Math.random().toString(36).slice(2, 9)}`;
@@ -102,9 +121,12 @@ export class GameService {
 
 	// --------------------------------------------------------------- matchmaking
 	// Returns the room the socket should join (the gateway does socket.join), or
-	// null if the socket is already busy.
-	assign(input: JoinInput): RoomState | null {
-		if (this.isInRoom(input.socketId)) return null;
+	// a rejection status if the socket is already busy or the user is already
+	// live in another room (e.g. a second browser tab).
+	assign(input: JoinInput): AssignResult {
+		if (this.isInRoom(input.socketId)) return { status: 'busy' };
+		if (input.kind === 'user' && input.userId != null && this.userInRoom(input.userId))
+			return { status: 'duplicate_session' };
 
 		const participant: Participant = {
 			pid: this.makePid(input.kind, input.userId),
@@ -124,7 +146,7 @@ export class GameService {
 		if (!existing) {
 			const room = this.createRoom(participant);
 			this.emitLobbyUpdate(room);
-			return room;
+			return { status: 'joined', room };
 		}
 
 		this.addParticipant(existing, participant);
@@ -133,7 +155,7 @@ export class GameService {
 			this.startCountdown(existing);
 		else
 			this.emitLobbyUpdate(existing);
-		return existing;
+		return { status: 'joined', room: existing };
 	}
 
 	private findJoinableRoom(): RoomState | undefined {

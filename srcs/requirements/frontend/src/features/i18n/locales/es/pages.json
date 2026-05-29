@@ -118,6 +118,8 @@
     "cancel": "Cancelar",
     "player_left": "{{name}} abandonó la carrera.",
     "race_voided": "Carrera cancelada — no hay suficientes jugadores.",
+    "already_in_game": "Ya estás en una carrera en otra pestaña.",
+    "join_failed": "No se pudo unir a la carrera. Inténtalo de nuevo.",
     "guest": "Invitado",
     "starting_in": "Comienza en {{n}}…"
   },
