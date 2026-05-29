@@ -127,8 +127,12 @@ export class UsersController {
     @ApiResponse({ status: 200, schema: { example: [{ wpm: 85, position: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox' } }] } })
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get(':username/history')
-    getHistory(@Param('username') username: string) {
-        return this.UsersService.getHistory(username);
+    getHistory(
+        @Param('username') username: string,
+        @Query('page') page = '1',
+        @Query('limit') limit = '20',
+    ) {
+        return this.UsersService.getHistory(username, parseInt(page), parseInt(limit));
     }
 
     @ApiBearerAuth()

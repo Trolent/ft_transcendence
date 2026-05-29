@@ -143,8 +143,9 @@
     "error_load": "No se pudieron cargar las conversaciones",
     "message_placeholder": "Escribe un mensaje…",
     "send": "Enviar",
-    "you": "Tú",
+    "you": "Yo",
     "open": "Abrir",
-    "no_chat_selected": "Ninguna conversación seleccionada."
+    "no_chat_selected": "Ninguna conversación seleccionada.",
+    "view_profile": "Ver perfil"
   }
 }

@@ -6,10 +6,11 @@ import { NewChat } from ".";
 
 interface ChatsListProps {
   onSelectChat: (username: string) => void;
+  selectedUsername?: string | null;
   refreshKey?: number;
 }
 
-export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
+export function ChatsList({ onSelectChat, selectedUsername, refreshKey }: ChatsListProps) {
   const { t } = useTranslation('pages');
   const [chats, setChats] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,6 +61,9 @@ export function ChatsList({ onSelectChat, refreshKey }: ChatsListProps) {
         <List
           className="mt-4"
           items={chats.map((c) => ({ ...c, id: c.user.id }))}
+          getItemClassName={(item) =>
+            item.user.username === selectedUsername ? "!border-2 !border-default" : ""
+          }
           renderItem={(item) => {
             return (
               <button

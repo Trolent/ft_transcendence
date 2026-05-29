@@ -38,6 +38,7 @@
     "USERNAME_CANNOT_CONTAIN_AT": "Le nom d'utilisateur ne peut pas contenir @.",
     "INVALID_CURRENT_PASSWORD": "Mot de passe actuel incorrect.",
     "CURRENT_PASSWORD_REQUIRED": "Le mot de passe actuel est requis.",
-    "ACTION_FAILED": "Une erreur est survenue."
+    "ACTION_FAILED": "Une erreur est survenue.",
+    "TOKEN_STALE": "Votre session a expiré, veuillez vous reconnecter."
   }
 }

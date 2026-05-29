@@ -4,3 +4,4 @@ export { default as Stats } from "./Stats";
 export { default as History } from "./History";
 export { default as AvatarUpload } from './AvatarUpload';
 export { default as Achievements } from './Achievements';
+export { default as ProfileHeader } from './ProfileHeader';

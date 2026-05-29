@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Heading, Text, Avatar, Alert, Status, PageLayout, PageWithSidebar, Sidebar } from "@/components";
+import { Alert, PageLayout, PageWithSidebar, Sidebar } from "@/components";
 import { tError } from "@/features/i18n";
 import { useAuth, useIsOwnProfile } from "@/features/auth";
-import { getUserProfile, getUserHistory, type UserProfile, type HistoryEntry } from "@/api/users.api";
+import { getUserProfile, type UserProfile } from "@/api/users.api";
 import { FriendsList } from "@/features/friends";
-import { FriendActions, Bio, Stats, History, AvatarUpload, Achievements } from "@/features/profile";
+import { Bio, Stats, History, Achievements, ProfileHeader } from "@/features/profile";
 import { useStatus } from "@/hooks/useStatus";
 
 export default function Profile() {
@@ -15,7 +15,6 @@ export default function Profile() {
   const { user: me } = useAuth();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [friendsRefreshKey, setFriendsRefreshKey] = useState(0);
@@ -30,13 +29,9 @@ export default function Profile() {
     setLoading(true);
     setError(null);
 
-    Promise.all([
-      getUserProfile(targetUsername),
-      getUserHistory(targetUsername),
-    ])
-      .then(([prof, hist]) => {
+    getUserProfile(targetUsername)
+      .then((prof) => {
         setProfile(prof);
-        setHistory(hist);
       })
       .catch((err) => setError(tError(err.message, t)))
       .finally(() => setLoading(false));
@@ -77,32 +72,14 @@ export default function Profile() {
     >
       <div className="flex flex-col gap-6">
 
-        <div className="flex flex-col sm:flex-row items-start gap-5">
-          {isOwnProfile ? (
-            <AvatarUpload
-              username={profile.username}
-              src={profile.avatarUrl}
-              onAvatarChange={(url) => setProfile((prev) => prev ? { ...prev, avatarUrl: url } : prev)}
-            />
-          ) : (
-            <Avatar username={profile.username} src={profile.avatarUrl ?? undefined} size="xl" />
-          )}
-
-          <div className="flex flex-col gap-4 flex-1">
-            <div>
-              <Heading level={1}><Status status={displayedStatus} hoverText={displayedStatus}/> {profile.username}</Heading>
-              {createdAt && (
-                <Text variant="muted" size="xs">{t('profile.created_on', { date: createdAt })}</Text>
-              )}
-            </div>
-            {me != null && !isOwnProfile && (
-              <FriendActions
-                username={profile.username}
-                onFriendRemoved={() => setFriendsRefreshKey((prev) => prev + 1)}
-              />
-            )}
-          </div>
-        </div>
+        <ProfileHeader
+          profile={profile}
+          isOwnProfile={isOwnProfile}
+          onAvatarChange={(url) => setProfile((prev) => prev ? { ...prev, avatarUrl: url } : prev)}
+          displayedStatus={displayedStatus}
+          createdAt={createdAt}
+          onFriendRemoved={() => setFriendsRefreshKey((prev) => prev + 1)}
+        />
 
         <Bio
           bio={profile.bio ?? null}
@@ -114,7 +91,7 @@ export default function Profile() {
 
         <Achievements achievements={profile.achievements} />
 
-        <History history={history} />
+        <History username={targetUsername} />
 
       </div>
     </PageWithSidebar>

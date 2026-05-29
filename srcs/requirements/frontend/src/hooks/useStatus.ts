@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 import { useAuth } from "@/features/auth";
+import { useStatusCtx } from "@/features/status";
 import type { UserStatus } from "@backend/common/types";
 
 export function useStatus() {
-  const { user, liveStatuses } = useAuth();
+  const { user } = useAuth();
+  const { liveStatuses } = useStatusCtx();
 
   return useCallback(
     (
