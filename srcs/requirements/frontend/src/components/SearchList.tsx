@@ -17,6 +17,7 @@ interface SearchListProps<T extends ListItem> {
   emptyMessage?: string;
   debounceMs?: number;
   className?: string;
+  excludeUsername?: string;
 }
 
 export function SearchList<T extends ListItem>({
@@ -26,11 +27,14 @@ export function SearchList<T extends ListItem>({
   emptyMessage,
   debounceMs = 300,
   className = '',
+  excludeUsername,
 }: SearchListProps<T>) {
   const { t } = useTranslation('common');
   const { query, setQuery, page, setPage, items, totalPages, loading, error, tooShort } =
     usePaginatedSearch(fetchFn, debounceMs);
-
+  const visibleItems = excludeUsername
+    ? items.filter((item) => item.username !== excludeUsername)
+    : items;
   return (
     <div className={['flex flex-col gap-4', className].join(' ')}>
       <Input
@@ -54,10 +58,10 @@ export function SearchList<T extends ListItem>({
         </p>
       )}
 
-      {items.length > 0 && (
+      {visibleItems.length > 0 && (
         <>
           <List
-            items={items}
+            items={visibleItems}
             renderItem={(item) => renderItem(item)}
           />
           {totalPages > 1 && (

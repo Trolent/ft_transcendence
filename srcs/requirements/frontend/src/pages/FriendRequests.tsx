@@ -7,13 +7,14 @@ import { sendFriendRequest } from "@/api/friends.api";
 import { searchUsers, type UserSearchResult } from "@/api/users.api";
 import { tError } from "@/features/i18n";
 import { useStatus } from "@/hooks/useStatus";
+import { useAuth } from "@/features/auth";
 
 export default function FriendRequests() {
   const { t } = useTranslation('pages');
   const [refreshKey, setRefreshKey] = useState(0);
   const [actionError, setActionError] = useState<string | null>(null);
   const getStatus = useStatus();
-
+  const {user: currentUser } = useAuth();
   const handleAddFriend = useCallback(async (user: UserSearchResult) => {
     setActionError(null);
     try {
@@ -49,6 +50,7 @@ export default function FriendRequests() {
           <SearchList
             fetchFn={searchUsers}
             renderItem={renderItem}
+            excludeUsername={currentUser?.username}
           />
           {actionError && (
             <Text variant="error" className="mt-2 text-sm">{actionError}</Text>

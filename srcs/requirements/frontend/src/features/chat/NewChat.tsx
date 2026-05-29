@@ -47,6 +47,7 @@ export function NewChat({ onSelectChat }: NewChatProps) {
         <SearchList
           fetchFn={searchUsers}
           renderItem={renderItem}
+          excludeUsername={user?.username}
         />
         <FriendsList username={user?.username ?? ""} showMsgBtn className="mt-3"/>
       </Modal>
