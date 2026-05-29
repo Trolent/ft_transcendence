@@ -34,7 +34,7 @@ function NavLink({ href, label, pathname }: { href: string; label: string; pathn
 
 // == USERMENU ==
 
-function UserMenu({ username, onLogout, unreadMessages }: { username: string; onLogout: () => void; unreadMessages: number }) {
+function UserMenu({ username, onLogout }: { username: string; onLogout: () => void }) {
   const { t } = useTranslation('nav');
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -83,11 +83,10 @@ function UserMenu({ username, onLogout, unreadMessages }: { username: string; on
 
 // == MOBILEMENU ==
 
-function MobileMenu({ pathname, user, onLogout, unreadMessages }: {
+function MobileMenu({ pathname, user, onLogout }: {
   pathname: string;
   user: { username: string } | null;
   onLogout: () => void;
-  unreadMessages: number;
 }) {
   const { t } = useTranslation('nav');
   const linkClass = "block w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-100";
@@ -134,7 +133,7 @@ export default function Navbar() {
   const { t } = useTranslation('nav');
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
-  const { user, logout, unreadMessages } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
@@ -166,7 +165,7 @@ export default function Navbar() {
           <ChatNotif/>
           <LanguageSwitcher />
           {user ? (
-            <UserMenu username={user.username} onLogout={logout} unreadMessages={unreadMessages} />
+            <UserMenu username={user.username} onLogout={logout} />
           ) : (
             <Link to="/signin"
               className="px-3 py-1 text-xs uppercase tracking-widest text-dim hover:text-default hover:bg-muted transition-colors duration-100">
@@ -177,7 +176,7 @@ export default function Navbar() {
 
       </div>
 
-      {menuOpen && <MobileMenu pathname={pathname} user={user} onLogout={logout} unreadMessages={unreadMessages} />}
+      {menuOpen && <MobileMenu pathname={pathname} user={user} onLogout={logout} />}
     </nav>
   );
 }
