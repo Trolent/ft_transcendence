@@ -19,6 +19,7 @@ export default function Leaderboard() {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const tooShort = query.trim().length > 0 && query.trim().length < 3;
@@ -43,7 +44,7 @@ export default function Leaderboard() {
     setLoading(true);
     setError(null);
 
-    getLeaderboard(currentPage, LIMIT, debouncedQuery)
+    getLeaderboard(currentPage, LIMIT, debouncedQuery, sortOrder)
       .then((response) => {
         if (cancelled) return;
         setPlayers(response.data.map((entry) => ({ ...entry, id: entry.username })));
@@ -57,7 +58,7 @@ export default function Leaderboard() {
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
-  }, [currentPage, debouncedQuery]);
+  }, [currentPage, debouncedQuery, sortOrder]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -74,6 +75,14 @@ export default function Leaderboard() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      <select
+        className="mt-2"
+        value={sortOrder}
+        onChange={(e) => { setSortOrder(e.target.value as 'asc' | 'desc'); setCurrentPage(1); }}
+      >
+        <option value="desc">{t('leaderboard.sort_desc')}</option>
+        <option value="asc">{t('leaderboard.sort_asc')}</option>
+      </select>
 
       {tooShort && (
         <Text className="mt-6" variant="muted">{t('common:search.min_chars')}</Text>

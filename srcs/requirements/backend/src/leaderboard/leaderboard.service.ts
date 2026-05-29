@@ -11,7 +11,7 @@ export class LeaderBoardService {
   constructor(private prisma: PrismaService) {}
 
   // wrap LeaderboardEntry in PaginatedResponse to get the total nb of pages
-  async getLeaderboard(page: number, limit: number, query?: string): Promise<PaginatedResponse<LeaderboardEntryDto>> {
+  async getLeaderboard(page: number, limit: number, query?: string, sortOrder: 'asc' | 'desc' = 'desc' ): Promise<PaginatedResponse<LeaderboardEntryDto>> {
     const safeLimit = Math.min(limit, LEADERBOARD_MAX_LIMIT);
     const offset   = (page - 1) * safeLimit;
 
@@ -36,7 +36,7 @@ export class LeaderBoardService {
         where: groupByWhere,
         _avg: { wpm: true },
         _count: { id: true },
-        orderBy: { _avg: { wpm: 'desc' } },
+        orderBy: { _avg: { wpm: sortOrder } },
         skip: offset,
         take: safeLimit,
       }),

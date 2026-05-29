@@ -8,7 +8,9 @@
     "error": "No se pudo cargar la clasificación.",
     "wpm": "{{wpm}} PPM",
     "level": "nivel: {{level}}",
-    "games": "partidas: {{count}}"
+    "games": "partidas: {{count}}",
+    "sort_desc": "Mayor PPM primero",
+    "sort_asc": "Menor PPM primero"
   },
   "settings": {
     "title": "AJUSTES",

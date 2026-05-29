@@ -8,7 +8,9 @@
     "error": "Failed to load leaderboard.",
     "wpm": "{{wpm}} WPM",
     "level": "level: {{level}}",
-    "games": "games: {{count}}"
+    "games": "games: {{count}}",
+    "sort_desc": "Highest WPM first",
+    "sort_asc": "Lowest WPM first"
   },
   "settings": {
     "title": "SETTINGS",

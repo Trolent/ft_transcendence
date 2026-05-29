@@ -8,7 +8,9 @@
     "error": "Impossible de charger le classement.",
     "wpm": "{{wpm}} MPM",
     "level": "niveau : {{level}}",
-    "games": "parties : {{count}}"
+    "games": "parties : {{count}}",
+    "sort_desc": "MPM décroissant",
+    "sort_asc": "MPM croissant"
   },
   "settings": {
     "title": "PARAMÈTRES",
