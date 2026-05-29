@@ -108,7 +108,10 @@ export default function Leaderboard() {
                 to={`/profile/${item.username}`}
                 className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
               >
-                <Heading level={4}>#{item.rank}</Heading>
+                {!debouncedQuery.trim() 
+                  ? <Heading level={4}>#{item.rank}</Heading>
+                  : <Heading level={4}>-</Heading>
+                }
                 <Avatar username={item.username} src={item.avatarUrl ?? undefined} size="sm" />
                 <div className="min-w-0 flex-1">
                   <Text className="truncate">{item.username}</Text>
