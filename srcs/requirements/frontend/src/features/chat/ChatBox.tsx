@@ -13,7 +13,7 @@ interface ChatBoxProps {
 export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
-  const { chatSocket, clearUnreadMessages } = useChat();
+  const { chatSocket, clearUnreadMessages } = useChatCtx();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
