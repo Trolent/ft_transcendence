@@ -143,7 +143,7 @@ export default function Navbar() {
         <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none">🚗 Typerun</Link>
 
         <div className="sm:hidden flex items-center gap-2">
-          <ChatNotif/>
+          {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           <button
             type="button"
@@ -162,7 +162,7 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden sm:flex items-center gap-1">
-          <ChatNotif/>
+          {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           {user ? (
             <UserMenu username={user.username} onLogout={logout} />
