@@ -15,4 +15,7 @@ export class PaginatedResponse<T> {
 
   @ApiProperty()
   totalPages: number;
+
+  @ApiProperty()
+  hasNext: boolean;
 }

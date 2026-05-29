@@ -8,9 +8,10 @@ import type { Friend } from "./types";
 
 interface IncomingRequestsProps {
   className?: string;
+  refreshKey?: number;
 }
 
-export default function IncomingRequests({ className = "" }: IncomingRequestsProps) {
+export default function IncomingRequests({ className = "", refreshKey }: IncomingRequestsProps) {
   const { t } = useTranslation('pages');
   const [requests, setRequests] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,7 @@ export default function IncomingRequests({ className = "" }: IncomingRequestsPro
       )
       .catch((err: unknown) => setError(err instanceof Error ? tError(err.message, t) : t('friends.error_requests')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   function handleAccept(username: string) {
     acceptFriendRequest(username)

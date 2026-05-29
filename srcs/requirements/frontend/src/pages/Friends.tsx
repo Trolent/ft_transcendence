@@ -10,7 +10,7 @@ export default function Friends() {
 
   return (
     <PageLayout maxWidth="max-w-lg">
-        <FriendsList username={user.username} showMsgBtn showRequestsBtn/>
+        <FriendsList username={user.username} showMsgBtn showRequestsBtn showSearchBar/>
     </PageLayout>
   )
 }

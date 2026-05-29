@@ -24,3 +24,10 @@ export class AvatarResponseDto {
     @ApiProperty({ example: 'https://cloudinary.com/avatar.jpg' })
     avatarUrl: string;
 }
+
+export class UserSearchDto {
+    @ApiProperty({ example: 1 }) id: number;
+    @ApiProperty({ example: 'johndoe' }) username: string;
+    @ApiProperty({ example: 'https://cloudinary.com/avatar.jpg', nullable: true }) avatarUrl: string | null;
+    @ApiProperty({ example: 'ONLINE' }) status: string;
+}

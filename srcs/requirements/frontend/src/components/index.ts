@@ -13,7 +13,8 @@ export { default as TextArea }              from "./TextArea";
 export { Pagination }                       from "./Pagination";
 export { Status }                           from './Status';
 export { LanguageSwitcher }                 from "./LanguageSwitcher";
-export { default as Modal }                 from "./Modal";
+export { default as Modal }                from "./Modal";
+export { SearchList }                      from "./SearchList";
 export { FindUser }                         from "./FindUser";
 
 /* layout */

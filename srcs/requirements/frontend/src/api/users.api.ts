@@ -6,6 +6,22 @@ export type UserStats = UserStatsDto;
 export type UserAchievement = UserAchievementDto;
 export type UserProfile = UserProfileDto;
 
+export type PaginatedResponse<T> = {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNext: boolean;
+};
+
+export type UserSearchResult = {
+  id: number;
+  username: string;
+  avatarUrl: string | null;
+  status: string;
+};
+
 export type MatchPlayer = {
   position: number | null;
   wpm: number | null;
@@ -75,6 +91,18 @@ export async function updateSettings(
     body: JSON.stringify(payload),
   });
   return handleResponse<{ email?: string; language?: string }>(res);
+}
+
+export async function searchUsers(
+  q: string,
+  page: number,
+  limit = 10,
+): Promise<PaginatedResponse<UserSearchResult>> {
+  const params = new URLSearchParams({ q, page: String(page), limit: String(limit) });
+  const res = await fetch(`${API_USERS}/search?${params}`, {
+    headers: authHeaders(),
+  });
+  return handleResponse<PaginatedResponse<UserSearchResult>>(res);
 }
 
 export async function uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
