@@ -10,6 +10,7 @@ interface ListProps<T extends ListItem> {
   renderItem: (item: T, index: number) => React.ReactNode;
   className?: string;
   containerVariant?: ContainerVariant;
+  getItemClassName?: (item: T, index: number) => string;
 }
 
 export function List<T extends ListItem>({
@@ -17,12 +18,16 @@ export function List<T extends ListItem>({
   renderItem,
   className = "",
   containerVariant,
+  getItemClassName,
 }: ListProps<T>) {
   return (
     <ul className={["flex flex-col gap-3", className].join(" ")}>
       {items.map((item, index) => (
         <li key={item.id}>
-          <Container variant={containerVariant} className="transition-all duration-200 hover:shadow-lg hover:scale-102">
+          <Container
+            variant={containerVariant}
+            className={["transition-all duration-200 hover:shadow-lg hover:scale-102", getItemClassName?.(item, index) ?? ""].join(" ")}
+          >
             {renderItem(item, index)}
           </Container>
         </li>
