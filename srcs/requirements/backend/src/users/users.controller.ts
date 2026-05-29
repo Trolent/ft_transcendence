@@ -35,7 +35,8 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 //SWAGGER
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes } from '@nestjs/swagger';
-import { UserProfileDto, AvatarResponseDto, UserStatsDto } from '../common/dto/users-response.dto';
+import { UserProfileDto, AvatarResponseDto, UserStatsDto, UserSearchDto } from '../common/dto/users-response.dto';
+import { PaginatedResponse } from '../common/dto/paginated-response.dto';
 
 const MAX_PROFILES_REQUEST = 70;
 
@@ -78,6 +79,22 @@ export class UsersController {
         return this.UsersService.updateSettings(user.username, dto)
     }
 
+    @ApiOperation({ summary: 'Search users by username (paginated)' })
+    @ApiQuery({ name: 'q', description: 'Search query', required: true })
+    @ApiQuery({ name: 'page', description: 'Page number', required: false, example: 1 })
+    @ApiQuery({ name: 'limit', description: 'Items per page', required: false, example: 10 })
+    @ApiResponse({ status: 200, description: 'PaginatedResponse<UserSearchDto>' })
+    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Get('search')
+    searchUsers(
+        @Query('q') q: string,
+        @Query('page') page = '1',
+        @Query('limit') limit = '10',
+    ): Promise<PaginatedResponse<UserSearchDto>> {
+        if (!q?.trim()) throw new BadRequestException('MISSING_SEARCH_QUERY');
+        return this.UsersService.searchUsers(q.trim(), Number(page), Number(limit));
+    }
+
     @ApiOperation({ summary: 'Get user profile by username' })
     @ApiResponse({ status: 200, type: UserProfileDto })
     @ApiResponse({ status: 404, description: 'USER_NOT_FOUND' })
@@ -110,8 +127,12 @@ export class UsersController {
     @ApiResponse({ status: 200, schema: { example: [{ wpm: 85, position: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox' } }] } })
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get(':username/history')
-    getHistory(@Param('username') username: string) {
-        return this.UsersService.getHistory(username);
+    getHistory(
+        @Param('username') username: string,
+        @Query('page') page = '1',
+        @Query('limit') limit = '20',
+    ) {
+        return this.UsersService.getHistory(username, parseInt(page), parseInt(limit));
     }
 
     @ApiBearerAuth()

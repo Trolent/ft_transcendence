@@ -3,10 +3,14 @@
     "title": "LEADERBOARD",
     "loading": "Loading...",
     "empty": "No players yet",
+    "search_placeholder": "Search a player...",
+    "search_empty": "No players match your search.",
     "error": "Failed to load leaderboard.",
     "wpm": "{{wpm}} WPM",
     "level": "level: {{level}}",
-    "games": "games: {{count}}"
+    "games": "games: {{count}}",
+    "sort_desc": "Highest WPM first",
+    "sort_asc": "Lowest WPM first"
   },
   "settings": {
     "title": "SETTINGS",
@@ -14,6 +18,9 @@
     "change_email": "Change email",
     "email_label": "New email",
     "email_placeholder": "new@example.com",
+    "set_password": "Set a password",
+    "alert_set_password": "Your account is linked to 42 OAuth only. Set a password to avoid losing access if your 42 account becomes unavailable.",
+    "email_managed_by_oauth": "Your email is managed by your 42 account and cannot be changed here.",
     "change_password": "Change password",
     "current_password_label": "Current password",
     "current_password_placeholder": "Your current password",
@@ -24,7 +31,6 @@
     "change_language": "Change language",
     "saved": "Saved successfully.",
     "error_email_invalid": "Please enter a valid email.",
-    "error_current_password_required": "Please enter your current password.",
     "error_passwords_mismatch": "Passwords do not match.",
     "error_password_too_short": "Password must be at least 8 characters.",
     "default_bio": "No bio yet.",
@@ -50,7 +56,7 @@
     "stat_level": "Level",
     "stat_played": "Played",
     "history_label": "history",
-    "history_empty": "No game played.",
+    "history_empty": "No games played.",
     "add_friend": "+ Add friend",
     "remove_friend": "Remove friend",
     "pending": "Pending",
@@ -62,13 +68,19 @@
     "history_date": "Date",
     "history_pos": "Pos",
     "history_wpm": "WPM",
-    "history_players": "Players"
+    "history_players": "Players",
+    "achievements": "Achievements",
+    "no_achievements": "No achievements yet.",
+    "achievements_show_all": "Show locked",
+    "achievements_hide_locked": "Hide locked"
   },
   "friends": {
     "title": "FRIENDS",
     "requests_title": "FRIEND REQUESTS",
     "list_heading": "Friends [{{count}}]",
     "no_friends": "No friends yet.",
+    "search_placeholder": "Search a friend...",
+    "search_empty": "No friends match your search.",
     "error_load": "Unable to load friends.",
     "incoming_heading": "Incoming [{{count}}]",
     "pending_heading": "Pending [{{count}}]",
@@ -100,8 +112,8 @@
     "stat_time": "Time",
     "stat_accuracy": "Accuracy",
     "stat_position": "Position",
-    "try_again": "Try Again",
-    "race_again": "Race Again",
+    "try_again": "Try again",
+    "race_again": "Race again",
     "hud_time": "Time",
     "hud_wpm": "WPM",
     "ordinals": [
@@ -125,5 +137,19 @@
   },
   "oauth_callback": {
     "connecting": "Connecting…"
+  },
+  "chat": {
+    "title": "Chats",
+    "new_chat": "New chat",
+    "loading": "Loading chat…",
+    "no_messages": "No messages yet",
+    "no_chats": "No chats yet",
+    "error_load": "Unable to load chats",
+    "message_placeholder": "Type a message…",
+    "send": "Send",
+    "you": "Me",
+    "open": "Open",
+    "no_chat_selected": "No chat selected.",
+    "view_profile": "View Profile"
   }
 }

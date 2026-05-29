@@ -1,0 +1,42 @@
+{
+  "first_race": {
+    "label": "Première Course",
+    "description": "Complétez votre première course"
+  },
+  "first_win": {
+    "label": "Première Victoire",
+    "description": "Gagnez votre première course"
+  },
+  "speed_50": {
+    "label": "De Plus en Plus Rapide",
+    "description": "Atteindre 50 WPM dans une course"
+  },
+  "speed_80": {
+    "label": "Dactylographe Rapide",
+    "description": "Atteindre 80 WPM dans une course"
+  },
+  "speed_100": {
+    "label": "Siècle",
+    "description": "Atteindre 100 WPM dans une course"
+  },
+  "veteran_10": {
+    "label": "Régulier",
+    "description": "Complétez 10 courses"
+  },
+  "veteran_50": {
+    "label": "Vétéran",
+    "description": "Complétez 50 courses"
+  },
+  "podium_3": {
+    "label": "Chasseur de Podium",
+    "description": "Terminez 1er dans 3 courses différentes"
+  },
+  "social_1": {
+    "label": "Social",
+    "description": "Ajouter votre premier ami"
+  },
+  "speed_150": {
+    "label": "Maître de la Dactylographie",
+    "description": "Atteindre 150 WPM dans une course"
+  }
+}

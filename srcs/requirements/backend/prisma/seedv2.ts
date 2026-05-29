@@ -1,6 +1,7 @@
 import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
+import { ACHIEVEMENTS } from '../src/common/achievements.constants';
 
 const SEED_USERS       = 999;
 const SEED_MATCHES     = 40;
@@ -16,19 +17,6 @@ const textSnippets = [
   'void *ft_memcpy(void *dest, const void *src, size_t n) copies n bytes from src to dest without overlap checks.',
   'int ft_strncmp(const char *s1, const char *s2, size_t n) compares two strings up to the requested length.',
   'char *ft_strjoin(const char *s1, const char *s2) allocates a fresh string containing both inputs end to end.',
-];
-
-const achievementsData = [
-  { key: 'first_race',  label: 'First Race',    description: 'Complete your first race'         },
-  { key: 'first_win',   label: 'First Win',     description: 'Win your first race'              },
-  { key: 'speed_50',    label: 'Getting Fast',  description: 'Reach 50 WPM in a race'           },
-  { key: 'speed_80',    label: 'Speed Typist',  description: 'Reach 80 WPM in a race'           },
-  { key: 'speed_100',   label: 'Century',       description: 'Reach 100 WPM in a race'          },
-  { key: 'veteran_10',  label: 'Regular',       description: 'Complete 10 races'                },
-  { key: 'veteran_50',  label: 'Veteran',       description: 'Complete 50 races'                },
-  { key: 'podium_3',    label: 'Podium Hunter', description: 'Finish 1st in 3 different races'  },
-  { key: 'social_1',    label: 'Social',        description: 'Add your first friend'            },
-  { key: 'speed_150',   label: 'Type Master',   description: 'Reach 150 WPM in a race'          },
 ];
 
 function randFrom<T>(arr: T[]): T {
@@ -48,11 +36,11 @@ async function main() {
   const statuses     = Object.values(UserStatus);
 
   const achievements = await Promise.all(
-    achievementsData.map(a =>
+    ACHIEVEMENTS.map(a =>
       prisma.achievement.upsert({
         where:  { key: a.key },
         update: {},
-        create: { ...a, iconUrl: null },
+        create: { ...a },
       }),
     ),
   );
@@ -78,7 +66,6 @@ async function main() {
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=default${i + 1}`,
           language:     Language.EN,
           status:       UserStatus.OFFLINE,
-          createdAt:    daysAgo(0),
         },
       }),
     ),
@@ -106,7 +93,6 @@ async function main() {
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
           language:     randFrom(languages),
           status:       UserStatus.OFFLINE,
-          createdAt:    daysAgo(faker.number.int({ min: 1, max: 90 })),
         },
       }),
     ),

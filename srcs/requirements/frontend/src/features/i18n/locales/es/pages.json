@@ -3,10 +3,14 @@
     "title": "CLASIFICACIÓN",
     "loading": "Cargando...",
     "empty": "Sin jugadores todavía",
+    "search_placeholder": "Buscar un jugador...",
+    "search_empty": "Ningún jugador coincide con tu búsqueda.",
     "error": "No se pudo cargar la clasificación.",
     "wpm": "{{wpm}} PPM",
     "level": "nivel: {{level}}",
-    "games": "partidas: {{count}}"
+    "games": "partidas: {{count}}",
+    "sort_desc": "Mayor PPM primero",
+    "sort_asc": "Menor PPM primero"
   },
   "settings": {
     "title": "AJUSTES",
@@ -14,6 +18,9 @@
     "change_email": "Cambiar correo",
     "email_label": "Nuevo correo",
     "email_placeholder": "nuevo@ejemplo.com",
+    "set_password": "Establecer una contraseña",
+    "alert_set_password": "Tu cuenta está vinculada únicamente a OAuth de 42. Establece una contraseña para no perder el acceso si tu cuenta 42 deja de estar disponible.",
+    "email_managed_by_oauth": "Tu correo está gestionado por tu cuenta 42 y no se puede cambiar aquí.",
     "change_password": "Cambiar contraseña",
     "current_password_label": "Contraseña actual",
     "current_password_placeholder": "Tu contraseña actual",
@@ -24,7 +31,6 @@
     "change_language": "Cambiar idioma",
     "saved": "Guardado con éxito.",
     "error_email_invalid": "Por favor, introduce un correo válido.",
-    "error_current_password_required": "Por favor, introduce tu contraseña actual.",
     "error_passwords_mismatch": "Las contraseñas no coinciden.",
     "error_password_too_short": "La contraseña debe tener al menos 8 caracteres.",
     "default_bio": "Sin biografía aún.",
@@ -62,13 +68,19 @@
     "history_date": "Fecha",
     "history_pos": "Pos",
     "history_wpm": "PPM",
-    "history_players": "Jugadores"
+    "history_players": "Jugadores",
+    "achievements": "Logros",
+    "no_achievements": "Aún no hay logros.",
+    "achievements_show_all": "Ver bloqueados",
+    "achievements_hide_locked": "Ocultar bloqueados"
   },
   "friends": {
     "title": "AMIGOS",
     "requests_title": "SOLICITUDES DE AMISTAD",
     "list_heading": "Amigos [{{count}}]",
     "no_friends": "Sin amigos todavía.",
+    "search_placeholder": "Buscar un amigo...",
+    "search_empty": "Ningún amigo coincide con tu búsqueda.",
     "error_load": "No se pudieron cargar los amigos.",
     "incoming_heading": "Recibidas [{{count}}]",
     "pending_heading": "Pendientes [{{count}}]",
@@ -93,7 +105,7 @@
     "ready_to_race": "¿Listo para correr?",
     "race_description": "Escribe más rápido que tus oponentes para cruzar la línea de meta.",
     "enter_race": "Entrar en la carrera",
-    "practice_mode": "Práctica",
+    "practice_mode": "Entrenamiento",
     "main_menu": "← Menú principal",
     "results_label": "resultados",
     "stat_wpm": "PPM",
@@ -125,5 +137,19 @@
   },
   "oauth_callback": {
     "connecting": "Conectando…"
+  },
+  "chat": {
+    "title": "Chats",
+    "new_chat": "Nuevo chat",
+    "loading": "Cargando chat…",
+    "no_messages": "Aún no hay mensajes",
+    "no_chats": "Aún no hay conversaciones",
+    "error_load": "No se pudieron cargar las conversaciones",
+    "message_placeholder": "Escribe un mensaje…",
+    "send": "Enviar",
+    "you": "Yo",
+    "open": "Abrir",
+    "no_chat_selected": "Ninguna conversación seleccionada.",
+    "view_profile": "Ver perfil"
   }
 }

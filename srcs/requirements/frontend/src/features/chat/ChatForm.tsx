@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input, Btn } from '@/components';
 
 interface ChatFormProps {
@@ -6,6 +7,7 @@ interface ChatFormProps {
 }
 
 export function ChatForm({ onSendMessage }: ChatFormProps) {
+  const { t } = useTranslation('pages');
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -20,13 +22,13 @@ export function ChatForm({ onSendMessage }: ChatFormProps) {
       <form onSubmit={handleSubmit} className="flex gap-2 w-full">
         <Input
           type="text"
-          placeholder="Type message..."
+          placeholder={t('chat.message_placeholder')}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           variant="ghost"
           className="flex-1"
         />
-        <Btn type="submit" variant="primary">Send</Btn>
+        <Btn type="submit" variant="primary">{t('chat.send')}</Btn>
       </form>
   );
 }

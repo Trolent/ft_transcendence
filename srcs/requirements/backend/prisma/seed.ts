@@ -1,5 +1,6 @@
 import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { ACHIEVEMENTS } from '../src/common/achievements.constants';
 
 const prisma = new PrismaClient();
 
@@ -40,18 +41,7 @@ const textSnippets = [
   'void ft_bzero(void *s, size_t n) clears a block of memory by writing zero across the full range.',
 ];
 
-const achievementsData = [
-  { key: 'first_race',  label: 'First Race',    description: 'Complete your first race',         iconUrl: null },
-  { key: 'first_win',   label: 'First Win',     description: 'Win your first race',              iconUrl: null },
-  { key: 'speed_50',    label: 'Getting Fast',  description: 'Reach 50 WPM in a race',           iconUrl: null },
-  { key: 'speed_80',    label: 'Speed Typist',  description: 'Reach 80 WPM in a race',           iconUrl: null },
-  { key: 'speed_100',   label: 'Century',       description: 'Reach 100 WPM in a race',          iconUrl: null },
-  { key: 'veteran_10',  label: 'Regular',       description: 'Complete 10 races',                iconUrl: null },
-  { key: 'veteran_50',  label: 'Veteran',       description: 'Complete 50 races',                iconUrl: null },
-  { key: 'podium_3',    label: 'Podium Hunter', description: 'Finish 1st in 3 different races',  iconUrl: null },
-  { key: 'social_1',    label: 'Social',        description: 'Add your first friend',            iconUrl: null },
-  { key: 'speed_150',   label: 'Type Master',   description: 'Reach 150 WPM in a race',          iconUrl: null },
-];
+
 
 function randInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -78,11 +68,11 @@ async function main() {
   const friendshipStatuses = [FriendshipStatus.ACCEPTED, FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING];
 
   const achievements = await Promise.all(
-    achievementsData.map((a) =>
+    ACHIEVEMENTS.map((a) =>
       prisma.achievement.upsert({
         where:  { key: a.key },
         update: {},
-        create: { key: a.key, label: a.label, description: a.description, iconUrl: a.iconUrl },
+        create: { key: a.key, label: a.label, description: a.description, icon: a.icon },
       }),
     ),
   );
@@ -103,7 +93,6 @@ async function main() {
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
           language:     randFrom(languages),
           status:       UserStatus.OFFLINE,
-          createdAt:    daysAgo(randInt(1, 60)),
         },
       }),
     ),
