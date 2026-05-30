@@ -90,6 +90,9 @@ async function main() {
         userId:     u.id,
         wpm:        parseFloat((30 + Math.random() * 120).toFixed(2)),
         position:   0,
+        nbPlayers:  playerCount,
+        nbBots:     0,
+        accuracy:   parseFloat((75 + Math.random() * 25).toFixed(2)),
         finishedAt: endedAt,
       }))
       .sort((a, b) => b.wpm - a.wpm)
