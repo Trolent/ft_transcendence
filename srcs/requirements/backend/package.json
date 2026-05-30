@@ -5,7 +5,8 @@
   "scripts": {
     "start:dev": "nest start --watch",
     "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
-    "seedv2": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seedv2.ts"
+    "seedv2": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seedv2.ts",
+    "seedstress": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seedstress.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.24",

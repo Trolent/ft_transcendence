@@ -37,12 +37,23 @@ export function SearchList<T extends ListItem>({
     : items;
   return (
     <div className={['flex flex-col gap-4', className].join(' ')}>
-      <Input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder={placeholder ?? t('search.placeholder')}
-        error={error ?? undefined}
-      />
+      <div className="relative">
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={placeholder ?? t('search.placeholder')}
+          error={error ?? undefined}
+        />
+        {query && (
+          <button
+            onClick={() => setQuery('')}
+            className="absolute right-2 inset-y-0 flex items-center text-dim hover:text-default transition-colors cursor-pointer px-1"
+            aria-label="Clear"
+          >
+            ✕
+          </button>
+        )}
+      </div>
 
       {tooShort && (
         <p className="text-dim text-sm text-center font-mono">{t('search.min_chars')}</p>
