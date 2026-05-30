@@ -10,7 +10,9 @@
     "level": "niveau : {{level}}",
     "games": "parties : {{count}}",
     "sort_desc": "MPM décroissant",
-    "sort_asc": "MPM croissant"
+    "sort_asc": "MPM croissant",
+    "min_level": "Niveau minimum",
+    "sort_label": "Tri"
   },
   "settings": {
     "title": "PARAMÈTRES",
