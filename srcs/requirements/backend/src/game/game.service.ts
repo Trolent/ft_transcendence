@@ -11,7 +11,8 @@ import {
 	LOBBY_WAIT_MS,
 	LOBBY_COUNTDOWN_MS,
 	LOBBY_JOIN_LOCK_MS,
-	BOTS_ON_SOLO,
+	MIN_BOTS_PAD,
+	BOT_FILL_INTERVAL_MS,
 	BOT_TICK_MS,
 	PROGRESS_MIN_INTERVAL_MS,
 } from '../common/game.constant';
@@ -25,7 +26,6 @@ import {
 	RaceResult,
 } from './game.types';
 
-// What the gateway hands us when a socket asks to play.
 export type JoinInput = {
 	socketId: string;
 	kind: 'user' | 'guest';
@@ -34,9 +34,6 @@ export type JoinInput = {
 	avatarUrl: string | null;
 };
 
-// Outcome of a matchmaking request. 'busy' = this socket is already in a room;
-// 'duplicate_session' = this logged-in user is already live in a room (e.g. a
-// second browser tab), so the new socket is refused.
 export type AssignResult =
 	| { status: 'joined'; room: RoomState }
 	| { status: 'busy' }
@@ -64,7 +61,6 @@ export class GameService {
 	private finalizing = new Set<string>();
 	private botSeq = 0;
 
-	// The gateway injects the namespace once, so per-room timers can emit directly.
 	setServer(server: Namespace): void {
 		this.server = server;
 	}
@@ -95,7 +91,12 @@ export class GameService {
 		return n;
 	}
 
-	// Humans still connected (a mid-race leaver keeps its slot but socketId is nulled).
+	private botCount(room: RoomState): number {
+		let n = 0;
+		for (const p of room.players.values()) if (p.kind === 'bot') n++;
+		return n;
+	}
+
 	private connectedHumanCount(room: RoomState): number {
 		let n = 0;
 		for (const p of room.players.values())
@@ -103,9 +104,6 @@ export class GameService {
 		return n;
 	}
 
-	// A logged-in user may only occupy one live slot at a time (prevents the
-	// same account joining a room from two tabs). Mid-race leavers have a null
-	// socketId and so don't block a fresh join.
 	private userInRoom(userId: number): boolean {
 		for (const room of this.rooms.values())
 			for (const p of room.players.values())
@@ -121,9 +119,6 @@ export class GameService {
 	}
 
 	// --------------------------------------------------------------- matchmaking
-	// Returns the room the socket should join (the gateway does socket.join), or
-	// a rejection status if the socket is already busy or the user is already
-	// live in another room (e.g. a second browser tab).
 	assign(input: JoinInput): AssignResult {
 		if (this.isInRoom(input.socketId)) return { status: 'busy' };
 		if (input.kind === 'user' && input.userId != null && this.userInRoom(input.userId))
@@ -139,6 +134,7 @@ export class GameService {
 			chars: 0,
 			progress: 0,
 			wpm: 0,
+			accuracy: 0,
 			finished: false,
 			finishedAt: null,
 		};
@@ -151,7 +147,6 @@ export class GameService {
 		}
 
 		this.addParticipant(existing, participant);
-		// startCountdown emits a lobby update itself; otherwise emit here.
 		if (existing.phase === 'waiting' && this.humanCount(existing) >= 2)
 			this.startCountdown(existing);
 		else
@@ -169,8 +164,6 @@ export class GameService {
 					r.countdownEndsAt - now > LOBBY_JOIN_LOCK_MS);
 			return openPhase && this.humanCount(r) < MAX_PLAYERS;
 		});
-		// Prefer lobbies with the most humans (match real players together),
-		// then the fullest, to consolidate into near-starting games.
 		eligible.sort((a, b) => {
 			const byHumans = this.humanCount(b) - this.humanCount(a);
 			if (byHumans !== 0) return byHumans;
@@ -188,7 +181,9 @@ export class GameService {
 			players: new Map([[host.pid, host]]),
 			hostPid: host.pid,
 			playerCount: 0,
+			botTarget: 0,
 			waitTimer: null,
+			botFillTimer: null,
 			countdownTimer: null,
 			countdownEndsAt: null,
 			startedAt: null,
@@ -198,7 +193,9 @@ export class GameService {
 		this.rooms.set(room.id, room);
 		if (host.socketId) this.socketToRoom.set(host.socketId, room.id);
 
+		room.botTarget = this.rollBotTarget(this.humanCount(room));
 		room.waitTimer = setTimeout(() => this.onWaitTimeout(room.id), LOBBY_WAIT_MS);
+		this.scheduleBotFill(room);
 		console.log(`[Lobby][${room.id}] created by ${host.username}`);
 		return room;
 	}
@@ -207,42 +204,81 @@ export class GameService {
 		if (room.players.size >= MAX_PLAYERS) this.evictBot(room);
 		room.players.set(p.pid, p);
 		if (p.socketId) this.socketToRoom.set(p.socketId, room.id);
+		this.repadBots(room);
 	}
 
-	private evictBot(room: RoomState): void {
+	private evictBot(room: RoomState): boolean {
 		for (const p of room.players.values()) {
 			if (p.kind === 'bot') {
 				room.players.delete(p.pid);
-				console.log(`[Lobby][${room.id}] evicted bot ${p.pid} for a human`);
-				return;
+				console.log(`[Lobby][${room.id}] evicted bot ${p.pid}`);
+				return true;
 			}
+		}
+		return false;
+	}
+
+	private rollBotTarget(humanCount: number): number {
+		const slots = MAX_PLAYERS - humanCount;
+		if (slots <= 0) return 0;
+		return MIN_BOTS_PAD + Math.floor(Math.random() * (slots - MIN_BOTS_PAD + 1));
+	}
+
+	private repadBots(room: RoomState): void {
+		room.botTarget = this.rollBotTarget(this.humanCount(room));
+		while (
+			(this.botCount(room) > room.botTarget || room.players.size > MAX_PLAYERS) &&
+			this.evictBot(room)
+		);
+	}
+
+	private addBot(room: RoomState): void {
+		const pid = this.makePid('bot', null);
+		room.players.set(pid, {
+			pid,
+			kind: 'bot',
+			socketId: null,
+			userId: null,
+			username: `Bot ${pid.slice(1)}`,
+			avatarUrl: null,
+			chars: 0,
+			progress: 0,
+			wpm: 0,
+			accuracy: 0,
+			finished: false,
+			finishedAt: null,
+		});
+	}
+
+	private scheduleBotFill(room: RoomState): void {
+		if (room.botFillTimer) 
+			return;
+		room.botFillTimer = setInterval(() => this.botFillTick(room.id), BOT_FILL_INTERVAL_MS);
+	}
+
+	private stopBotFill(room: RoomState): void {
+		if (room.botFillTimer) {
+			clearInterval(room.botFillTimer);
+			room.botFillTimer = null;
 		}
 	}
 
-	private addBots(room: RoomState, count: number): void {
-		for (let i = 0; i < count && room.players.size < MAX_PLAYERS; i++) {
-			const pid = this.makePid('bot', null);
-			room.players.set(pid, {
-				pid,
-				kind: 'bot',
-				socketId: null,
-				userId: null,
-				username: `Bot ${pid.slice(1)}`,
-				avatarUrl: null,
-				chars: 0,
-				progress: 0,
-				wpm: 0,
-				finished: false,
-				finishedAt: null,
-			});
+	private botFillTick(roomId: string): void {
+		const room = this.rooms.get(roomId);
+		if (!room) return;
+		if (room.phase !== 'waiting' && room.phase !== 'countdown') {
+			this.stopBotFill(room);
+			return;
 		}
+		if (this.botCount(room) >= room.botTarget || room.players.size >= MAX_PLAYERS) return;
+		this.addBot(room);
+		this.emitLobbyUpdate(room);
 	}
 
 	private onWaitTimeout(roomId: string): void {
 		const room = this.rooms.get(roomId);
 		if (!room || room.phase !== 'waiting') return;
 		room.waitTimer = null;
-		if (this.humanCount(room) <= 1) this.addBots(room, BOTS_ON_SOLO);
 		this.startCountdown(room);
 	}
 
@@ -272,6 +308,7 @@ export class GameService {
 			clearTimeout(room.countdownTimer);
 			room.countdownTimer = null;
 		}
+		this.stopBotFill(room);
 		room.countdownEndsAt = null;
 		room.phase = 'racing';
 		room.startedAt = Date.now();
@@ -338,6 +375,7 @@ export class GameService {
 		socketId: string,
 		chars: number,
 		durationMs?: number,
+		accuracy?: number,
 	): { roomId: string; pid: string; username: string; kind: ParticipantKind; progress: number; wpm: number } | null {
 		const room = this.roomOf(socketId);
 		if (!room || room.phase !== 'racing' || !room.startedAt) return null;
@@ -363,6 +401,7 @@ export class GameService {
 
 		p.chars = safe;
 		p.progress = len > 0 ? safe / len : 1;
+		if (accuracy != null) p.accuracy = Math.max(0, Math.min(100, accuracy));
 
 		if (isFinish) {
 			// Time the finish by the player's own clock (latency-free, like
@@ -427,10 +466,10 @@ export class GameService {
 
 	async finalizeRace(roomId: string): Promise<void> {
 		const room = this.rooms.get(roomId);
-		if (!room) return;
-		// Guard against the several paths that can race to finish a room
-		// (last human, last bot, race timeout, disconnect).
-		if (this.finalizing.has(roomId)) return;
+		if (!room)
+			return;
+		if (this.finalizing.has(roomId))
+			return;
 		this.finalizing.add(roomId);
 		room.phase = 'finished';
 		if (room.botTicker) {
@@ -441,9 +480,8 @@ export class GameService {
 		const sorted = [...room.players.values()].sort((a, b) => {
 			const fa = a.finishedAt ?? Infinity;
 			const fb = b.finishedAt ?? Infinity;
-			if (fa !== fb) return fa - fb;
-			// Ties (leavers with null finishedAt, or timeout-finished racers
-			// stamped the same ms): rank the further-along racer higher.
+			if (fa !== fb) 
+				return fa - fb;
 			return b.progress - a.progress;
 		});
 
@@ -455,8 +493,6 @@ export class GameService {
 			wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 		}));
 
-		// Persist only real users; bots & guests are deliberately never stored,
-		// which also keeps them off the leaderboard (it groups by userId).
 		const userRows = sorted
 			.map((p, i) => ({ p, position: i + 1 }))
 			.filter(({ p }) => p.kind === 'user' && p.userId != null);
@@ -475,6 +511,7 @@ export class GameService {
 					matchId: room.matchId,
 					userId: p.userId as number,
 					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+					accuracy: p.accuracy,
 					position,
 					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
 					nbPlayers,
@@ -519,6 +556,7 @@ export class GameService {
 				this.cleanRoom(room.id);
 				return { roomId: room.id };
 			}
+			this.repadBots(room);
 			this.emitLobbyUpdate(room);
 			return { roomId: room.id };
 		}
@@ -527,9 +565,6 @@ export class GameService {
 			return { roomId: room.id };
 		}
 
-		// Racing: keep the leaver in place so their car freezes where it stopped
-		// and they still count toward placement. Mark finished (finishedAt stays
-		// null) so the race can resolve and they sort last.
 		p.socketId = null;
 		p.finished = true;
 		if (p.userId != null) {
@@ -586,6 +621,7 @@ export class GameService {
 		const room = this.rooms.get(roomId);
 		if (!room) return;
 		if (room.waitTimer) clearTimeout(room.waitTimer);
+		if (room.botFillTimer) clearInterval(room.botFillTimer);
 		if (room.countdownTimer) clearTimeout(room.countdownTimer);
 		if (room.raceTimeout) clearTimeout(room.raceTimeout);
 		if (room.botTicker) clearInterval(room.botTicker);

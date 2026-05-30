@@ -1,4 +1,4 @@
-import { IsInt, IsNumber, IsOptional, Min } from 'class-validator';
+import { IsInt, IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 export class PlayerProgressDto {
   @IsInt()
@@ -11,4 +11,12 @@ export class PlayerProgressDto {
   @IsNumber()
   @Min(0)
   durationMs?: number;
+
+  // Current accuracy as a whole-number percentage (0..100), reported by the
+  // client; the last value seen at finish is persisted on the match result.
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  accuracy?: number;
 }

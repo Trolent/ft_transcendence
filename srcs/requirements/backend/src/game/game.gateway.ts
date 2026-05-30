@@ -97,7 +97,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @SubscribeMessage('player_progress')
   async handleProgress(client: Socket, payload: PlayerProgressDto) {
-	const delta = this.gameService.updateProgress(client.id, payload.chars, payload.durationMs);
+	const delta = this.gameService.updateProgress(client.id, payload.chars, payload.durationMs, payload.accuracy);
 	if (!delta)
 		return;
 

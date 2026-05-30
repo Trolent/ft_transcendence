@@ -24,14 +24,21 @@ export const MIN_RACE_SECONDS = 20;
 export const MIN_CHARS_PER_SEC = 2.5;
 
 // --- Lobby / matchmaking timings ---
-// A freshly created lobby waits this long for a 2nd human before falling back to bots.
+// A freshly created lobby waits this long for more humans before the countdown.
 export const LOBBY_WAIT_MS = 5_000;
 // Once started, the pre-race countdown runs this long, then the race begins.
 export const LOBBY_COUNTDOWN_MS = 10_000;
 // Players may join an existing lobby only while more than this much countdown remains.
 export const LOBBY_JOIN_LOCK_MS = 2_000;
-// Number of bots dropped in when a lobby host is still solo at the end of the wait.
-export const BOTS_ON_SOLO = 2;
+
+// --- Bot padding ---
+// Every lobby is padded with bots toward a per-lobby target. The target is a
+// random count in [MIN_BOTS_PAD, free slots], rerolled whenever the human count
+// changes, so a lobby with 2 humans pads with 1..3 bots, a solo host with 1..4.
+export const MIN_BOTS_PAD = 1;
+// Bots are added one at a time, at most this often, so the roster fills in
+// gradually over the lobby instead of all at once.
+export const BOT_FILL_INTERVAL_MS = 1_200;
 
 // --- Bot behaviour ---
 // Adaptive bot speed centres on the real players' recent average wpm, jittered by this fraction.

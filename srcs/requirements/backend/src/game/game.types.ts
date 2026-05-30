@@ -28,6 +28,7 @@ export type Participant = {
 	chars: number;
 	progress: number; // 0..1
 	wpm: number;
+	accuracy: number; // 0..100, last value reported by the client (bots stay 0)
 	finished: boolean;
 	finishedAt: number | null;
 	lastProgressAt?: number; // last accepted progress msg, for rate-limiting
@@ -42,8 +43,10 @@ export type RoomState = {
 	players: Map<string, Participant>; // keyed by pid
 	hostPid: string | null;
 	playerCount: number; // locked when the race starts (humans + bots + guests)
+	botTarget: number; // how many bots this lobby wants; rerolled on human join/leave
 	// timers
 	waitTimer: NodeJS.Timeout | null; // 5s "waiting for players" window
+	botFillTimer: NodeJS.Timeout | null; // progressively pads the lobby with bots
 	countdownTimer: NodeJS.Timeout | null; // 10s pre-race countdown
 	countdownEndsAt: number | null;
 	startedAt: number | null;
