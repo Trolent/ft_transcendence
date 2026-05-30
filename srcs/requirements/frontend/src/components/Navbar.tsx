@@ -145,13 +145,13 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-black font-mono">
-      <div className="grid grid-cols-[auto_1fr_auto] items-center px-4 h-12 gap-2">
-        <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none justify-self-start whitespace-nowrap flex items-center gap-2">
+      <div className="relative flex items-center justify-between px-4 h-12">
+        <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none whitespace-nowrap flex items-center gap-2">
           <img src="/favicon.png" className="w-5 h-5 object-contain" alt="" />
           Typerun
         </Link>
 
-        <div className="sm:hidden flex items-center gap-1 justify-self-end col-span-2">
+        <div className="sm:hidden flex items-center gap-1">
           {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           <button
@@ -162,7 +162,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <ul className="hidden sm:flex items-center justify-center gap-1">
+        <ul className="hidden sm:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
           {(user ? AUTH_NAV_LINKS : NAV_LINKS).map(({ key, href }) => (
             <li key={key}>
               <NavLink href={href} label={t(key)} pathname={pathname} />
@@ -170,7 +170,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden sm:flex items-center gap-1 justify-self-end">
+        <div className="hidden sm:flex items-center gap-1">
           {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           {user ? (
