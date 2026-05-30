@@ -61,11 +61,11 @@ export function LanguageSwitcher({ variant = "navbar" }: LanguageSwitcherProps) 
         className={[
           "flex items-center gap-1 px-3 py-1 text-xs uppercase tracking-widest transition-colors duration-100",
           isSettings
-            ? "text-dim border border-dim hover:text-default hover:border-default"
+            ? "text-dim bg-black border border-dim hover:text-default hover:border-default"
             : "text-dim hover:text-default hover:bg-muted",
         ].join(" ")}
       >
-        {FLAG[current]}
+        {FLAG[current]} {isSettings ? NATIVE[current] : ""}
       </button>
 
       {isOpen && (
@@ -78,8 +78,8 @@ export function LanguageSwitcher({ variant = "navbar" }: LanguageSwitcherProps) 
                 className={[
                   "w-full text-left px-3 py-1 text-xs uppercase tracking-widest transition-colors duration-100",
                   lang === current
-                    ? "text-default bg-muted cursor-default"
-                    : "text-dim hover:text-default hover:bg-muted",
+                    ? "text-default bg-black cursor-default"
+                    : "text-dim hover:text-default hover:bg-black",
                 ].join(" ")}
               >
                 {FLAG[lang]} {isSettings ? NATIVE[lang] : lang.toUpperCase()}

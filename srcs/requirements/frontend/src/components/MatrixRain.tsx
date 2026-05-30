@@ -26,7 +26,8 @@ export default function MatrixRain() {
 
   useEffect(() => {
     const container = ref.current;
-    if (!container) return;
+    if (!container)
+      return;
 
     let cancelled = false;
 
@@ -39,7 +40,8 @@ export default function MatrixRain() {
         let lastTime = Date.now();
 
         function tick() {
-          if (cancelled) return;
+          if (cancelled)
+            return;
 
           const now = Date.now();
           if (now - lastTime >= delay) {
@@ -101,7 +103,8 @@ export default function MatrixRain() {
 
           for (let i = 0; i < trailSize; i++) {
             const span = spans[offset + i - trailSize + 1];
-            if (!span) continue;
+            if (!span)
+              continue;
 
             const isHead = i === trailSize - 1;
 
