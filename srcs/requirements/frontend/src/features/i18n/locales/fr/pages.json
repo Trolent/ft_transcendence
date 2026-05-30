@@ -68,6 +68,9 @@
     "history_date": "Date",
     "history_pos": "Pos",
     "history_wpm": "WPM",
+    "wpm_long": "Mots par minute",
+    "accuracy": "Précision",
+    "accuracy_short": "Préc",
     "history_players": "Joueurs",
     "achievements": "Succès",
     "no_achievements": "Pas de succès débloqués.",
@@ -157,6 +160,8 @@
     "you": "Moi",
     "open": "Ouvrir",
     "no_chat_selected": "Aucune conversation sélectionnée.",
-    "view_profile": "Voir le profil"
+    "view_profile": "Voir le profil",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
   }
 }
