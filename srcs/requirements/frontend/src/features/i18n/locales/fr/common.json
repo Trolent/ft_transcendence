@@ -13,6 +13,8 @@
     "min_chars": "Saisissez au moins 3 caractères pour rechercher."
   },
   "find": "Trouver",
+  "new": "Nouveau",
+  "message": "Message",
   "errors": {
     "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
     "USER_ALREADY_EXISTS": "Nom d'utilisateur déjà pris.",

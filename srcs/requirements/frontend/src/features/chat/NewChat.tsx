@@ -25,17 +25,18 @@ export function NewChat({ onSelectChat }: NewChatProps) {
   }, [onSelectChat, navigate]);
 
   const renderItem = useCallback((item: UserSearchResult) => (
-    <div className="flex items-center gap-3 px-1 py-0.5">
-      <button
-        className="flex items-center gap-3 flex-1 min-w-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default text-left"
-        onClick={() => handleAction(item)}
-      >
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4 min-w-0">
         <Avatar username={item.username} src={item.avatarUrl} size="sm" />
-        <span className="font-mono text-sm text-default truncate">{item.username}</span>
-        <Status status={getStatus(item.status, item.id as number, item.username)} />
-      </button>
+        <span className="font-mono text-sm text-default truncate">
+          <Status status={getStatus(item.status, item.id as number, item.username)} /> {item.username}
+        </span>
+      </div>
+      <Btn size="sm" variant="ghost" onClick={() => handleAction(item)}>
+        {t("common:new")}
+      </Btn>
     </div>
-  ), [getStatus, handleAction]);
+  ), [getStatus, handleAction, t]);
 
   return (
     <>

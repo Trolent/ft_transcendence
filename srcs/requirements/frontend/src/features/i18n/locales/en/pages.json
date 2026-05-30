@@ -151,6 +151,8 @@
     "you": "Me",
     "open": "Open",
     "no_chat_selected": "No chat selected.",
-    "view_profile": "View Profile"
+    "view_profile": "View Profile",
+    "today": "Today",
+    "yesterday": "Yesterday"
   }
 }

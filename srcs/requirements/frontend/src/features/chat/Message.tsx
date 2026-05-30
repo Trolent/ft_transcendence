@@ -10,16 +10,15 @@ interface MessageProps {
 
 export function Message({ message, isOwn = false }: MessageProps) {
   const { t } = useTranslation('pages');
-  const sender = message.sender;
-  //const avatarUrl = message.sender.avatarUrl ?? undefined;
-  const displayName = isOwn ? t('chat.you') : sender.username;
+  const displayName = isOwn ? t('chat.you') : message.sender.username;
+  const time = new Date(message.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="mb-2 flex items-center gap-2">
-      {/*<Avatar username={sender.username} src={avatarUrl} size="sm" />*/}
-      <Text size="sm" className="truncate">
+    <div className="mb-2 flex items-start justify-between gap-3">
+      <Text size="sm">
         <span className="font-bold">{displayName}</span>: {message.content}
       </Text>
+      <Text size="xs" variant="muted" className="shrink-0 mt-0.5">{time}</Text>
     </div>
   );
 }

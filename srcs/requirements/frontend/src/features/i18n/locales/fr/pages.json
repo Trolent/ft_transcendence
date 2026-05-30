@@ -157,6 +157,8 @@
     "you": "Moi",
     "open": "Ouvrir",
     "no_chat_selected": "Aucune conversation sélectionnée.",
-    "view_profile": "Voir le profil"
+    "view_profile": "Voir le profil",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
   }
 }

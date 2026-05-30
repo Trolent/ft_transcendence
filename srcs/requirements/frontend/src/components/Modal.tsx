@@ -26,6 +26,7 @@ export default function Modal({ isOpen, onClose, title, children, className = ""
         className={[
           "relative bg-black border border-default font-mono",
           "w-full max-w-md mx-4 p-6 flex flex-col gap-4",
+          "max-h-[90svh]",
           "shadow-[0_0_24px_0_rgba(0,255,65,0.15)]",
           className,
         ].join(" ")}
@@ -44,7 +45,7 @@ export default function Modal({ isOpen, onClose, title, children, className = ""
             </svg>
           </button>
         </div>
-        <div>{children}</div>
+        <div className="overflow-y-auto flex-1 min-h-0 pr-1">{children}</div>
       </div>
     </div>
   );

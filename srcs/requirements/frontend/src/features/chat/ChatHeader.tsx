@@ -32,12 +32,12 @@ export function ChatHeader({ username }: ChatHeaderProps) {
   return (
     <div className="flex items-center gap-3">
       <Avatar username={profile.username} src={profile.avatarUrl ?? undefined} size="md" />
-      <div className="flex flex-col flex-1">
-        <Heading level={2}>
+      <div className="flex flex-col flex-1 min-w-0">
+        <Heading level={2} className="truncate">
           <Status status={displayedStatus} hoverText={displayedStatus} /> {profile.username}
         </Heading>
       </div>
-      <Btn as={Link} to={`/profile/${profile.username}`} variant="primary" size="sm">
+      <Btn as={Link} to={`/profile/${profile.username}`} variant="primary" size="sm" className="shrink-0">
         {t('chat.view_profile')}
       </Btn>
     </div>
