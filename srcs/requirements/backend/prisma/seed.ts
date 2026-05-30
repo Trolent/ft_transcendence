@@ -1,32 +1,14 @@
 import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
 import { ACHIEVEMENTS } from '../src/common/achievements.constants';
 
+const SEED_USERS       = 999;
+const SEED_MATCHES     = 40;
+const SEED_FRIENDSHIPS = 30;
+const DEFAULT_PASSWORD = 'Password123!';
+
 const prisma = new PrismaClient();
-
-const usersData = [
-  { username: 'alice',    email: 'alice@example.com'    },
-  { username: 'thomas',   email: 'thomas@example.com'   },
-  { username: 'chloe',   email: 'chloe@example.com'   },
-  { username: 'lucas',    email: 'lucas@example.com'    },
-  { username: 'emma',      email: 'emma@example.com'      },
-  { username: 'hugo',    email: 'hugo@example.com'    },
-  { username: 'lea',      email: 'lea@example.com'      },
-  { username: 'maxime',   email: 'maxime@example.com'   },
-  { username: 'sofia',      email: 'sofia@example.com'      },
-  { username: 'nathan',    email: 'nathan@example.com'    },
-  { username: 'camille',   email: 'camille@example.com'   },
-  { username: 'theo',     email: 'theo@example.com'     },
-  { username: 'pauline', email: 'pauline@example.com' },
-  { username: 'romain',    email: 'romain@example.com'    },
-  { username: 'jade',   email: 'jade@example.com'   },
-  { username: 'akhmed', email: 'akhmed@example.com' },
-  { username: 'kevin',     email: 'kevin@example.com'     },
-  { username: 'axel', email: 'axel@example.com' },
-  { username: 'jerome', email: 'jerome@example.com' },
-  { username: 'timothee',email: 'timothee@example.com'},
-];
-
 
 const textSnippets = [
   'size_t ft_strlen(const char *s) returns the number of characters before the null terminator.',
@@ -35,21 +17,7 @@ const textSnippets = [
   'void *ft_memcpy(void *dest, const void *src, size_t n) copies n bytes from src to dest without overlap checks.',
   'int ft_strncmp(const char *s1, const char *s2, size_t n) compares two strings up to the requested length.',
   'char *ft_strjoin(const char *s1, const char *s2) allocates a fresh string containing both inputs end to end.',
-  'char **ft_split(const char *s, char c) separates a string into an array of tokens using the delimiter character.',
-  'char *ft_substr(const char *s, unsigned int start, size_t len) extracts a substring from the chosen offset.',
-  'char *ft_strtrim(const char *s1, const char *set) removes all matching characters from both ends of the string.',
-  'void ft_bzero(void *s, size_t n) clears a block of memory by writing zero across the full range.',
 ];
-
-
-
-function randInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function randFloat(min: number, max: number): number {
-  return parseFloat((Math.random() * (max - min) + min).toFixed(2));
-}
 
 function randFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -62,33 +30,65 @@ function daysAgo(n: number): Date {
 }
 
 async function main() {
-  const passwordHash = await bcrypt.hash('Password123!', 10);
-  const languages = [Language.EN, Language.FR, Language.ES];
-  //const statuses  = [UserStatus.ONLINE, UserStatus.OFFLINE, UserStatus.IN_GAME];
-  const friendshipStatuses = [FriendshipStatus.ACCEPTED, FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING];
+  faker.seed(42);
+  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
+  const languages    = Object.values(Language);
+  const statuses     = Object.values(UserStatus);
 
   const achievements = await Promise.all(
-    ACHIEVEMENTS.map((a) =>
+    ACHIEVEMENTS.map(a =>
       prisma.achievement.upsert({
         where:  { key: a.key },
         update: {},
-        create: { key: a.key, label: a.label, description: a.description, icon: a.icon },
+        create: { ...a },
       }),
     ),
   );
 
-  const users = await Promise.all(
-    usersData.map((u, i) =>
+  const DEFAULT_USERS = [
+    { username: 'akhmed', email: 'akhmed@example.com' },
+    { username: 'kevin', email: 'kevin@example.com' },
+    { username: 'axel', email: 'axel@example.com' },
+    { username: 'jerome', email: 'jerome@example.com' },
+    { username: 'timothee', email: 'timothee@example.com' },
+  ];
+
+  const defaultUsers = await Promise.all(
+    DEFAULT_USERS.map((u, i) =>
       prisma.user.upsert({
         where:  { username: u.username },
-        update: {
-          bio:      `Hello, I'm ${u.username}! I love typing and gaming!`,
-          avatarUrl: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
-        },
+        update: {},
         create: {
           username:     u.username,
           email:        u.email,
-          bio:          `Hello, I'm ${u.username}! I love typing and gaming!`,
+          bio:          faker.lorem.sentence(),
+          passwordHash,
+          avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=default${i + 1}`,
+          language:     Language.EN,
+          status:       UserStatus.OFFLINE,
+        },
+      }),
+    ),
+  );
+
+  const usernames = new Set<string>(DEFAULT_USERS.map(u => u.username));
+  const usersData: { username: string; email: string }[] = [];
+  while (usersData.length < SEED_USERS) {
+    const username = faker.internet.username().toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 20);
+    if (usernames.has(username)) continue;
+    usernames.add(username);
+    usersData.push({ username, email: faker.internet.email().toLowerCase() });
+  }
+
+  const randomUsers = await Promise.all(
+    usersData.map((u, i) =>
+      prisma.user.upsert({
+        where:  { username: u.username },
+        update: {},
+        create: {
+          username:     u.username,
+          email:        u.email,
+          bio:          faker.lorem.sentence(),
           passwordHash,
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=${i + 1}`,
           language:     randFrom(languages),
@@ -98,31 +98,33 @@ async function main() {
     ),
   );
 
-  const friendshipPairs: Set<string> = new Set();
-  for (let i = 0; i < 25; i++) {
+  const users = [...defaultUsers, ...randomUsers];
+
+  const friendshipPairs = new Set<string>();
+  let attempts = 0;
+  while (friendshipPairs.size < SEED_FRIENDSHIPS && attempts < SEED_FRIENDSHIPS * 5) {
+    attempts++;
     const a = randFrom(users);
     const b = randFrom(users);
     if (a.id === b.id) continue;
-
     const key = `${Math.min(a.id, b.id)}-${Math.max(a.id, b.id)}`;
     if (friendshipPairs.has(key)) continue;
     friendshipPairs.add(key);
-
     await prisma.friendship.upsert({
       where:  { initiatorId_receiverId: { initiatorId: a.id, receiverId: b.id } },
       update: {},
       create: {
         initiatorId: a.id,
         receiverId:  b.id,
-        status:      randFrom(friendshipStatuses),
-        createdAt:   daysAgo(randInt(1, 30)),
+        status:      randFrom([FriendshipStatus.ACCEPTED, FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING]),
+        createdAt:   daysAgo(faker.number.int({ min: 1, max: 30 })),
       },
     });
   }
 
-  for (let i = 0; i < 30; i++) {
-    const startedAt = daysAgo(randInt(0, 30));
-    const endedAt   = new Date(startedAt.getTime() + randInt(30, 180) * 1000);
+  for (let i = 0; i < SEED_MATCHES; i++) {
+    const startedAt = daysAgo(faker.number.int({ min: 0, max: 30 }));
+    const endedAt   = new Date(startedAt.getTime() + faker.number.int({ min: 30, max: 300 }) * 1000);
 
     const match = await prisma.match.create({
       data: {
@@ -133,14 +135,14 @@ async function main() {
       },
     });
 
-    const playerCount = randInt(2, 4);
+    const playerCount = faker.number.int({ min: 2, max: Math.min(4, users.length) });
     const players = [...users].sort(() => Math.random() - 0.5).slice(0, playerCount);
 
     const results = players
-      .map((user) => ({
+      .map(user => ({
         matchId:    match.id,
         userId:     user.id,
-        wpm:        randFloat(40, 140),
+        wpm:        parseFloat(faker.number.float({ min: 30, max: 150, fractionDigits: 2 }).toFixed(2)),
         position:   0,
         finishedAt: endedAt,
       }))
@@ -151,7 +153,7 @@ async function main() {
   }
 
   for (const user of users) {
-    const count = randInt(0, 3);
+    const count    = faker.number.int({ min: 0, max: 3 });
     const selected = [...achievements].sort(() => Math.random() - 0.5).slice(0, count);
     for (const achievement of selected) {
       await prisma.userAchievement.upsert({
@@ -160,13 +162,15 @@ async function main() {
         create: {
           userId:        user.id,
           achievementId: achievement.id,
-          unlockedAt:    daysAgo(randInt(0, 30)),
+          unlockedAt:    daysAgo(faker.number.int({ min: 0, max: 30 })),
         },
       });
     }
   }
+
+  console.log(`Seeded: ${SEED_USERS} users, ${SEED_MATCHES} matches, ${friendshipPairs.size} friendships`);
 }
 
 main()
-  .catch((e) => { console.error(e); process.exit(1); })
+  .catch(e => { console.error(e); process.exit(1); })
   .finally(() => prisma.$disconnect());
