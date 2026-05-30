@@ -21,7 +21,7 @@ export default function History({ username }: HistoryProps) {
 
   useEffect(() => {
     getUserHistory(username, currentPage, LIMIT).then(({ data, totalPages }) => {
-      setHistory(data);
+      setHistory(data.filter((e) => e.finishedAt != null));
       setTotalPages(totalPages);
     });
   }, [username, currentPage]);

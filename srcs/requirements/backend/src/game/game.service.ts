@@ -1,362 +1,586 @@
 import { Injectable } from '@nestjs/common';
-import { RoomState, RoomPlayer } from './game.types';
+import { Namespace } from 'socket.io';
 import { PrismaService } from '../prisma/prisma.service';
 import { MatchStatus, UserStatus } from '@prisma/client';
-import { MAX_WPM, QUOTES, MIN_RACE_SECONDS, MIN_CHARS_PER_SEC } from '../common/game.constant';
+import {
+	MAX_PLAYERS,
+	MAX_WPM,
+	QUOTES,
+	MIN_RACE_SECONDS,
+	MIN_CHARS_PER_SEC,
+	LOBBY_WAIT_MS,
+	LOBBY_COUNTDOWN_MS,
+	LOBBY_JOIN_LOCK_MS,
+	BOTS_ON_SOLO,
+	BOT_TICK_MS,
+} from '../common/game.constant';
 import { AchievementService } from '../achievement/achievement.service';
+import { BotService } from './bot.service';
+import {
+	Participant,
+	ParticipantKind,
+	RoomState,
+	LobbyParticipant,
+	RaceResult,
+} from './game.types';
 
-type QueueEntry = {
-    socketId:   string;
-    userId:     number;
-    username:   string;
-    avatarUrl:  string | null;
-}
+// What the gateway hands us when a socket asks to play.
+export type JoinInput = {
+	socketId: string;
+	kind: 'user' | 'guest';
+	userId: number | null;
+	username: string;
+	avatarUrl: string | null;
+};
 
-// utils
+// Outcome of a matchmaking request. 'busy' = this socket is already in a room;
+// 'duplicate_session' = this logged-in user is already live in a room (e.g. a
+// second browser tab), so the new socket is refused.
+export type AssignResult =
+	| { status: 'joined'; room: RoomState }
+	| { status: 'busy' }
+	| { status: 'duplicate_session' };
 
 function generateRoomID(): string {
-    return Math.random().toString(36).substring(2, 7).toUpperCase();
+	return Math.random().toString(36).substring(2, 7).toUpperCase();
 }
 
-function pickQuote() : string {
-    return QUOTES[Math.floor(Math.random() * QUOTES.length)];
+function pickQuote(): string {
+	return QUOTES[Math.floor(Math.random() * QUOTES.length)];
 }
 
 @Injectable()
-export class GameService{
-
-    constructor(
-        private prisma: PrismaService,
-        private achievementService: AchievementService,
-    ) {}
-
-    private queue        = new Map<string, QueueEntry>();
-    private rooms        = new Map<string, RoomState>();
-    private socketToRoom = new Map<string, string>();
-
-    //QUEUE
-
-    private dequeuTwo(): QueueEntry[] {
-        const iter      = this.queue.entries();
-        const first     = iter.next().value!;
-        const second    = iter.next().value!;
-
-        this.queue.delete(first[0]);
-        this.queue.delete(second[0]);
-
-        return [first[1], second[1]];
-    }
-
-    addToQueue(entry : QueueEntry): QueueEntry[] | null {
-
-        if (this.isInQueue(entry.socketId) || this.isInRoom(entry.socketId))
-            return null;
-
-        this.queue.set(entry.socketId, entry);
-        console.log(`[Queue] ${entry.username} rej file ${this.queue.size} en attente`);
-        
-        if(this.queue.size >= 2)
-            return this.dequeuTwo();
-
-        return null;
-    }
-
-    removeFromQueu(socketId : string) : void {
-        const entry = this.queue.get(socketId);
-        if(entry){
-            this.queue.delete(socketId);
-            console.log(`[Queue] ${entry.username} a quitter la file`);
-            return ;
-        }
-    }
-
-    isInQueue(socketId: string) : boolean{
-        return this.queue.has(socketId);
-    }
-
-    //ROOM
-
-    async createRoom(players: QueueEntry[]): Promise<RoomState>{
-        const id = generateRoomID();
-        const text = pickQuote();
-
-        const roomPlayers = new Map<string, RoomPlayer>();
-        for(const data of players){
-            roomPlayers.set(data.socketId, {
-                socketId:   data.socketId,
-                userId:     data.userId,
-                username:   data.username,
-                avatarUrl:  data.avatarUrl,
-                chars:      0,
-                progress:   0,
-                wpm:        0,
-                finished:   false,
-                finishedAt: null
-            });
-            this.socketToRoom.set(data.socketId, id);
-        }
-
-        const room: RoomState = {
-            id,
-            matchId:        0,
-            phase:          'waiting',
-            text,
-            players:        roomPlayers,
-            maxPlayers:     2,
-            startedAt:      null,
-            countdown:      null,
-            raceTimeout:    null,
-        }
-        const match = await this.prisma.match.create({
-            data: {
-                textSnippet:    text,
-                startedAt:      new Date(),
-                status:         MatchStatus.IN_PROGRESS,
-            }
-        });
-        room.matchId = match.id;
-
-        await this.prisma.user.updateMany({
-            where: { id: { in: players.map(p => p.userId)}},
-            data: {status: UserStatus.IN_GAME}
-        })
-
-        this.rooms.set(id, room);
-        console.log(`[Room] ${id} creer / joueurs ${players.map(p => p.username).join(', ')}`);
-        return room;
-    }
-
-    getRoom(roomId: string): RoomState | undefined {
-        return this.rooms.get(roomId);
-    }
-
-    getRoomBySocketId(socketId: string): RoomState | undefined {
-        const roomId = this.socketToRoom.get(socketId);
-
-        if(roomId)
-            return this.rooms.get(roomId);
-
-        return undefined;
-    }
-
-    isInRoom(socketId: string): boolean {
-        return this.socketToRoom.has(socketId);
-    }
-
-    cleanRoom(roomId: string): void {
-        const room = this.rooms.get(roomId);
-
-        if(!room)
-            return;
-
-        if (room.raceTimeout)
-            clearTimeout(room.raceTimeout);
-
-        if(room.countdown)
-            clearTimeout(room.countdown);
-
-        room.players.forEach(
-            (_, socketId) => this.socketToRoom.delete(socketId)
-        );
-        this.rooms.delete(roomId);
-        console.log(`[Room][${roomId}] deleted`);
-    }
-
-    private calcWpm(chars:number, startedAt: number) : number {
-        const minutes = (Date.now() - startedAt) / 60000;
-        
-        if(minutes > 0)
-            return Math.round((chars / 5) / minutes);
-
-        return 0;
-    }
-
-    //GAME
-    updateProgress(socketId: string, chars: number):
-    {
-        roomId:     string;
-        userId:     number;
-        username:   string;
-        progress:   number;
-        wpm:        number } | null {
-        
-        const room = this.getRoomBySocketId(socketId);
-        if(!room || room.phase !== 'racing' || !room.startedAt)
-            return null;
-        
-        const player = room.players.get(socketId);
-        if(!player || player.finished)
-            return null;
-        
-        const safeChars = Math.min(chars, room.text.length);
-        player.chars    = safeChars;
-        player.progress = safeChars / room.text.length;
-        player.wpm      = this.calcWpm(safeChars, room.startedAt);
-
-        return { roomId: room.id, userId: player.userId, username: player.username, progress: player.progress, wpm: player.wpm };
-    }
-
-    startCountdown(roomId: string, emit:(time:number | null) => void, onTimeout: (roomId: string) => void): void{
-
-        const room = this.getRoom(roomId);
-
-        if(!room)
-            return ;
-
-        room.phase = 'countdown';
-        let time = 3;
-
-        const tick = () => {
-            if(time === 0){
-                const maxMs = Math.max(MIN_RACE_SECONDS, Math.ceil(room.text.length / MIN_CHARS_PER_SEC)) * 1000;
-                room.phase          = 'racing';
-                room.startedAt      = Date.now();
-                room.raceTimeout = setTimeout(() => onTimeout(room.id), maxMs);
-                emit(null);
-                return ;
-            }
-            emit(time);
-            console.log(`[Game][${room.id}]CountDown ${time}`)
-            time--;
-            room.countdown = setTimeout(tick, 1000);
-        };
-
-        room.countdown = setTimeout(tick, 1000);
-
-    }
-
-    async finalizeRace(roomId: string): Promise<{ userId: number; username: string; wpm: number; position: number }[]>{
-        const room = this.getRoom(roomId);
-        if(!room || room.phase !== 'finished') return [];
-
-        await this.prisma.match.update({
-            where: { id: room.matchId },
-            data:  { endedAt: new Date(), status: MatchStatus.FINISHED },
-        });
-
-        // tri
-        const sorted = [...room.players.values()]
-            .sort((a, b) => (a.finishedAt ?? Infinity) - (b.finishedAt ?? Infinity));
-
-        await this.prisma.matchResult.createMany({
-            data: sorted.map((p, i) => ({
-                matchId:    room.matchId,
-                userId:     p.userId,
-                wpm:        p.wpm > MAX_WPM ? 0 : p.wpm,
-                position:   i + 1,
-                finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
-            })),
-        });
-
-        await this.prisma.user.updateMany({
-            where: { id: { in: sorted.map(p => p.userId) } },
-            data:  { status: UserStatus.ONLINE },
-        });
-
-        const savedResults = await this.prisma.matchResult.findMany({
-            where: { matchId: room.matchId },
-        });
-        for (const result of savedResults) {
-            await this.achievementService.checkAndUnlockAchievements(result.userId, result);
-        }
-
-        this.cleanRoom(roomId);
-
-        return sorted.map((p, i) => ({
-            userId:   p.userId,
-            username: p.username,
-            wpm:      p.wpm > MAX_WPM ? 0 : p.wpm,
-            position: i + 1,
-        }));
-    }
-
-    async forceFinishRace(roomId : string) : Promise<{ userId: number; username: string; wpm: number; position: number }[]> {
-        const room = this.getRoom(roomId);
-        if(!room || room.phase === 'finished')
-            return [];
-
-        for(const player of room.players.values()){
-            if(!player.finished){
-                player.finished     = true;
-                player.finishedAt   = Date.now();
-            }
-        }
-        room.phase = 'finished';
-        return this.finalizeRace(roomId);
-    }
-
-    //Player
-    handlePlayerFinish(socketId : string): { roomId: string; allDone: boolean} | null {
-
-        const room = this.getRoomBySocketId(socketId);
-
-        if(!room || room.phase !== 'racing')
-            return null;
-
-        const player = room.players.get(socketId);
-
-        if(!player || player.finished)
-            return null;
-
-        player.finished = true;
-        player.finishedAt = Date.now();
-        console.log(`[Game][${room.id}]Game finished for ${player.username.slice(0, 6)} 100%!`);
-
-        const allDone = [...room.players.values()].every(ply => ply.finished);
-
-        if(allDone)
-            room.phase = 'finished';
-
-        return {roomId: room.id, allDone};
-    }
-
-    async handlePlayerDisconnect(socketId: string): Promise<{
-        roomId:     string;
-        cancelled:  boolean;
-        others:     string[];
-        username:   string;
-    } | null > {
-
-        const room = this.getRoomBySocketId(socketId);
-
-        if(!room)
-            return null;
-
-        const player = room.players.get(socketId);
-        if(!player)
-            return null;
-
-        const others = [...room.players.keys()].filter(id => id !== socketId);
-        const active = [...room.players.values()]
-            .filter(p => p.socketId !== socketId && !p.finished).length;
-        
-        room.players.delete(socketId);
-        this.socketToRoom.delete(socketId);
-
-        const cancelled = room.phase !== 'finished' && active < 2;
-
-        if(cancelled){
-            //update match status
-            await this.prisma.match.update({
-                where:  { id: room.matchId },
-                data:   { status: MatchStatus.CANCELLED},
-            });
-
-            //update user status
-            await this.prisma.user.updateMany({
-                where:  { id: { in: [...room.players.values()]
-                    .map(p => p.userId).concat(player.userId)}},
-                data:   { status: UserStatus.ONLINE},
-            });
-
-            this.cleanRoom(room.id);
-        }else {
-            await this.prisma.user.update({
-                where:  { id: player.userId },
-                data:   { status: UserStatus.ONLINE},
-            });
-        }
-
-        return { roomId: room.id, cancelled, others, username: player.username };
-    }
+export class GameService {
+	constructor(
+		private prisma: PrismaService,
+		private achievementService: AchievementService,
+		private botService: BotService,
+	) {}
+
+	private server!: Namespace;
+	private rooms = new Map<string, RoomState>();
+	private socketToRoom = new Map<string, string>();
+	private finalizing = new Set<string>();
+	private botSeq = 0;
+
+	// The gateway injects the namespace once, so per-room timers can emit directly.
+	setServer(server: Namespace): void {
+		this.server = server;
+	}
+
+	// ----------------------------------------------------------------- helpers
+	getRoom(roomId: string): RoomState | undefined {
+		return this.rooms.get(roomId);
+	}
+
+	isInRoom(socketId: string): boolean {
+		return this.socketToRoom.has(socketId);
+	}
+
+	private roomOf(socketId: string): RoomState | undefined {
+		const id = this.socketToRoom.get(socketId);
+		return id ? this.rooms.get(id) : undefined;
+	}
+
+	private participantOf(room: RoomState, socketId: string): Participant | undefined {
+		for (const p of room.players.values())
+			if (p.socketId === socketId) return p;
+		return undefined;
+	}
+
+	private humanCount(room: RoomState): number {
+		let n = 0;
+		for (const p of room.players.values()) if (p.kind !== 'bot') n++;
+		return n;
+	}
+
+	// Humans still connected (a mid-race leaver keeps its slot but socketId is nulled).
+	private connectedHumanCount(room: RoomState): number {
+		let n = 0;
+		for (const p of room.players.values())
+			if (p.kind !== 'bot' && p.socketId !== null) n++;
+		return n;
+	}
+
+	// A logged-in user may only occupy one live slot at a time (prevents the
+	// same account joining a room from two tabs). Mid-race leavers have a null
+	// socketId and so don't block a fresh join.
+	private userInRoom(userId: number): boolean {
+		for (const room of this.rooms.values())
+			for (const p of room.players.values())
+				if (p.kind === 'user' && p.userId === userId && p.socketId !== null)
+					return true;
+		return false;
+	}
+
+	private makePid(kind: ParticipantKind, userId: number | null): string {
+		if (kind === 'user') return `u${userId}`;
+		if (kind === 'guest') return `g${Math.random().toString(36).slice(2, 9)}`;
+		return `b${++this.botSeq}`;
+	}
+
+	// --------------------------------------------------------------- matchmaking
+	// Returns the room the socket should join (the gateway does socket.join), or
+	// a rejection status if the socket is already busy or the user is already
+	// live in another room (e.g. a second browser tab).
+	assign(input: JoinInput): AssignResult {
+		if (this.isInRoom(input.socketId)) return { status: 'busy' };
+		if (input.kind === 'user' && input.userId != null && this.userInRoom(input.userId))
+			return { status: 'duplicate_session' };
+
+		const participant: Participant = {
+			pid: this.makePid(input.kind, input.userId),
+			kind: input.kind,
+			socketId: input.socketId,
+			userId: input.userId,
+			username: input.username,
+			avatarUrl: input.avatarUrl,
+			chars: 0,
+			progress: 0,
+			wpm: 0,
+			finished: false,
+			finishedAt: null,
+		};
+
+		const existing = this.findJoinableRoom();
+		if (!existing) {
+			const room = this.createRoom(participant);
+			this.emitLobbyUpdate(room);
+			return { status: 'joined', room };
+		}
+
+		this.addParticipant(existing, participant);
+		// startCountdown emits a lobby update itself; otherwise emit here.
+		if (existing.phase === 'waiting' && this.humanCount(existing) >= 2)
+			this.startCountdown(existing);
+		else
+			this.emitLobbyUpdate(existing);
+		return { status: 'joined', room: existing };
+	}
+
+	private findJoinableRoom(): RoomState | undefined {
+		const now = Date.now();
+		const eligible = [...this.rooms.values()].filter((r) => {
+			const openPhase =
+				r.phase === 'waiting' ||
+				(r.phase === 'countdown' &&
+					r.countdownEndsAt != null &&
+					r.countdownEndsAt - now > LOBBY_JOIN_LOCK_MS);
+			return openPhase && this.humanCount(r) < MAX_PLAYERS;
+		});
+		// Prefer lobbies with the most humans (match real players together),
+		// then the fullest, to consolidate into near-starting games.
+		eligible.sort((a, b) => {
+			const byHumans = this.humanCount(b) - this.humanCount(a);
+			if (byHumans !== 0) return byHumans;
+			return b.players.size - a.players.size;
+		});
+		return eligible[0];
+	}
+
+	private createRoom(host: Participant): RoomState {
+		const room: RoomState = {
+			id: generateRoomID(),
+			matchId: 0,
+			phase: 'waiting',
+			text: pickQuote(),
+			players: new Map([[host.pid, host]]),
+			hostPid: host.pid,
+			playerCount: 0,
+			waitTimer: null,
+			countdownTimer: null,
+			countdownEndsAt: null,
+			startedAt: null,
+			raceTimeout: null,
+			botTicker: null,
+		};
+		this.rooms.set(room.id, room);
+		if (host.socketId) this.socketToRoom.set(host.socketId, room.id);
+
+		room.waitTimer = setTimeout(() => this.onWaitTimeout(room.id), LOBBY_WAIT_MS);
+		console.log(`[Lobby][${room.id}] created by ${host.username}`);
+		return room;
+	}
+
+	private addParticipant(room: RoomState, p: Participant): void {
+		if (room.players.size >= MAX_PLAYERS) this.evictBot(room);
+		room.players.set(p.pid, p);
+		if (p.socketId) this.socketToRoom.set(p.socketId, room.id);
+	}
+
+	private evictBot(room: RoomState): void {
+		for (const p of room.players.values()) {
+			if (p.kind === 'bot') {
+				room.players.delete(p.pid);
+				console.log(`[Lobby][${room.id}] evicted bot ${p.pid} for a human`);
+				return;
+			}
+		}
+	}
+
+	private addBots(room: RoomState, count: number): void {
+		for (let i = 0; i < count && room.players.size < MAX_PLAYERS; i++) {
+			const pid = this.makePid('bot', null);
+			room.players.set(pid, {
+				pid,
+				kind: 'bot',
+				socketId: null,
+				userId: null,
+				username: `Bot ${pid.slice(1)}`,
+				avatarUrl: null,
+				chars: 0,
+				progress: 0,
+				wpm: 0,
+				finished: false,
+				finishedAt: null,
+			});
+		}
+	}
+
+	private onWaitTimeout(roomId: string): void {
+		const room = this.rooms.get(roomId);
+		if (!room || room.phase !== 'waiting') return;
+		room.waitTimer = null;
+		if (this.humanCount(room) <= 1) this.addBots(room, BOTS_ON_SOLO);
+		this.startCountdown(room);
+	}
+
+	private startCountdown(room: RoomState): void {
+		if (room.waitTimer) {
+			clearTimeout(room.waitTimer);
+			room.waitTimer = null;
+		}
+		room.phase = 'countdown';
+		room.countdownEndsAt = Date.now() + LOBBY_COUNTDOWN_MS;
+		room.countdownTimer = setTimeout(
+			() => this.onCountdownEnd(room.id),
+			LOBBY_COUNTDOWN_MS,
+		);
+		this.emitLobbyUpdate(room);
+	}
+
+	private onCountdownEnd(roomId: string): void {
+		const room = this.rooms.get(roomId);
+		if (!room || room.phase !== 'countdown') return;
+		void this.startRace(room);
+	}
+
+	// ------------------------------------------------------------------ racing
+	private async startRace(room: RoomState): Promise<void> {
+		if (room.countdownTimer) {
+			clearTimeout(room.countdownTimer);
+			room.countdownTimer = null;
+		}
+		room.countdownEndsAt = null;
+		room.phase = 'racing';
+		room.startedAt = Date.now();
+		room.playerCount = room.players.size;
+
+		const userIds = this.userIdsOf(room);
+		const match = await this.prisma.match.create({
+			data: {
+				textSnippet: room.text,
+				startedAt: new Date(),
+				status: MatchStatus.IN_PROGRESS,
+			},
+		});
+		room.matchId = match.id;
+
+		if (userIds.length > 0) {
+			await this.prisma.user.updateMany({
+				where: { id: { in: userIds } },
+				data: { status: UserStatus.IN_GAME },
+			});
+		}
+
+		const anchor = await this.botService.anchorWpm(userIds);
+		this.botService.initBots(room, anchor);
+
+		this.server.to(room.id).emit('race_start', {
+			roomId: room.id,
+			startedAt: room.startedAt,
+			playerCount: room.playerCount,
+		});
+
+		const maxMs =
+			Math.max(MIN_RACE_SECONDS, Math.ceil(room.text.length / MIN_CHARS_PER_SEC)) * 1000;
+		room.raceTimeout = setTimeout(() => void this.forceFinish(room.id), maxMs);
+		room.botTicker = setInterval(() => this.botTick(room.id), BOT_TICK_MS);
+
+		console.log(
+			`[Race][${room.id}] started / ${room.playerCount} racers (${userIds.length} users)`,
+		);
+	}
+
+	private botTick(roomId: string): void {
+		const room = this.rooms.get(roomId);
+		if (!room || room.phase !== 'racing') return;
+
+		for (const bot of this.botService.step(room)) {
+			this.server.to(room.id).emit('race_update', {
+				pid: bot.pid,
+				username: bot.username,
+				kind: bot.kind,
+				progress: bot.progress,
+				wpm: bot.wpm,
+			});
+		}
+		if (this.allFinished(room)) void this.finalizeRace(room.id);
+	}
+
+	// chars = correct characters typed so far this race
+	updateProgress(
+		socketId: string,
+		chars: number,
+	): { roomId: string; pid: string; username: string; kind: ParticipantKind; progress: number; wpm: number } | null {
+		const room = this.roomOf(socketId);
+		if (!room || room.phase !== 'racing' || !room.startedAt) return null;
+
+		const p = this.participantOf(room, socketId);
+		if (!p || p.finished) return null;
+
+		if (chars < p.chars) return null;
+
+		const elapsedSec = (Date.now() - room.startedAt!) / 1000;
+		const maxReachable = Math.ceil(elapsedSec * (MAX_WPM * 5 / 60));
+		const safe = Math.min(chars, room.text.length, maxReachable);
+		p.chars = safe;
+		p.progress = room.text.length > 0 ? safe / room.text.length : 1;
+		p.wpm = this.calcWpm(safe, room.startedAt);
+
+		return {
+			roomId: room.id,
+			pid: p.pid,
+			username: p.username,
+			kind: p.kind,
+			progress: p.progress,
+			wpm: p.wpm,
+		};
+	}
+
+	// Called when a socket reports 100%. The finisher's `position` is final the
+	// moment they finish (later finishers can only place behind them).
+	handleFinish(socketId: string): { roomId: string; allDone: boolean; position: number; playerCount: number } | null {
+		const room = this.roomOf(socketId);
+		if (!room || room.phase !== 'racing') return null;
+
+		const p = this.participantOf(room, socketId);
+		if (!p || p.finished) return null;
+
+		p.finished = true;
+		p.finishedAt = Date.now();
+		p.progress = 1;
+
+		const position = [...room.players.values()].filter(x => x.finished).length;
+		const allDone = this.allFinished(room);
+		if (allDone) room.phase = 'finished';
+		return { roomId: room.id, allDone, position, playerCount: room.playerCount };
+	}
+
+	private allFinished(room: RoomState): boolean {
+		for (const p of room.players.values()) if (!p.finished) return false;
+		return true;
+	}
+
+	async forceFinish(roomId: string): Promise<void> {
+		const room = this.rooms.get(roomId);
+		if (!room || room.phase === 'finished') return;
+		for (const p of room.players.values()) {
+			if (!p.finished) {
+				p.finished = true;
+				p.finishedAt = Date.now();
+			}
+		}
+		room.phase = 'finished';
+		await this.finalizeRace(roomId);
+	}
+
+	async finalizeRace(roomId: string): Promise<void> {
+		const room = this.rooms.get(roomId);
+		if (!room) return;
+		// Guard against the several paths that can race to finish a room
+		// (last human, last bot, race timeout, disconnect).
+		if (this.finalizing.has(roomId)) return;
+		this.finalizing.add(roomId);
+		room.phase = 'finished';
+		if (room.botTicker) {
+			clearInterval(room.botTicker);
+			room.botTicker = null;
+		}
+
+		const sorted = [...room.players.values()].sort((a, b) => {
+			const fa = a.finishedAt ?? Infinity;
+			const fb = b.finishedAt ?? Infinity;
+			if (fa !== fb) return fa - fb;
+			// Ties (leavers with null finishedAt, or timeout-finished racers
+			// stamped the same ms): rank the further-along racer higher.
+			return b.progress - a.progress;
+		});
+
+		const results: RaceResult[] = sorted.map((p, i) => ({
+			pid: p.pid,
+			username: p.username,
+			kind: p.kind,
+			position: i + 1,
+			wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+		}));
+
+		// Persist only real users; bots & guests are deliberately never stored,
+		// which also keeps them off the leaderboard (it groups by userId).
+		const userRows = sorted
+			.map((p, i) => ({ p, position: i + 1 }))
+			.filter(({ p }) => p.kind === 'user' && p.userId != null);
+
+		await this.prisma.match.update({
+			where: { id: room.matchId },
+			data: { endedAt: new Date(), status: MatchStatus.FINISHED },
+		});
+
+		if (userRows.length > 0) {
+			await this.prisma.matchResult.createMany({
+				data: userRows.map(({ p, position }) => ({
+					matchId: room.matchId,
+					userId: p.userId as number,
+					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+					position,
+					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+				})),
+			});
+
+			await this.prisma.user.updateMany({
+				where: { id: { in: userRows.map(({ p }) => p.userId as number) } },
+				data: { status: UserStatus.ONLINE },
+			});
+
+			const saved = await this.prisma.matchResult.findMany({
+				where: { matchId: room.matchId },
+			});
+			for (const r of saved)
+				await this.achievementService.checkAndUnlockAchievements(r.userId, r);
+		}
+
+		this.server.to(room.id).emit('race_finished', {
+			results,
+			playerCount: room.playerCount,
+		});
+
+		console.log(`[Race][${room.id}] finished / ${room.playerCount} racers`);
+		this.cleanRoom(roomId);
+	}
+
+	// --------------------------------------------------------------- disconnect
+	async handleDisconnect(socketId: string): Promise<{ roomId: string } | null> {
+		const room = this.roomOf(socketId);
+		if (!room) return null;
+
+		const p = this.participantOf(room, socketId);
+		if (!p) return null;
+
+		this.socketToRoom.delete(socketId);
+
+		if (room.phase === 'waiting' || room.phase === 'countdown') {
+			room.players.delete(p.pid);
+			if (this.humanCount(room) === 0) {
+				this.cleanRoom(room.id);
+				return { roomId: room.id };
+			}
+			this.emitLobbyUpdate(room);
+			return { roomId: room.id };
+		}
+
+		if (room.phase !== 'racing') {
+			return { roomId: room.id };
+		}
+
+		// Racing: keep the leaver in place so their car freezes where it stopped
+		// and they still count toward placement. Mark finished (finishedAt stays
+		// null) so the race can resolve and they sort last.
+		p.socketId = null;
+		p.finished = true;
+		if (p.userId != null) {
+			await this.prisma.user.update({
+				where: { id: p.userId },
+				data: { status: UserStatus.ONLINE },
+			}).catch(() => undefined);
+		}
+
+		if (this.connectedHumanCount(room) === 0) {
+			if (!this.finalizing.has(room.id)) {
+				this.finalizing.add(room.id);
+				if (room.botTicker) {
+					clearInterval(room.botTicker);
+					room.botTicker = null;
+				}
+				await this.prisma.match.update({
+					where: { id: room.matchId },
+					data: { status: MatchStatus.CANCELLED },
+				}).catch(() => undefined);
+				await this.releaseUsers(room);
+				this.cleanRoom(room.id);
+			}
+			return { roomId: room.id };
+		}
+
+		if (this.allFinished(room)) await this.finalizeRace(room.id);
+		return { roomId: room.id };
+	}
+
+	// -------------------------------------------------------------------- utils
+	private userIdsOf(room: RoomState): number[] {
+		const ids: number[] = [];
+		for (const p of room.players.values())
+			if (p.kind === 'user' && p.userId != null) ids.push(p.userId);
+		return ids;
+	}
+
+	private async releaseUsers(room: RoomState): Promise<void> {
+		const ids = this.userIdsOf(room);
+		if (ids.length === 0) return;
+		await this.prisma.user.updateMany({
+			where: { id: { in: ids } },
+			data: { status: UserStatus.ONLINE },
+		}).catch(() => undefined);
+	}
+
+	private calcWpm(chars: number, startedAt: number): number {
+		const minutes = (Date.now() - startedAt) / 60000;
+		return minutes > 0 ? Math.round(chars / 5 / minutes) : 0;
+	}
+
+	private cleanRoom(roomId: string): void {
+		const room = this.rooms.get(roomId);
+		if (!room) return;
+		if (room.waitTimer) clearTimeout(room.waitTimer);
+		if (room.countdownTimer) clearTimeout(room.countdownTimer);
+		if (room.raceTimeout) clearTimeout(room.raceTimeout);
+		if (room.botTicker) clearInterval(room.botTicker);
+		for (const p of room.players.values())
+			if (p.socketId) this.socketToRoom.delete(p.socketId);
+		this.rooms.delete(roomId);
+		this.finalizing.delete(roomId);
+		console.log(`[Room][${roomId}] deleted`);
+	}
+
+	// ------------------------------------------------------------------- emits
+	private emitLobbyUpdate(room: RoomState): void {
+		const players: LobbyParticipant[] = [...room.players.values()].map((p) => ({
+			pid: p.pid,
+			kind: p.kind,
+			username: p.username,
+			avatarUrl: p.avatarUrl,
+		}));
+		const phase = room.phase === 'countdown' ? 'countdown' : 'waiting';
+		for (const p of room.players.values()) {
+			if (!p.socketId) continue;
+			this.server.sockets.get(p.socketId)?.emit('lobby_update', {
+				lobbyId: room.id,
+				phase,
+				players,
+				you: p.pid,
+				hostPid: room.hostPid,
+				text: room.text,
+				countdownEndsAt: room.countdownEndsAt,
+			});
+		}
+	}
 }

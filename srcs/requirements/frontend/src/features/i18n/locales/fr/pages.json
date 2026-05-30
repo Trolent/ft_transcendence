@@ -116,6 +116,7 @@
     "results_label": "résultats",
     "stat_wpm": "MPM",
     "stat_time": "Temps",
+    "stat_accuracy": "Précision",
     "stat_position": "Position",
     "try_again": "Réessayer",
     "race_again": "Rejouer",
@@ -128,8 +129,18 @@
     ],
     "you": "Vous",
     "player": "Joueur {{n}}",
-    "type_here": "Tapez ici…",
-    "waiting_start": "En attente du départ de la course…"
+    "type_here": "Tapez ici...",
+    "waiting_start": "En attente du départ de la course...",
+    "connecting": "Connexion…",
+    "waiting_for_players": "En attente de joueurs…",
+    "cancel": "Annuler",
+    "player_left": "{{name}} a quitté la course.",
+    "race_voided": "Course annulée — pas assez de joueurs.",
+    "already_in_game": "Vous êtes déjà dans une course dans un autre onglet.",
+    "join_failed": "Impossible de rejoindre la course. Veuillez réessayer.",
+    "guest": "Invité",
+    "starting_in": "Départ dans {{n}}…",
+    "bot": "Robot"
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"

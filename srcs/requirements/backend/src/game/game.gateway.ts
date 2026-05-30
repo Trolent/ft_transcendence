@@ -1,127 +1,132 @@
 import {
-    WebSocketGateway,
-    WebSocketServer,
-    SubscribeMessage,
-    OnGatewayConnection,
-    OnGatewayDisconnect,
+	WebSocketGateway,
+	WebSocketServer,
+	SubscribeMessage,
+	OnGatewayInit,
+	OnGatewayConnection,
+	OnGatewayDisconnect,
 } from '@nestjs/websockets'
-import { GameService } from './game.service'
-import { UseGuards, } from '@nestjs/common';
+import { GameService, JoinInput } from './game.service'
+import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { WsJwtGuard } from '../auth/ws-jwt.guard'
 import { AuthService } from '../auth/auth.service'
 import { Socket, Namespace } from 'socket.io';
-import { MAX_WPM } from '../common/game.constant';
+import { MAX_WPM, PROGRESS_MIN_INTERVAL_MS } from '../common/game.constant';
 import { WS_CORS } from '../common/ws.config'
+import { PlayerProgressDto } from './dto/player-progress.dto'
+
+function sanitizeGuestName(raw: unknown): string {
+	if (typeof raw !== 'string') return 'Guest';
+	const name = raw.trim().replace(/\s+/g, ' ').slice(0, 20).trim();
+	return name.length > 0 ? name : 'Guest';
+}
 
 @WebSocketGateway({ cors: WS_CORS, namespace: '/game' })
-export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   @WebSocketServer()
   server: Namespace;
 
+  private readonly lastProgress = new Map<string, number>();
+
   constructor(
-      private gameService: GameService,
-      private authService: AuthService,
+	  private gameService: GameService,
+	  private authService: AuthService,
   ) {}
 
+  afterInit() {
+	this.gameService.setServer(this.server);
+  }
+
   async handleConnection(client: Socket) {
-    const ok = await this.authService.validateWsClient(client);
-    if (!ok)
-        return client.disconnect();
+    const auth = client.handshake.auth ?? {};
+    // Logged-in players authenticate by JWT (sets client.data.user).
+    if (auth.token) {
+        const ok = await this.authService.validateWsClient(client);
+        if (!ok)
+            return client.disconnect();
+        return;
+    }
+    // Guests opt in explicitly; they race + count toward placement but are
+    // never persisted. Any other tokenless connection is rejected.
+    if (auth.guest === true) {
+        client.data.guest = { username: sanitizeGuestName(auth.nickname) };
+        return;
+    }
+    return client.disconnect();
   }
 
   async handleDisconnect(client: Socket) {
-    if(this.gameService.isInQueue(client.id))
-        this.gameService.removeFromQueu(client.id);
+	this.lastProgress.delete(client.id);
+	await this.gameService.handleDisconnect(client.id);
+  }
 
-    const gameData = await this.gameService.handlePlayerDisconnect(client.id);
-
-    if(gameData){
-        for(const id of gameData.others) {
-            this.server.sockets.get(id)?.emit('opponent_disconnected',
-            { username: gameData.username, cancelled: gameData.cancelled });
-        }
-    }
+  // Identity comes from the JWT (client.data.user) or the guest handshake
+  // (client.data.guest). Guests race and count toward placement but are never
+  // persisted; the guest path is enabled in the ws guard.
+  private resolveJoin(client: Socket): JoinInput | null {
+	const user = client.data.user;
+	if (user)
+		return { socketId: client.id, kind: 'user', userId: user.id, username: user.username, avatarUrl: user.avatarUrl ?? null };
+	const guest = client.data.guest;
+	if (guest)
+		return { socketId: client.id, kind: 'guest', userId: null, username: guest.username, avatarUrl: null };
+	return null;
   }
 
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('join_queue')
-  async handleJoinQueue(client: Socket) {
-    const user = client.data.user;
-    const matched = this.gameService.addToQueue({
-        socketId:   client.id,
-        userId:     user.id,
-        username:   user.username,
-        avatarUrl:  user.avatarUrl,
-    });
-    if(!matched)
-        return ;
-
-    const room = await this.gameService.createRoom(matched);
-
-    for (const player of matched)
-        this.server.sockets.get(player.socketId)?.join(room.id);
-
-    this.server.to(room.id).emit('match_found', {
-        roomId:     room.id,
-        text:       room.text,
-        players:    [...room.players.values()].map(p => ({
-            userId:     p.userId,
-            username:   p.username,
-            avatarUrl:  p.avatarUrl,
-        })),
-    });
-
-    // console.log(`[Game][${room.id}]CountDown start`);
-    this.gameService.startCountdown(room.id, (time) => {
-        if(time === null){
-            console.log(`[Game][${room.id}]Race start`);
-            this.server.to(room.id).emit('race_start');
-        } else {
-            this.server.to(room.id).emit('countdown', { time });
-        }
-            
-    }, async (roomId) => {
-        const results = await this.gameService.forceFinishRace(roomId);
-        if(results)
-            this.server.to(roomId).emit('race_finished', { results });
-    });
+  handleJoinQueue(client: Socket) {
+	const input = this.resolveJoin(client);
+	if (!input)
+		return;
+	const result = this.gameService.assign(input);
+	if (result.status === 'joined')
+		client.join(result.room.id);
+	else if (result.status === 'duplicate_session')
+		client.emit('join_rejected', { reason: 'duplicate_session' });
   }
 
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('leave_queue')
-  handleLeaveQueue(client: Socket) {
-    this.gameService.removeFromQueu(client.id);
+  async handleLeaveQueue(client: Socket) {
+	const left = await this.gameService.handleDisconnect(client.id);
+	if (!left)
+		return;
+	client.leave(left.roomId);
   }
 
   @UseGuards(WsJwtGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @SubscribeMessage('player_progress')
-  async handleProgress(client: Socket, payload: { chars: number}){
-    if (typeof payload?.chars !== 'number')
-        return;
-    const delta = this.gameService.updateProgress(client.id, payload.chars);
+  async handleProgress(client: Socket, payload: PlayerProgressDto) {
+	const now = Date.now();
+	const last = this.lastProgress.get(client.id) ?? 0;
+	if (now - last < PROGRESS_MIN_INTERVAL_MS) return;
+	this.lastProgress.set(client.id, now);
 
-    if(!delta)
-        return ;
+	const delta = this.gameService.updateProgress(client.id, payload.chars);
+	if (!delta)
+		return;
 
-    if (delta.wpm > MAX_WPM)
-        console.warn(`[CHEAT?][${delta.roomId}] ${delta.username} wpm:${delta.wpm} progress:${Math.round(delta.progress * 100)}%`)
+	if (delta.wpm > MAX_WPM)
+		console.warn(`[CHEAT?][${delta.roomId}] ${delta.username} wpm:${delta.wpm}`);
 
-    if (delta.progress >= 1){
-        const finish = this.gameService.handlePlayerFinish(client.id);
-        if (finish?.allDone) {
-            const results = await this.gameService.finalizeRace(finish.roomId);
-            this.server.to(finish.roomId).emit('race_finished', { results });
-        }
-        return;
-    }
+	this.server.to(delta.roomId).emit('race_update', {
+		pid: delta.pid,
+		username: delta.username,
+		kind: delta.kind,
+		progress: delta.progress,
+		wpm: delta.wpm,
+	});
 
-    // console.log(`[Game][${delta.roomId}]Game progression for ${delta.username.slice(0, 6)} ${Math.round(delta.progress * 100)}%`)
-    this.server.to(delta.roomId).emit('race_update', {
-        userId:     delta.userId,
-        username:   delta.username,
-        progress:   delta.progress,
-        wpm:        delta.wpm,
-    });
+	if (delta.progress >= 1) {
+		const finish = this.gameService.handleFinish(client.id);
+		if (finish) {
+			client.emit('you_finished', { position: finish.position, playerCount: finish.playerCount });
+			if (finish.allDone)
+				await this.gameService.finalizeRace(finish.roomId);
+		}
+	}
   }
 }
