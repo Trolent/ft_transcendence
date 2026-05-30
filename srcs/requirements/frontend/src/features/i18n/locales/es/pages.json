@@ -3,10 +3,14 @@
     "title": "CLASIFICACIÓN",
     "loading": "Cargando...",
     "empty": "Sin jugadores todavía",
+    "search_placeholder": "Buscar un jugador...",
+    "search_empty": "Ningún jugador coincide con tu búsqueda.",
     "error": "No se pudo cargar la clasificación.",
     "wpm": "{{wpm}} PPM",
     "level": "nivel: {{level}}",
-    "games": "partidas: {{count}}"
+    "games": "partidas: {{count}}",
+    "sort_desc": "Mayor PPM primero",
+    "sort_asc": "Menor PPM primero"
   },
   "settings": {
     "title": "AJUSTES",
@@ -54,7 +58,6 @@
     "history_label": "historial",
     "history_empty": "Ninguna partida jugada.",
     "add_friend": "+ Añadir amigo",
-    "add_friend_short": "Añadir",
     "remove_friend": "Eliminar amigo",
     "pending": "Pendiente",
     "message": "Mensaje",
@@ -65,13 +68,19 @@
     "history_date": "Fecha",
     "history_pos": "Pos",
     "history_wpm": "PPM",
-    "history_players": "Jugadores"
+    "history_players": "Jugadores",
+    "achievements": "Logros",
+    "no_achievements": "Aún no hay logros.",
+    "achievements_show_all": "Ver bloqueados",
+    "achievements_hide_locked": "Ocultar bloqueados"
   },
   "friends": {
     "title": "AMIGOS",
     "requests_title": "SOLICITUDES DE AMISTAD",
     "list_heading": "Amigos [{{count}}]",
     "no_friends": "Sin amigos todavía.",
+    "search_placeholder": "Buscar un amigo...",
+    "search_empty": "Ningún amigo coincide con tu búsqueda.",
     "error_load": "No se pudieron cargar los amigos.",
     "incoming_heading": "Recibidas [{{count}}]",
     "pending_heading": "Pendientes [{{count}}]",
@@ -96,17 +105,12 @@
     "ready_to_race": "¿Listo para correr?",
     "race_description": "Escribe más rápido que tus oponentes para cruzar la línea de meta.",
     "enter_race": "Entrar en la carrera",
-    "practice_mode": "Práctica",
+    "practice_mode": "Entrenamiento",
     "main_menu": "← Menú principal",
-    "start": "Empezar",
-    "waiting": "Esperando jugadores…",
-    "countdown": "¡Prepárate!",
-    "finished": "¡Carrera terminada!",
-    "your_wpm": "Tus PPM: {{wpm}}",
-    "position": "Posición: {{pos}}/{{total}}",
     "results_label": "resultados",
     "stat_wpm": "PPM",
     "stat_time": "Tiempo",
+    "stat_accuracy": "Precisión",
     "stat_position": "Posición",
     "try_again": "Intentar de nuevo",
     "race_again": "Correr de nuevo",
@@ -120,15 +124,33 @@
     "you": "Tú",
     "player": "Jugador {{n}}",
     "type_here": "Escribe aquí...",
-    "waiting_start": "Esperando el inicio de la carrera..."
+    "waiting_start": "Esperando el inicio de la carrera...",
+    "connecting": "Conectando…",
+    "waiting_for_players": "Esperando jugadores…",
+    "cancel": "Cancelar",
+    "player_left": "{{name}} abandonó la carrera.",
+    "race_voided": "Carrera cancelada — no hay suficientes jugadores.",
+    "already_in_game": "Ya estás en una carrera en otra pestaña.",
+    "join_failed": "No se pudo unir a la carrera. Inténtalo de nuevo.",
+    "guest": "Invitado",
+    "starting_in": "Comienza en {{n}}…",
+    "bot": "Robot"
   },
   "oauth_callback": {
     "connecting": "Conectando…"
   },
   "chat": {
+    "title": "Chats",
     "new_chat": "Nuevo chat",
-    "new_chat_title": "Nuevo chat",
+    "loading": "Cargando chat…",
+    "no_messages": "Aún no hay mensajes",
+    "no_chats": "Aún no hay conversaciones",
+    "error_load": "No se pudieron cargar las conversaciones",
+    "message_placeholder": "Escribe un mensaje…",
+    "send": "Enviar",
+    "you": "Yo",
     "open": "Abrir",
-    "no_chat_selected": "Ninguna conversación seleccionada."
+    "no_chat_selected": "Ninguna conversación seleccionada.",
+    "view_profile": "Ver perfil"
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { MatchResult } from '@prisma/client';
@@ -9,14 +9,16 @@ export class AchievementService implements OnModuleInit {
 
     constructor(
         private prisma: PrismaService,
-        private users: UsersService) {}
+        @Inject(forwardRef(() => UsersService))
+        private users: UsersService,
+    ) {}
 
     async onModuleInit() {
         for (const a of ACHIEVEMENTS) {
             await this.prisma.achievement.upsert({
                 where:  { key: a.key },
                 update: {},
-                create: { ...a, iconUrl: null },
+                create: { ...a },
             });
         }
     }
@@ -88,13 +90,24 @@ export class AchievementService implements OnModuleInit {
         const user = await this.users.findByUsername(username);
         if (!user) return [];
 
-        return this.prisma.userAchievement.findMany({
-            where: { userId: user.id },
-            include: {
-                achievement: true,
-            },
-            orderBy: { unlockedAt: 'desc' },
-        });
+        const [allAchievements, userAchievements] = await Promise.all([
+            this.prisma.achievement.findMany(),
+            this.prisma.userAchievement.findMany({ where: { userId: user.id } }),
+        ]);
+
+        const unlockedMap = new Map(userAchievements.map(ua => [ua.achievementId, ua.unlockedAt]));
+
+        return allAchievements
+            .map(achievement => ({
+                achievement,
+                unlockedAt: unlockedMap.get(achievement.id) ?? null,
+            }))
+            .sort((a, b) => {
+                if (a.unlockedAt && b.unlockedAt) return b.unlockedAt.getTime() - a.unlockedAt.getTime();
+                if (a.unlockedAt) return -1;
+                if (b.unlockedAt) return 1;
+                return 0;
+            });
     }
 
 }

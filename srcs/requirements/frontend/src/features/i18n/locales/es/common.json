@@ -1,5 +1,5 @@
 {
-  "loading": "Cargando...",
+  "loading": "Cargando…",
   "save": "Guardar",
   "cancel": "Cancelar",
   "please_wait": "Por favor espera…",
@@ -7,18 +7,24 @@
     "prev": "Ant",
     "next": "Sig"
   },
+  "search": {
+    "placeholder": "Buscar un jugador...",
+    "empty": "No se encontraron jugadores.",
+    "min_chars": "Escribe al menos 3 caracteres para buscar."
+  },
+  "find": "Buscar",
   "errors": {
     "INVALID_CREDENTIALS": "Email o contraseña incorrectos.",
     "USER_ALREADY_EXISTS": "Nombre de usuario ya en uso.",
     "USER_NOT_FOUND": "Usuario no encontrado.",
     "EMAIL_ALREADY_TAKEN": "Email ya en uso.",
     "EMAIL_ALREADY_IN_USE": "Email ya en uso.",
-    "ALREADY_FRIENDS": "Ya son amigos.",
+    "ALREADY_FRIENDS": "Ya sois amigos.",
     "CANNOT_ADD_YOURSELF": "No puedes añadirte a ti mismo.",
     "ALREADY_BLOCKED": "Este usuario ya está bloqueado.",
     "CANNOT_BLOCK_YOURSELF": "No puedes bloquearte a ti mismo.",
     "CANNOT_UNBLOCK_YOURSELF": "No puedes desbloquearte a ti mismo.",
-    "NOT_FRIENDS": "No son amigos.",
+    "NOT_FRIENDS": "No sois amigos.",
     "NOT_YOUR_BLOCK": "No has bloqueado a este usuario.",
     "NOT_YOUR_REQUEST": "Esta solicitud no te pertenece.",
     "REQUEST_ALREADY_SENT": "Solicitud de amistad ya enviada.",
@@ -27,9 +33,12 @@
     "NO_FILE_PROVIDED": "No se proporcionó ningún archivo.",
     "AVATAR_TOO_LARGE": "El archivo del avatar es demasiado grande.",
     "AVATAR_MIMETYPE_NOT_ALLOWED": "Tipo de archivo no permitido.",
+    "MISSING_SEARCH_QUERY": "La búsqueda no puede estar vacía.",
     "MISSING_USERS_PARAM": "Parámetro de usuario faltante.",
     "USERNAME_CANNOT_CONTAIN_AT": "El nombre de usuario no puede contener @.",
     "INVALID_CURRENT_PASSWORD": "Contraseña actual incorrecta.",
-    "CURRENT_PASSWORD_REQUIRED": "La contraseña actual es obligatoria."
+    "CURRENT_PASSWORD_REQUIRED": "La contraseña actual es obligatoria.",
+    "ACTION_FAILED": "La acción ha fallado.",
+    "TOKEN_STALE": "Tu sesión ha expirado, por favor inicia sesión de nuevo."
   }
 }

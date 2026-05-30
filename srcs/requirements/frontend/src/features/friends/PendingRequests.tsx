@@ -8,9 +8,10 @@ import type { Friend } from "./types";
 
 interface PendingRequestsProps {
   className?: string;
+  refreshKey?: number;
 }
 
-export default function PendingRequests({ className = "" }: PendingRequestsProps) {
+export default function PendingRequests({ className = "", refreshKey = 0 }: PendingRequestsProps) {
   const { t } = useTranslation('pages');
   const [pending, setPending] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,11 +21,11 @@ export default function PendingRequests({ className = "" }: PendingRequestsProps
     setLoading(true);
     getSentRequests()
       .then((data) =>
-        setPending(data.map((item) => ({ id: item.id, username: item.username, avatarSrc: item.avatarUrl })))
+        setPending(data.map((item) => ({ id: item.id, username: item.username, avatarSrc: item.avatarUrl, status: "OFFLINE" })))
       )
       .catch((err: unknown) => setError(err instanceof Error ? tError(err.message, t) : t('friends.error_requests')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   return (
     <section className={className}>

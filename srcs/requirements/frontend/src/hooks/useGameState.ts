@@ -12,10 +12,10 @@ function calcMaxTime(passageLength: number): number {
   return Math.max(20, Math.ceil(passageLength / 2.5));
 }
 
-export function useGameState(active: boolean, forcedEnd = false, practice = false) {
-  const [passage] = useState<string>(pickRandomQuote);
+export function useGameState(active: boolean, forcedEnd = false, practice = false, initialText?: string, maxTimeOverride?: number) {
+  const [passage] = useState<string>(() => initialText ?? pickRandomQuote());
   const words = passage.split(" ");
-  const maxTime = calcMaxTime(passage.length);
+  const maxTime = maxTimeOverride ?? calcMaxTime(passage.length);
 
   const [wordIndex, setWordIndex] = useState(0);
   const [typed, setTyped] = useState("");
@@ -37,6 +37,9 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   const timeLeft = Math.max(0, maxTime - elapsed);
   const minutes = elapsed / 60;
   const wpm = lockedWpm ?? (minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
+  const accuracy = totalTyped > 0
+    ? Math.min(100, Math.round((completedChars / totalTyped) * 100))
+    : 0;
 
   const handleType = (newValue: string) => {
     if (newValue.length > typed.length) {
@@ -82,5 +85,7 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
     handleType, completeWord,
     elapsed, timeLeft, wpm, progress, finished, playerDone,
     finishTime: lockedElapsed,
+    accuracy,
+    totalCorrect,
   };
 }

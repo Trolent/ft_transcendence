@@ -12,9 +12,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { sub: number }) {
+  async validate(payload: { sub: number; iat: number }) {
     const user = await this.authService.validateUser(payload.sub);
     if (!user) throw new UnauthorizedException('USER_NOT_FOUND');
+    if (payload.iat * 1000 < user.createdAt.getTime() - 1000)
+      throw new UnauthorizedException('TOKEN_STALE');
     return user;
   }
 }
