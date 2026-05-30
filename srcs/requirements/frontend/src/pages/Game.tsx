@@ -1,23 +1,31 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Btn, PageLayout, Alert } from "@/components";
 import { GameArena } from "@/features/game";
 import { useRaceSocket } from "@/hooks/useRaceSocket";
 
-type Mode = "menu" | "practice" | "multiplayer";
+type Mode = "practice" | "multiplayer";
 type PracticePhase = "countdown" | "go" | "racing";
 
-export default function Play() {
+export default function Game() {
   const { t } = useTranslation('pages');
-  const [mode, setMode] = useState<Mode>("menu");
+  const navigate = useNavigate();
+  const { mode: modeParam } = useParams<{ mode: string }>();
+  const mode: Mode = modeParam === "practice" ? "practice" : "multiplayer";
   const [gameKey, setGameKey] = useState(0);
 
   // --- practice (offline, single-player) ---
-  const [pPhase, setPPhase] = useState<PracticePhase>("countdown");
+  const [pPhase, setPPhase] = useState<PracticePhase>("racing");
   const [pCountdown, setPCountdown] = useState(5);
 
   // --- multiplayer (socket-driven) ---
   const race = useRaceSocket();
+
+  // Auto-join queue when entering multiplayer
+  useEffect(() => {
+    if (mode === "multiplayer") race.joinQueue();
+  }, [mode, race.joinQueue]);
 
   // ---- practice countdown clock ----
   useEffect(() => {
@@ -49,42 +57,11 @@ export default function Play() {
     [race.racers],
   );
 
-  // ===== Menu =====
-  const enterRace = () => {
-    setMode("multiplayer");
-    race.joinQueue();
-  };
-
-  const enterPractice = () => {
-    setMode("practice");
-    setPPhase("racing");
-  };
-
+  // ===== Back to menu =====
   const backToMenu = () => {
     if (mode === "multiplayer") race.leaveQueue();
-    setMode("menu");
+    navigate('/');
   };
-
-  if (mode === "menu") {
-    return (
-      <PageLayout centerY>
-        <div className="flex flex-col items-center gap-8">
-          <div className="text-center flex flex-col gap-3">
-            <h1 className="text-3xl sm:text-5xl font-bold font-mono tracking-widest uppercase text-default">
-              {t('play.ready_to_race')}
-            </h1>
-            <p className="text-dim font-mono text-sm">
-              {t('play.race_description')}
-            </p>
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <Btn size="lg" onClick={enterRace}>{t('play.enter_race')}</Btn>
-            <Btn size="lg" variant="secondary" onClick={enterPractice}>{t('play.practice_mode')}</Btn>
-          </div>
-        </div>
-      </PageLayout>
-    );
-  }
 
   // ===== Practice =====
   if (mode === "practice") {
