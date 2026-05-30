@@ -48,8 +48,8 @@ export function NewChat({ onSelectChat }: NewChatProps) {
 
   return (
     <>
-      <Btn variant="primary" size="sm" onClick={() => setIsOpen(true)}>
-        {t("chat.new_chat")}
+      <Btn variant="primary" size="sm" className="font-bold" onClick={() => setIsOpen(true)}>
+        {t("chat.new_chat_btn")}
       </Btn>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title={t("chat.new_chat")}>
