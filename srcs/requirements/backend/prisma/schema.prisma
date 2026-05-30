@@ -116,6 +116,9 @@ model MatchResult {
     user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
     wpm                 Float?
     position            Int?
+    nbPlayers           Int?
+    nbBots              Int?
+    accuracy            Float?
     finishedAt          DateTime?
 
     @@unique([matchId, userId])

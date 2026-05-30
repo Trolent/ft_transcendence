@@ -144,6 +144,9 @@ async function main() {
         userId:     user.id,
         wpm:        parseFloat(faker.number.float({ min: 30, max: 150, fractionDigits: 2 }).toFixed(2)),
         position:   0,
+        nbPlayers:  playerCount,
+        nbBots:     0,
+        accuracy:   parseFloat(faker.number.float({ min: 75, max: 100, fractionDigits: 2 }).toFixed(2)),
         finishedAt: endedAt,
       }))
       .sort((a, b) => b.wpm - a.wpm)
