@@ -6,13 +6,14 @@ import {
   FriendsPage,
   Leaderboard,
   OAuthCallback,
-  Play,
   Privacy,
   Profile,
   Register,
   Settings,
   Signin,
   Terms,
+  Home,
+  Game
 } from "@/pages";
 import { Navbar, Footer } from "@/components";
 import { ProtectedRoute, GuestRoute } from "@/features/auth";
@@ -23,8 +24,8 @@ function App() {
       <Navbar />
       <main className="flex-1 flex flex-col">
         <Routes>
-          <Route path="/" element={<Play />} />
-          <Route path="/play" element={<Play />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/play/:mode" element={<Game />} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/signin" element={<GuestRoute><Signin /></GuestRoute>} />
           <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
@@ -38,7 +39,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
           <Route path="/friends/requests" element={<ProtectedRoute><FriendRequests /></ProtectedRoute>} />
-          <Route path="*" element={<Play />} />
+          <Route path="*" element={<Home />} />
         </Routes>
       </main>
       <Footer />

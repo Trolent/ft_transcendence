@@ -7,7 +7,14 @@
     "prev": "Ant",
     "next": "Sig"
   },
+  "search": {
+    "placeholder": "Buscar un jugador...",
+    "empty": "No se encontraron jugadores.",
+    "min_chars": "Escribe al menos 3 caracteres para buscar."
+  },
   "find": "Buscar",
+  "new": "Nuevo",
+  "message": "Mensaje",
   "errors": {
     "INVALID_CREDENTIALS": "Email o contraseña incorrectos.",
     "USER_ALREADY_EXISTS": "Nombre de usuario ya en uso.",
@@ -28,6 +35,7 @@
     "NO_FILE_PROVIDED": "No se proporcionó ningún archivo.",
     "AVATAR_TOO_LARGE": "El archivo del avatar es demasiado grande.",
     "AVATAR_MIMETYPE_NOT_ALLOWED": "Tipo de archivo no permitido.",
+    "MISSING_SEARCH_QUERY": "La búsqueda no puede estar vacía.",
     "MISSING_USERS_PARAM": "Parámetro de usuario faltante.",
     "USERNAME_CANNOT_CONTAIN_AT": "El nombre de usuario no puede contener @.",
     "INVALID_CURRENT_PASSWORD": "Contraseña actual incorrecta.",

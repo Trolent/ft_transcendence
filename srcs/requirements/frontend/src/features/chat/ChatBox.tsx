@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-// @ts-ignore
-import { io, Socket } from 'socket.io-client';
-import { getToken, useAuth } from '@/features/auth';
-import { Heading, Text } from '@/components';
-import { Messages, ChatForm } from '.';
+import { useAuth } from '@/features/auth';
+import { Text, Container } from '@/components';
+import { Messages, ChatForm, ChatHeader, useChatCtx } from '.';
 import { chatApi, type ChatMessage, type IncomingChatMessageEvent } from '@/api/chat.api';
 
 interface ChatBoxProps {
@@ -15,13 +13,13 @@ interface ChatBoxProps {
 export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
+  const { chatSocket, clearUnreadMessages } = useChatCtx();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    clearUnreadMessages();
     if (!targetUsername) {
       setMessages([]);
       setIsLoading(false);
@@ -33,38 +31,21 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
     const fetchHistory = async () => {
       try {
         const history = await chatApi.getHistory(targetUsername);
-        setMessages(history);
+        setMessages([...history].reverse());
       } catch (error) {
-        console.error('failed to fetch history:', error);
+        console.error('Failed to fetch chat history:', error);
       }
       setIsLoading(false);
     };
 
     fetchHistory();
+  }, [targetUsername]);
 
-    const token = getToken();
-    if (!token) {
-      console.error('No token found');
-      return;
-    }
+  useEffect(() => {
+    if (!chatSocket || !targetUsername) return;
 
-    const newSocket = io('/chat', {
-      auth: { token },
-      autoConnect: true,
-    });
-
-    newSocket.on('connect', () => {
-      console.log('Chat socket connected');
-      setIsConnected(true);
-      setIsLoading(false);
-    });
-
-    newSocket.on('connect_error', (error: any) => {
-      console.error('Chat:', error);
-    });
-
-    newSocket.on('receive_message', (data: IncomingChatMessageEvent) => {
-      console.log('Message received:', data);
+    const handleReceiveMessage = (data: IncomingChatMessageEvent) => {
+      if (data.fromUsername !== targetUsername) return;
       setMessages((prev) => [
         ...prev,
         {
@@ -85,23 +66,20 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
           },
         },
       ]);
-    });
+      onMessageSent?.();
+      clearUnreadMessages();
+    };
 
-    newSocket.on('disconnect', () => {
-      console.log('Chat socket disconnected');
-      setIsConnected(false);
-    });
-
-    setSocket(newSocket);
+    chatSocket.on('receive_message', handleReceiveMessage);
 
     return () => {
-      newSocket.disconnect();
+      chatSocket.off('receive_message', handleReceiveMessage);
     };
-  }, [user, targetUsername]);
+  }, [chatSocket, targetUsername, user]);
 
   const handleSendMessage = (content: string) => {
-    if (socket && targetUsername) {
-      socket.emit('send_message', {
+    if (chatSocket && targetUsername) {
+      chatSocket.emit('send_message', {
         to: targetUsername,
         content,
       });
@@ -132,20 +110,20 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
   };
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
+    <div className="flex h-full min-h-0 w-full flex-col gap-4">
       {!targetUsername ? (
           <Text variant="dim">{t('chat.no_chat_selected')}</Text>
       ) : (
         <>
-          <Heading level={2}>{targetUsername}</Heading>
+          <ChatHeader username={targetUsername} />
 
           {isLoading ? (
             <div><Text variant="dim">{t('common:loading')}</Text></div>
           ) : (
-            <>
-              <Messages messages={messages}/>
+            <Container className="flex flex-col h-[62dvh] sm:h-[65dvh] !p-2 sm:!p-4">
+              <Messages messages={messages} currentUserId={user?.id} />
               <ChatForm onSendMessage={handleSendMessage} />
-            </>
+            </Container>
           )}
         </>
       )}

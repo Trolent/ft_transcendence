@@ -6,8 +6,7 @@ export default function Terms() {
   const { i18n } = useTranslation();
   if (i18n.language === "en") {
     return (
-      <div className="mx-auto w-240">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-240">
           <Heading level={2}>Terms</Heading>
           <Text variant="prompt">Thank you for using Typerun. By creating an account and using our services, you agree to all the terms below.</Text>
           <Text variant="accent"><u>Account management:</u> Your account must be created by an individual. You must be at least 13 years old and provide a valid email address. You are responsible for keeping your password confidential and for any activity carried out from your account.</Text>
@@ -28,8 +27,7 @@ export default function Terms() {
 
   else if (i18n.language === "fr") {
     return (
-      <div className="mx-auto w-240">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-240">
           <Heading level={2}>Conditions</Heading>
           <Text variant="prompt">Merci d'utiliser Typerun. En créant un compte et en utilisant nos services, vous acceptez l'intégralité des conditions ci-dessous.</Text>
           <Text variant="accent"><u>Gestion du compte :</u> Votre compte doit être créé par une personne physique. Vous devez avoir au minimum 13 ans et fournir une adresse e-mail valide. Vous êtes responsable de la confidentialité de votre mot de passe et de toute activité effectuée depuis votre compte.</Text>

@@ -1,5 +1,4 @@
 export { default as Leaderboard } from "./Leaderboard";
-export { default as Play } from "./Play";
 export { default as Privacy } from "./Privacy";
 export { default as Profile } from "./Profile";
 export { default as Register } from "./Register";
@@ -10,3 +9,5 @@ export { default as FriendsPage } from "./Friends";
 export { default as FriendRequests } from "./FriendRequests";
 export { default as Chat } from "./Chat";
 export { default as OAuthCallback } from "./OAuthCallback";
+export { default as Home } from "./Home";
+export { default as Game } from "./Game";

@@ -23,12 +23,14 @@ export default function ChatPage() {
     <PageWithSidebar
       sidebar={
         <ChatsList
-          //selectedUsername={selectedChat}
+          selectedUsername={selectedChat}
           onSelectChat={handleSelectChat}
           refreshKey={chatsRefreshKey}
         />
       }
       maxWidth="max-w-xl"
+      fillHeight
+      sidebarFull={!selectedChat}
     >
       <ChatBox targetUsername={selectedChat} onMessageSent={() => setChatsRefreshKey((k) => k + 1)} />
     </PageWithSidebar>

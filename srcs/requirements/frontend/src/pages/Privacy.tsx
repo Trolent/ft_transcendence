@@ -6,8 +6,7 @@ export default function Privacy() {
   const { i18n } = useTranslation();
   if (i18n.language === "en") {
     return (
-      <div className="mx-auto w-220">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-220">
           <Heading level={2}>Privacy</Heading>
           <Text variant="accent">Your data belongs to you. Here is what we collect, why, and how you stay in control.</Text>
           <Text><u>Your data:</u> When you create an account, the data collected is: username, email address and password (hidden). The other data gathered afterwards is: game statistics, match history, IP addresses, browser used, logs, friend list and friend requests sent/received.</Text>
@@ -25,8 +24,7 @@ export default function Privacy() {
 
   else if (i18n.language === "fr") {
     return (
-      <div className="mx-auto w-220">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-220">
           <Heading level={2}>Confidentialité</Heading>
           <Text variant="accent">Vos données vous appartiennent. Voici ce que nous collectons, pourquoi, et comment vous gardez le contrôle.</Text>
           <Text><u>Vos données :</u> Lorsque vous créez un compte, les données collectées sont : nom d'utilisateur, adresse e-mail et mot de passe (masqué). Les autres données recueillies par la suite sont : les statistiques de jeu, l'historique des parties, les adresses IP, le navigateur utilisé, les logs, la liste d'amis et les demandes d'amis envoyées/reçues.</Text>
@@ -44,8 +42,7 @@ export default function Privacy() {
 
   else {
     return (
-      <div className="mx-auto w-220">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-220">
           <Heading level={2}>Privacidad</Heading>
           <Text variant="accent">Tus datos te pertenecen. Aquí te explicamos qué recopilamos, por qué, y cómo mantienes el control.</Text>
           <Text><u>Tus datos:</u> Cuando creas una cuenta, los datos recopilados son: nombre de usuario, dirección de correo electrónico y contraseña (oculta). Los demás datos recopilados posteriormente son: las estadísticas de juego, el historial de partidas, las direcciones IP, el navegador utilizado, los registros, la lista de amigos y las solicitudes de amistad enviadas/recibidas.</Text>

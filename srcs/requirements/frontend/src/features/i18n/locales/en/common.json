@@ -7,7 +7,14 @@
     "prev": "Prev",
     "next": "Next"
   },
+  "search": {
+    "placeholder": "Search a player...",
+    "empty": "No players found.",
+    "min_chars": "Type at least 3 characters to search."
+  },
   "find": "Find",
+  "new": "New",
+  "message": "Message",
   "errors": {
     "INVALID_CREDENTIALS": "Invalid email or password.",
     "USER_ALREADY_EXISTS": "Username already taken.",
@@ -28,6 +35,7 @@
     "NO_FILE_PROVIDED": "No file provided.",
     "AVATAR_TOO_LARGE": "Avatar file is too large.",
     "AVATAR_MIMETYPE_NOT_ALLOWED": "File type not allowed.",
+    "MISSING_SEARCH_QUERY": "Search query is required.",
     "MISSING_USERS_PARAM": "Missing user parameter.",
     "USERNAME_CANNOT_CONTAIN_AT": "Username cannot contain @.",
     "INVALID_CURRENT_PASSWORD": "Incorrect current password.",

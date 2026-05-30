@@ -3,10 +3,14 @@
     "title": "CLASSEMENT",
     "loading": "Chargement...",
     "empty": "Aucun joueur pour le moment",
+    "search_placeholder": "Rechercher un joueur...",
+    "search_empty": "Aucun joueur ne correspond à votre recherche.",
     "error": "Impossible de charger le classement.",
     "wpm": "{{wpm}} MPM",
     "level": "niveau : {{level}}",
-    "games": "parties : {{count}}"
+    "games": "parties : {{count}}",
+    "sort_desc": "MPM décroissant",
+    "sort_asc": "MPM croissant"
   },
   "settings": {
     "title": "PARAMÈTRES",
@@ -75,6 +79,8 @@
     "requests_title": "DEMANDES D'AMIS",
     "list_heading": "Amis [{{count}}]",
     "no_friends": "Aucun ami pour le moment.",
+    "search_placeholder": "Rechercher un ami...",
+    "search_empty": "Aucun ami ne correspond à votre recherche.",
     "error_load": "Impossible de charger les amis.",
     "incoming_heading": "Reçues [{{count}}]",
     "pending_heading": "En attente [{{count}}]",
@@ -110,6 +116,7 @@
     "results_label": "résultats",
     "stat_wpm": "MPM",
     "stat_time": "Temps",
+    "stat_accuracy": "Précision",
     "stat_position": "Position",
     "try_again": "Réessayer",
     "race_again": "Rejouer",
@@ -122,8 +129,18 @@
     ],
     "you": "Vous",
     "player": "Joueur {{n}}",
-    "type_here": "Tapez ici…",
-    "waiting_start": "En attente du départ de la course…"
+    "type_here": "Tapez ici...",
+    "waiting_start": "En attente du départ de la course...",
+    "connecting": "Connexion…",
+    "waiting_for_players": "En attente de joueurs…",
+    "cancel": "Annuler",
+    "player_left": "{{name}} a quitté la course.",
+    "race_voided": "Course annulée — pas assez de joueurs.",
+    "already_in_game": "Vous êtes déjà dans une course dans un autre onglet.",
+    "join_failed": "Impossible de rejoindre la course. Veuillez réessayer.",
+    "guest": "Invité",
+    "starting_in": "Départ dans {{n}}…",
+    "bot": "Robot"
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"
@@ -137,8 +154,11 @@
     "error_load": "Impossible de charger les conversations",
     "message_placeholder": "Écrivez un message…",
     "send": "Envoyer",
-    "you": "Vous",
+    "you": "Moi",
     "open": "Ouvrir",
-    "no_chat_selected": "Aucune conversation sélectionnée."
+    "no_chat_selected": "Aucune conversation sélectionnée.",
+    "view_profile": "Voir le profil",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
   }
 }
