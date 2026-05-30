@@ -5,7 +5,7 @@ import { Container, Text, Modal, Avatar, Pagination } from "@/components";
 import { useAuth } from "@/features/auth";
 import { getUserHistory, type HistoryEntry, type MatchPlayer } from "@/api/users.api";
 
-const LIMIT = 10; // TODO set to 20
+const LIMIT = 10;
 
 interface HistoryProps {
   username: string;
@@ -47,7 +47,19 @@ export default function History({ username }: HistoryProps) {
                   {history.map((entry) => (
                     <tr key={entry.match.id} className="border-b border-dim/40 hover:bg-muted/30 transition-colors">
                       <td className="py-2 pr-4">
-                        <Text size="sm" variant="muted" as="span">
+                        <Text
+                          size="sm"
+                          variant="muted"
+                          as="span"
+                          title={
+                            entry.finishedAt
+                              ? new Date(entry.finishedAt).toLocaleString("fr-CA", {
+                                  dateStyle: "short",
+                                  timeStyle: "short",
+                                })
+                              : "—"
+                          }
+                        >
                           {entry.finishedAt ? new Date(entry.finishedAt).toLocaleDateString("fr-CA") : "—"}
                         </Text>
                       </td>
