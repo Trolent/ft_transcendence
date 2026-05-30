@@ -16,7 +16,7 @@ export function Message({ message, isOwn = false }: MessageProps) {
   return (
     <div className="mb-2 flex items-start justify-between gap-3">
       <Text size="sm">
-        <span className="font-bold">{displayName}</span>: {message.content}
+        <span className={`font-bold ${isOwn ? "text-default" : "text-accent"}`}>{displayName}</span>: {message.content}
       </Text>
       <Text size="xs" variant="muted" className="shrink-0 mt-0.5">{time}</Text>
     </div>
