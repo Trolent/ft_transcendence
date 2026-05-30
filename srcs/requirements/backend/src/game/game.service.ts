@@ -13,6 +13,7 @@ import {
 	LOBBY_JOIN_LOCK_MS,
 	BOTS_ON_SOLO,
 	BOT_TICK_MS,
+	PROGRESS_MIN_INTERVAL_MS,
 } from '../common/game.constant';
 import { AchievementService } from '../achievement/achievement.service';
 import { BotService } from './bot.service';
@@ -317,6 +318,9 @@ export class GameService {
 		if (!room || room.phase !== 'racing') return;
 
 		for (const bot of this.botService.step(room)) {
+			// Same cumulative formula as human racers (see updateProgress), so
+			// bot and human wpm labels behave identically.
+			bot.wpm = this.calcWpm(bot.chars, room.startedAt!);
 			this.server.to(room.id).emit('race_update', {
 				pid: bot.pid,
 				username: bot.username,
@@ -328,10 +332,12 @@ export class GameService {
 		if (this.allFinished(room)) void this.finalizeRace(room.id);
 	}
 
-	// chars = correct characters typed so far this race
+	// chars = correct characters typed so far this race. durationMs = the client's
+	// own elapsed-since-green-light, used only to time the finish accurately.
 	updateProgress(
 		socketId: string,
 		chars: number,
+		durationMs?: number,
 	): { roomId: string; pid: string; username: string; kind: ParticipantKind; progress: number; wpm: number } | null {
 		const room = this.roomOf(socketId);
 		if (!room || room.phase !== 'racing' || !room.startedAt) return null;
@@ -341,12 +347,36 @@ export class GameService {
 
 		if (chars < p.chars) return null;
 
-		const elapsedSec = (Date.now() - room.startedAt!) / 1000;
-		const maxReachable = Math.ceil(elapsedSec * (MAX_WPM * 5 / 60));
-		const safe = Math.min(chars, room.text.length, maxReachable);
+		const now = Date.now();
+		const len = room.text.length;
+		// Server clock is the ceiling: nobody can have typed more than MAX_WPM
+		// allows for the elapsed time, so a fake chars count can't outrun it.
+		const maxReachable = Math.ceil(((now - room.startedAt) / 1000) * (MAX_WPM * 5 / 60));
+		const safe = Math.min(chars, len, maxReachable);
+		const isFinish = len > 0 && safe >= len;
+
+		// Rate-limit live updates, but never the finishing one, so a fast typist's
+		// final keystroke is always registered.
+		if (!isFinish && p.lastProgressAt != null && now - p.lastProgressAt < PROGRESS_MIN_INTERVAL_MS)
+			return null;
+		p.lastProgressAt = now;
+
 		p.chars = safe;
-		p.progress = room.text.length > 0 ? safe / room.text.length : 1;
-		p.wpm = this.calcWpm(safe, room.startedAt);
+		p.progress = len > 0 ? safe / len : 1;
+
+		if (isFinish) {
+			// Time the finish by the player's own clock (latency-free, like
+			// TypeRacer), clamped so it can't beat MAX_WPM and can't claim less
+			// elapsed than the server actually observed.
+			const minDurationMs = (len / 5) / MAX_WPM * 60000;
+			const serverElapsedMs = now - room.startedAt;
+			let dur = durationMs && durationMs > 0 ? durationMs : serverElapsedMs;
+			dur = Math.min(dur, serverElapsedMs);
+			dur = Math.max(dur, minDurationMs);
+			p.wpm = Math.round((len / 5) / (dur / 60000));
+		} else {
+			p.wpm = this.calcWpm(safe, room.startedAt);
+		}
 
 		return {
 			roomId: room.id,
@@ -431,6 +461,9 @@ export class GameService {
 			.map((p, i) => ({ p, position: i + 1 }))
 			.filter(({ p }) => p.kind === 'user' && p.userId != null);
 
+		const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
+		const nbPlayers = room.players.size - nbBots;
+
 		await this.prisma.match.update({
 			where: { id: room.matchId },
 			data: { endedAt: new Date(), status: MatchStatus.FINISHED },
@@ -444,6 +477,8 @@ export class GameService {
 					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 					position,
 					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+					nbPlayers,
+					nbBots,
 				})),
 			});
 

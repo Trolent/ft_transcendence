@@ -6,6 +6,9 @@ import {
 	BOT_WPM_JITTER,
 	BOT_WPM_FALLBACK_MIN,
 	BOT_WPM_FALLBACK_MAX,
+	BOT_PACE_STEP,
+	BOT_PACE_MIN,
+	BOT_PACE_MAX,
 } from '../common/game.constant';
 
 function randBetween(min: number, max: number): number {
@@ -35,7 +38,7 @@ export class BotService {
 			if (p.kind !== 'bot') continue;
 			const jitter = 1 + (Math.random() * 2 - 1) * BOT_WPM_JITTER;
 			const target = Math.max(15, Math.round(anchor * jitter));
-			p.bot = { targetWpm: target, charsFloat: 0 };
+			p.bot = { targetWpm: target, charsFloat: 0, pace: 1 };
 			p.wpm = target;
 		}
 	}
@@ -50,7 +53,13 @@ export class BotService {
 		for (const p of room.players.values()) {
 			if (p.kind !== 'bot' || p.finished || !p.bot) continue;
 
-			const charsPerTick = (p.bot.targetWpm * 5 / 60) * (BOT_TICK_MS / 1000);
+			// Drift the pace smoothly within its band so the bot surges and eases
+			// over the race instead of holding a flat speed.
+			p.bot.pace += (Math.random() - 0.5) * BOT_PACE_STEP;
+			p.bot.pace = Math.min(BOT_PACE_MAX, Math.max(BOT_PACE_MIN, p.bot.pace));
+
+			const pacedWpm = p.bot.targetWpm * p.bot.pace;
+			const charsPerTick = (pacedWpm * 5 / 60) * (BOT_TICK_MS / 1000);
 			p.bot.charsFloat += charsPerTick;
 
 			const chars = Math.min(len, Math.floor(p.bot.charsFloat));
@@ -58,6 +67,8 @@ export class BotService {
 
 			p.chars = chars;
 			p.progress = len > 0 ? chars / len : 1;
+			// wpm is left to the caller, which runs it through the same cumulative
+			// formula as human racers so the displayed number behaves identically.
 			changed.push(p);
 
 			if (chars >= len) {

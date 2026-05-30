@@ -11,7 +11,7 @@ import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { WsJwtGuard } from '../auth/ws-jwt.guard'
 import { AuthService } from '../auth/auth.service'
 import { Socket, Namespace } from 'socket.io';
-import { MAX_WPM, PROGRESS_MIN_INTERVAL_MS } from '../common/game.constant';
+import { MAX_WPM } from '../common/game.constant';
 import { WS_CORS } from '../common/ws.config'
 import { PlayerProgressDto } from './dto/player-progress.dto'
 
@@ -26,8 +26,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @WebSocketServer()
   server: Namespace;
-
-  private readonly lastProgress = new Map<string, number>();
 
   constructor(
 	  private gameService: GameService,
@@ -57,7 +55,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   async handleDisconnect(client: Socket) {
-	this.lastProgress.delete(client.id);
 	await this.gameService.handleDisconnect(client.id);
   }
 
@@ -100,12 +97,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @SubscribeMessage('player_progress')
   async handleProgress(client: Socket, payload: PlayerProgressDto) {
-	const now = Date.now();
-	const last = this.lastProgress.get(client.id) ?? 0;
-	if (now - last < PROGRESS_MIN_INTERVAL_MS) return;
-	this.lastProgress.set(client.id, now);
-
-	const delta = this.gameService.updateProgress(client.id, payload.chars);
+	const delta = this.gameService.updateProgress(client.id, payload.chars, payload.durationMs);
 	if (!delta)
 		return;
 

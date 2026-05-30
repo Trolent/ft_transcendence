@@ -14,6 +14,7 @@ export type RoomPhase = 'waiting' | 'countdown' | 'racing' | 'finished';
 export type BotState = {
 	targetWpm: number; // chars/min-derived target this race
 	charsFloat: number; // fractional char accumulator between ticks
+	pace: number; // current speed multiplier, drifts each tick for human-like surges
 };
 
 export type Participant = {
@@ -29,6 +30,7 @@ export type Participant = {
 	wpm: number;
 	finished: boolean;
 	finishedAt: number | null;
+	lastProgressAt?: number; // last accepted progress msg, for rate-limiting
 	bot?: BotState;
 };
 

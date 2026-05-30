@@ -36,6 +36,9 @@ export type RacePhase = "idle" | "waiting" | "countdown" | "racing" | "finished"
 
 export function useRaceSocket() {
 	const socketRef = useRef<Socket | null>(null);
+	// When this client saw the green light (its own clock), to time the finish
+	// free of network latency.
+	const raceStartClientRef = useRef<number | null>(null);
 
 	const [phase, setPhase]               = useState<RacePhase>("idle");
 	const [connected, setConnected]       = useState(false);
@@ -76,6 +79,7 @@ export function useRaceSocket() {
 	const joinQueue = useCallback(() => {
 		teardown();
 		resetState();
+		raceStartClientRef.current = null;
 
 		// Logged-in players authenticate by JWT; logged-out players join as a
 		// guest (the server tags them "Guest" — results are never saved).
@@ -132,6 +136,7 @@ export function useRaceSocket() {
 		});
 
 		socket.on("race_start", (payload: RaceStartPayload) => {
+			raceStartClientRef.current = Date.now();
 			setStartedAt(payload.startedAt);
 			setPlayerCount(payload.playerCount);
 			setCountdownEndsAt(null);
@@ -179,7 +184,9 @@ export function useRaceSocket() {
 	// is included in the payload for a teammate to persist.
 	const sendProgress = useCallback((chars: number, accuracy: number) => {
 		const s = socketRef.current;
-		if (s && s.connected) s.emit("player_progress", { chars, accuracy });
+		if (!s || !s.connected) return;
+		const durationMs = raceStartClientRef.current != null ? Date.now() - raceStartClientRef.current : 0;
+		s.emit("player_progress", { chars, accuracy, durationMs });
 	}, []);
 
 	// Tear the socket down when the consuming component unmounts.

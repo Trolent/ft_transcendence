@@ -35,12 +35,17 @@ export const BOTS_ON_SOLO = 2;
 
 // --- Bot behaviour ---
 // Adaptive bot speed centres on the real players' recent average wpm, jittered by this fraction.
-export const BOT_WPM_JITTER = 0.15;
+export const BOT_WPM_JITTER = 0.35;
 // Fallbacks when no real-player history is available to anchor adaptive speed.
 export const BOT_WPM_FALLBACK_MIN = 30;
 export const BOT_WPM_FALLBACK_MAX = 60;
 // How often the bot simulation advances each bot's progress.
 export const BOT_TICK_MS = 250;
+// Each tick a bot's pace drifts by up to ±half this, then clamps to the band
+// below, so its speed surges and eases over the race like a real typist.
+export const BOT_PACE_STEP = 0.15;
+export const BOT_PACE_MIN = 0.6;
+export const BOT_PACE_MAX = 1.4;
 
 // Minimum ms between accepted player_progress messages per socket.
 export const PROGRESS_MIN_INTERVAL_MS = 200;

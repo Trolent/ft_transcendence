@@ -35,8 +35,10 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   const playerDone = finished || forcedEnd || timedOut;
   const raceOver = forcedEnd || timedOut;
   const timeLeft = Math.max(0, maxTime - elapsed);
-  const minutes = elapsed / 60;
-  const wpm = lockedWpm ?? (minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
+  // WPM is timed at millisecond precision, not the whole-second `elapsed` clock,
+  // so short runs aren't over- or under-counted.
+  const liveMinutes = startedAt.current != null ? (Date.now() - startedAt.current) / 60000 : 0;
+  const wpm = lockedWpm ?? (liveMinutes > 0 ? Math.round(totalCorrect / 5 / liveMinutes) : 0);
   const accuracy = totalTyped > 0
     ? Math.min(100, Math.round((completedChars / totalTyped) * 100))
     : 0;
@@ -56,13 +58,14 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
     if (!isLast) setTotalTyped((t: number) => t + 1);
   };
 
-  // Lock WPM and elapsed when the race is over
+  // Lock WPM and elapsed when the race is over, captured at millisecond precision.
   useEffect(() => {
     if (playerDone && lockedWpm === null) {
-      setLockedWpm(minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
-      setLockedElapsed(elapsed);
+      const mins = startedAt.current != null ? (Date.now() - startedAt.current) / 60000 : 0;
+      setLockedWpm(mins > 0 ? Math.round(totalCorrect / 5 / mins) : 0);
+      setLockedElapsed(Math.round(mins * 60));
     }
-  }, [playerDone, lockedWpm, totalCorrect, minutes, elapsed]);
+  }, [playerDone, lockedWpm, totalCorrect]);
 
   useEffect(() => {
     if (active && startedAt.current === null) {
