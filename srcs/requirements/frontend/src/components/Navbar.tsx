@@ -98,7 +98,7 @@ function MobileMenu({ pathname, user, onLogout }: {
   const linkClass = "block w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-100";
 
   return (
-    <ul className="sm:hidden border-t border-muted px-4 pb-3 flex flex-col gap-1">
+    <ul className="md:hidden border-t border-muted px-4 pb-3 flex flex-col gap-1">
       {NAV_LINKS.map(({ key, href }) => {
         const active = isActive(href, pathname);
         return (
@@ -151,7 +151,7 @@ export default function Navbar() {
           Typerun
         </Link>
 
-        <div className="sm:hidden flex items-center gap-1">
+        <div className="md:hidden flex items-center gap-1">
           {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           <button
@@ -162,7 +162,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <ul className="hidden sm:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
+        <ul className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
           {(user ? AUTH_NAV_LINKS : NAV_LINKS).map(({ key, href }) => (
             <li key={key}>
               <NavLink href={href} label={t(key)} pathname={pathname} />
@@ -170,7 +170,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden sm:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-1">
           {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           {user ? (

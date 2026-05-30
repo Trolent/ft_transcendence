@@ -17,6 +17,7 @@ export default function ChatPage() {
   const handleSelectChat = (chatUsername: string) => {
     setSelectedChat(chatUsername);
     navigate(`/chat/${chatUsername}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
