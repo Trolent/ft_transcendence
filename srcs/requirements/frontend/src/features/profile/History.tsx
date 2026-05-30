@@ -64,7 +64,7 @@ export default function History({ username }: HistoryProps) {
                         </Text>
                       </td>
                       <td className="py-2 pr-4">
-                        <Text size="sm" as="span" >{entry.position ?? "—"}</Text><Text size="sm" as="span" variant="dim">/{entry.match.matchResult.length}</Text>
+                        <Text size="sm" as="span" >{entry.position ?? "—"}</Text><Text size="sm" as="span" variant="dim">/{entry.nbPlayers + entry.nbBots}</Text>
                       </td>
                       <td className="py-2 pr-4">
                         <Text size="sm" as="span">{entry.wpm != null ? `${Math.round(entry.wpm)}` : "—"}</Text>

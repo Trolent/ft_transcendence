@@ -35,6 +35,8 @@ export type MatchPlayer = {
 export type HistoryEntry = {
   wpm: number | null;
   position: number | null;
+  nbPlayers: number;
+  nbBots: number;
   finishedAt: string | null;
   match: {
     id: number;
