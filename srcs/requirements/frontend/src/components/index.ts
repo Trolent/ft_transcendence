@@ -23,3 +23,5 @@ export { default as Navbar }                from "./Navbar";
 export { default as PageLayout }            from "./PageLayout";
 export { default as PageWithSidebar }       from "./PageWithSidebar";
 export { default as Sidebar }               from "./Sidebar";
+export { default as MatrixRain }            from "./MatrixRain";
+export { default as PillButton }            from "./PillButton";

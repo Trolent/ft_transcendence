@@ -2,12 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Heading, Btn, Container, PageLayout, Input, Alert, LanguageSwitcher } from "@/components";
 import { updateSettings, type UpdateSettingsPayload } from "@/api/users.api";
-// import { tError, SUPPORTED, LANG_DB_MAP, type Lang } from "@/features/i18n";
 import { tError } from "@/features/i18n";
 import { useAuth } from "@/features/auth";
-
-//const FLAG: Record<Lang, string> = { en: "🇬🇧", fr: "🇫🇷", es: "🇪🇸" };
-//const LABEL: Record<Lang, string> = { en: "English", fr: "Français", es: "Español" };
 
 type FieldErrors = {
   email?: string;
@@ -17,9 +13,7 @@ type FieldErrors = {
 };
 
 export default function Settings() {
-  //const { t, i18n } = useTranslation("pages");
   const { t } = useTranslation("pages");
-  //const currentLang = (SUPPORTED.includes(i18n.language as Lang) ? i18n.language : "en") as Lang;
   const { user, refreshUser } = useAuth();
 
   const isOAuthOnly = user?.isOAuthOnly ?? false;
@@ -28,7 +22,6 @@ export default function Settings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  //const [language, setLanguage] = useState<Lang>(currentLang);
 
   const [errors, setErrors] = useState<FieldErrors>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -69,15 +62,13 @@ export default function Settings() {
     const payload: UpdateSettingsPayload = {};
     if (email) payload.email = email;
     if (password) { payload.currentPassword = currentPassword; payload.password = password; }
-    //if (language !== currentLang) payload.language = LANG_DB_MAP[language];
-
     if (!Object.keys(payload).length) return;
 
     setLoading(true);
     try {
       await updateSettings(payload);
       await refreshUser();
-      //if (payload.language) await i18n.changeLanguage(language);
+
       setSuccess(true);
       setEmail("");
       setCurrentPassword("");
@@ -159,7 +150,7 @@ export default function Settings() {
         </Container>
 
         <Container variant="panel" label={t("settings.change_language")} className="flex gap-3 mt-1">
-            <LanguageSwitcher />
+          <LanguageSwitcher variant="settings" />
         </Container>
 
         {globalError && <Alert variant="error">{globalError}</Alert>}
