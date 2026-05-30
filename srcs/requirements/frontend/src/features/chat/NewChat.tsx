@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Avatar, Btn, Modal, SearchList, Status } from "@/components";
 import { FriendsList } from "@/features/friends";
@@ -14,7 +14,12 @@ interface NewChatProps {
 export function NewChat({ onSelectChat }: NewChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
   const { t } = useTranslation("pages");
   const getStatus = useStatus();
 
@@ -53,7 +58,7 @@ export function NewChat({ onSelectChat }: NewChatProps) {
           renderItem={renderItem}
           excludeUsername={user?.username}
         />
-        <FriendsList username={user?.username ?? ""} showMsgBtn className="mt-3"/>
+        <FriendsList username={user?.username ?? ""} showMsgBtn onMsgClick={() => setIsOpen(false)} className="mt-3"/>
       </Modal>
     </>
   );

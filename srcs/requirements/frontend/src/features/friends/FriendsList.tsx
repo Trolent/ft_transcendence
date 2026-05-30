@@ -18,6 +18,7 @@ interface FriendsListProps {
   showMsgBtn?: boolean;
   showRequestsBtn?: boolean;
   showSearchBar?: boolean;
+  onMsgClick?: () => void;
 }
 
 export default function FriendsList({
@@ -27,7 +28,8 @@ export default function FriendsList({
   refreshKey,
   showMsgBtn,
   showRequestsBtn,
-  showSearchBar
+  showSearchBar,
+  onMsgClick
 }: FriendsListProps) {
   const { t } = useTranslation('pages');
   const isOwnProfile = useIsOwnProfile(username);
@@ -133,7 +135,7 @@ export default function FriendsList({
                 </Text>
               </Link>
               {showMsgBtn && (
-                <Btn as={Link} to={`/chat/${item.username}`} variant="ghost" size="sm">
+                <Btn as={Link} to={`/chat/${item.username}`} variant="ghost" size="sm" onClick={onMsgClick}>
                   {t('common:message')}
                 </Btn>
               )}
