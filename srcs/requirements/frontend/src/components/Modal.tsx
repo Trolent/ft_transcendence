@@ -45,7 +45,7 @@ export default function Modal({ isOpen, onClose, title, children, className = ""
             </svg>
           </button>
         </div>
-        <div className="overflow-y-auto flex-1 min-h-0 pr-1">{children}</div>
+        <div className="overflow-y-auto flex-1 min-h-0 pr-1 pb-2">{children}</div>
       </div>
     </div>
   );
