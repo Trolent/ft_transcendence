@@ -171,7 +171,7 @@ export class UsersService {
     const data  = await this.prisma.matchResult.findMany({
       where,
       select: {
-        wpm: true, position: true, finishedAt: true, nbPlayers: true, nbBots: true,
+        wpm: true, position: true, accuracy: true, finishedAt: true, nbPlayers: true, nbBots: true,
         match: {
           select: {
             id: true, startedAt: true, textSnippet: true,
