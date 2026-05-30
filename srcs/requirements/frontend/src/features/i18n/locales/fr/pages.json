@@ -139,7 +139,8 @@
     "already_in_game": "Vous êtes déjà dans une course dans un autre onglet.",
     "join_failed": "Impossible de rejoindre la course. Veuillez réessayer.",
     "guest": "Invité",
-    "starting_in": "Départ dans {{n}}…"
+    "starting_in": "Départ dans {{n}}…",
+    "bot": "Robot"
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"

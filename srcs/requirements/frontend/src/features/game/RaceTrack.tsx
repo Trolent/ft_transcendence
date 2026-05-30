@@ -113,7 +113,7 @@ function MultiplayerTrack({ racers = [], youPid }: Props) {
           <div key={r.pid} className="flex items-center h-14 mb-3">
             <div className="w-20 sm:w-32 text-right pr-3 sm:pr-4 text-sm truncate flex flex-col items-end justify-center">
               <span className={isYou ? "text-default font-bold" : "text-dim"}>
-                {r.kind === 'user' ? r.username : t('play.guest')}
+                {r.kind === 'user' ? r.username : r.kind === 'bot' ? t('play.bot') : t('play.guest')}
               </span>
               {isYou && (
                 <span className="text-xs text-dim">({t('play.you')})</span>
