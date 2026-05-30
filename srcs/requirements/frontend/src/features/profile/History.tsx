@@ -5,7 +5,7 @@ import { Container, Text, Modal, Avatar, Pagination } from "@/components";
 import { useAuth } from "@/features/auth";
 import { getUserHistory, type HistoryEntry, type MatchPlayer } from "@/api/users.api";
 
-const LIMIT = 10;
+const LIMIT = 10; // TODO set to 20
 
 interface HistoryProps {
   username: string;
@@ -40,7 +40,7 @@ export default function History({ username }: HistoryProps) {
                     <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_date')}</th>
                     <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_pos')}</th>
                     <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_wpm')}</th>
-                    <th className="text-left py-2 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_players')}</th>
+                    <th className="text-left py-2 text-xs uppercase tracking-widest text-dim font-normal"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -52,7 +52,7 @@ export default function History({ username }: HistoryProps) {
                         </Text>
                       </td>
                       <td className="py-2 pr-4">
-                        <Text size="sm" as="span">#{entry.position ?? "—"}</Text>
+                        <Text size="sm" as="span" >{entry.position ?? "—"}</Text><Text size="sm" as="span" variant="dim">/{entry.match.matchResult.length}</Text>
                       </td>
                       <td className="py-2 pr-4">
                         <Text size="sm" as="span">{entry.wpm != null ? `${Math.round(entry.wpm)}` : "—"}</Text>
@@ -62,7 +62,6 @@ export default function History({ username }: HistoryProps) {
                           onClick={() => setPlayers(entry.match.matchResult)}
                           className="flex items-center gap-2 text-default hover:text-accent transition-colors cursor-pointer"
                         >
-                          <Text size="sm" as="span">{entry.match.matchResult.length}</Text>
                           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                             <circle cx="12" cy="12" r="3"/>
