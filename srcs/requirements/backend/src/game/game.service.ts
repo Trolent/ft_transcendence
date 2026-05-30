@@ -431,6 +431,9 @@ export class GameService {
 			.map((p, i) => ({ p, position: i + 1 }))
 			.filter(({ p }) => p.kind === 'user' && p.userId != null);
 
+		const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
+		const nbPlayers = room.players.size - nbBots;
+
 		await this.prisma.match.update({
 			where: { id: room.matchId },
 			data: { endedAt: new Date(), status: MatchStatus.FINISHED },
@@ -444,6 +447,8 @@ export class GameService {
 					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 					position,
 					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+					nbPlayers,
+					nbBots,
 				})),
 			});
 

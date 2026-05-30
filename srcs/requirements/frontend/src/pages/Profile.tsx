@@ -66,7 +66,7 @@ export default function Profile() {
       centerContent
       sidebar={
         <Sidebar>
-          <FriendsList username={targetUsername} limit={60} className="h-full" refreshKey={friendsRefreshKey} showRequestsBtn />
+          <FriendsList username={targetUsername} className="h-full" refreshKey={friendsRefreshKey} showRequestsBtn />
         </Sidebar>
       }
       maxWidth="max-w-2xl"
