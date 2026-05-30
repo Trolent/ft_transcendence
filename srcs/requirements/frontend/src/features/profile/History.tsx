@@ -34,7 +34,7 @@ export default function History({ username }: HistoryProps) {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full table-fixed font-mono text-sm border-collapse">
+              <table className="w-full table-auto font-mono text-sm border-collapse">
                 <thead>
                   <tr className="border-b border-dim">
                     <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal whitespace-nowrap">{t('profile.history_date')}</th>
