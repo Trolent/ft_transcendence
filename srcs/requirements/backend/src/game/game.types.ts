@@ -43,10 +43,10 @@ export type RoomState = {
 	players: Map<string, Participant>; // keyed by pid
 	hostPid: string | null;
 	playerCount: number; // locked when the race starts (humans + bots + guests)
-	botTarget: number; // how many bots this lobby wants; rerolled on human join/leave
+	botTarget: number;
 	// timers
 	waitTimer: NodeJS.Timeout | null; // 5s "waiting for players" window
-	botFillTimer: NodeJS.Timeout | null; // progressively pads the lobby with bots
+	botFillTimer: NodeJS.Timeout | null;
 	countdownTimer: NodeJS.Timeout | null; // 10s pre-race countdown
 	countdownEndsAt: number | null;
 	startedAt: number | null;

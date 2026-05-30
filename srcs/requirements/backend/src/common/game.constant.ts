@@ -32,12 +32,7 @@ export const LOBBY_COUNTDOWN_MS = 10_000;
 export const LOBBY_JOIN_LOCK_MS = 2_000;
 
 // --- Bot padding ---
-// Every lobby is padded with bots toward a per-lobby target. The target is a
-// random count in [MIN_BOTS_PAD, free slots], rerolled whenever the human count
-// changes, so a lobby with 2 humans pads with 1..3 bots, a solo host with 1..4.
 export const MIN_BOTS_PAD = 1;
-// Bots are added one at a time, at most this often, so the roster fills in
-// gradually over the lobby instead of all at once.
 export const BOT_FILL_INTERVAL_MS = 1_200;
 
 // --- Bot behaviour ---
