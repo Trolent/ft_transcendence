@@ -1,7 +1,9 @@
 {
+  "play": "Jouer",
+  "leaderboard": "Classement",
   "profile": "Profil",
-  "chat": "Messages",
   "friends": "Amis",
+  "chat": "Messages",
   "requests": "Demandes",
   "settings": "Paramètres",
   "logout": "Déconnexion",
