@@ -12,6 +12,7 @@
     "sort_desc": "Mayor PPM primero",
     "sort_asc": "Menor PPM primero",
     "min_level": "Nivel mínimo",
+    "player_col": "Jugador",
     "sort_label": "Orden"
   },
   "settings": {

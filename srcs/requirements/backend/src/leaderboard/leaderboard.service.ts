@@ -34,7 +34,7 @@ export class LeaderBoardService {
       this.prisma.matchResult.groupBy({
         by: ['userId'],
         where: groupByWhere,
-        _avg: { wpm: true },
+        _avg: { wpm: true, accuracy: true },
         _count: { id: true },
         having: minLevel > 1 ? {
           id: { _count: { gte: (minLevel - 1) *3 } }
@@ -46,7 +46,7 @@ export class LeaderBoardService {
       this.prisma.matchResult.groupBy({
         by: ['userId'],
         where: groupByWhere,
-        _avg: { wpm: true },
+        _avg: { wpm: true, accuracy: true },
       }).then((results) => results.length),
     ]);
 
@@ -63,6 +63,7 @@ export class LeaderBoardService {
       const user       = userMap.get(r.userId);
       const gamesPlayed = (r as unknown as { _count: { id: number } })._count.id;
       const avgWpm     = r._avg.wpm ? Math.round(r._avg.wpm) : 0;
+      const avgAccuracy = r._avg.accuracy ? Math.round(r._avg.accuracy) : 0;
       const level      = Math.floor(gamesPlayed / 3) + 1;
 
       return {
@@ -73,6 +74,7 @@ export class LeaderBoardService {
         avgWpm,
         gamesPlayed,
         level,
+        avgAccuracy,
       };
     });
 

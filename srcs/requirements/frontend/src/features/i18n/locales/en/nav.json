@@ -1,9 +1,7 @@
 {
-  "play": "Play",
-  "leaderboard": "Leaderboard",
   "profile": "Profile",
-  "friends": "Friends",
   "chat": "Messages",
+  "friends": "Friends",
   "requests": "Requests",
   "settings": "Settings",
   "logout": "Logout",
