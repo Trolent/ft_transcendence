@@ -10,7 +10,9 @@
     "level": "nivel: {{level}}",
     "games": "partidas: {{count}}",
     "sort_desc": "Mayor PPM primero",
-    "sort_asc": "Menor PPM primero"
+    "sort_asc": "Menor PPM primero",
+    "min_level": "Nivel mínimo",
+    "sort_label": "Orden"
   },
   "settings": {
     "title": "AJUSTES",

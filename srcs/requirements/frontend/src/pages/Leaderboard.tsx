@@ -20,6 +20,7 @@ export default function Leaderboard() {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [minLevel, setMinLevel] = useState(1);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const tooShort = query.trim().length > 0 && query.trim().length < 3;
@@ -44,7 +45,7 @@ export default function Leaderboard() {
     setLoading(true);
     setError(null);
 
-    getLeaderboard(currentPage, LIMIT, debouncedQuery, sortOrder)
+    getLeaderboard(currentPage, LIMIT, debouncedQuery, sortOrder, minLevel)
       .then((response) => {
         if (cancelled) return;
         setPlayers(response.data.map((entry) => ({ ...entry, id: entry.username })));
@@ -58,7 +59,7 @@ export default function Leaderboard() {
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
-  }, [currentPage, debouncedQuery, sortOrder]);
+  }, [currentPage, debouncedQuery, sortOrder, minLevel]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -75,14 +76,25 @@ export default function Leaderboard() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <select
-        className="mt-2"
-        value={sortOrder}
-        onChange={(e) => { setSortOrder(e.target.value as 'asc' | 'desc'); setCurrentPage(1); }}
-      >
-        <option value="desc">{t('leaderboard.sort_desc')}</option>
-        <option value="asc">{t('leaderboard.sort_asc')}</option>
-      </select>
+      <div className="flex gap-2 mt-2 items-end">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs uppercase tracking-widest text-dim">{t('leaderboard.sort_label')}</span>
+          <select
+            value={sortOrder}
+            onChange={(e) => { setSortOrder(e.target.value as 'asc' | 'desc'); setCurrentPage(1); }}
+          >
+            <option value="desc">{t('leaderboard.sort_desc')}</option>
+            <option value="asc">{t('leaderboard.sort_asc')}</option>
+          </select>
+        </div>
+        <Input
+          label={t('leaderboard.min_level')}
+          type="number"
+          min={1}
+          value={minLevel}
+          onChange={(e) => { setMinLevel(Math.max(1, parseInt(e.target.value) || 1)); setCurrentPage(1); }}
+        />
+      </div>
 
       {tooShort && (
         <Text className="mt-6" variant="muted">{t('common:search.min_chars')}</Text>
