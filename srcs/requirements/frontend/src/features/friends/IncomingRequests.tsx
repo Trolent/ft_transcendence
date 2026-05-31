@@ -21,7 +21,7 @@ export default function IncomingRequests({ className = "", refreshKey }: Incomin
     setLoading(true);
     getIncomingRequests()
       .then((data) =>
-        setRequests(data.map((item) => ({ id: item.id, username: item.username, avatarSrc: item.avatarUrl })))
+        setRequests(data.map((item) => ({ id: item.id, username: item.username, avatarSrc: item.avatarUrl, status: "OFFLINE" as const })))
       )
       .catch((err: unknown) => setError(err instanceof Error ? tError(err.message, t) : t('friends.error_requests')))
       .finally(() => setLoading(false));
@@ -53,15 +53,15 @@ export default function IncomingRequests({ className = "", refreshKey }: Incomin
           className="mt-4"
           items={requests}
           renderItem={(item: Friend) => (
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-2 min-[370px]:flex-row min-[370px]:items-center min-[370px]:justify-between">
               <Link
                 to={`/profile/${item.username}`}
-                className="flex min-w-0 items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
+                className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
               >
                 <Avatar username={item.username} src={item.avatarSrc} size="sm" />
-                <Text>{item.username}</Text>
+                <Text className="truncate">{item.username}</Text>
               </Link>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <Btn size="sm" variant="danger" onClick={() => handleDecline(item.username)}>{t('friends.decline')}</Btn>
                 <Btn size="sm" onClick={() => handleAccept(item.username)}>{t('friends.accept')}</Btn>
               </div>

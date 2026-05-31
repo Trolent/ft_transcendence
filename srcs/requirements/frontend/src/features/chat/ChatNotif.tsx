@@ -9,7 +9,7 @@ export function ChatNotif() {
   return (
     <Link
       to="/chat"
-      className="flex items-center gap-1 px-3 py-1 text-xs uppercase tracking-widest text-dim hover:text-default hover:bg-muted transition-colors duration-100"
+      className="flex items-center gap-1 px-2 py-1 text-xs uppercase tracking-widest text-dim hover:text-default hover:bg-muted transition-colors duration-100"
     >
       <span className="relative">
         ✉️
