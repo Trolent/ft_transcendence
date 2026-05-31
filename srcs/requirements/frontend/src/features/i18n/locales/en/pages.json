@@ -139,7 +139,9 @@
     "join_failed": "Couldn't join the race. Please try again.",
     "guest": "Guest",
     "starting_in": "Starting in {{n}}…",
-    "bot": "Bot 🤖"
+    "bot": "Bot 🤖",
+    "mobile_title": "Desktop only",
+    "mobile_message": "Typerun is designed for keyboard play. Please open this page on a desktop or laptop to race."
   },
   "oauth_callback": {
     "connecting": "Connecting…"
