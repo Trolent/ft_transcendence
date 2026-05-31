@@ -29,7 +29,7 @@ export default function Signin() {
   return (
     <PageLayout maxWidth="max-w-sm" centerY>
       <AuthForm mode="login" error={error} loading={loading} onSubmit={handleSubmit} />
-      <Btn as="a" href="/api/auth/42" size="md" className="block w-full mt-3 text-center !bg-[#00babc] !text-white !border-[#00babc] hover:!opacity-90">
+      <Btn as="a" href="/api/auth/42" size="md" className="block w-full mt-9 text-center !bg-[#00babc] !text-white !border-[#00babc] hover:!opacity-90">
         {t('login_with_42')}
       </Btn>
     </PageLayout>

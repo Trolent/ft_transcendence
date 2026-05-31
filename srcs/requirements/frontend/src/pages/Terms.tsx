@@ -6,29 +6,42 @@ export default function Terms() {
   const { i18n } = useTranslation();
   if (i18n.language === "en") {
     return (
-      <PageLayout maxWidth="max-w-240">
+      <PageLayout maxWidth="max-w-150">
+        <div className="flex flex-col gap-4">
           <Heading level={2}>Terms</Heading>
           <Text variant="prompt">Thank you for using Typerun. By creating an account and using our services, you agree to all the terms below.</Text>
-          <Text variant="accent"><u>Account management :</u> Your account must be created by a natural person. You must be at least 13 years old and provide a valid email address. You are responsible for keeping your password confidential and for any activity carried out from your account. You can delete your account at any time from your settings.</Text>
-          <Text><u>Rules of conduct :</u> Be courteous with other players. Harassment, hate speech, racist, sexist or discriminatory remarks are not tolerated under any circumstances. If a message or username is reported by another user, we reserve the right to take action if we deem the report legitimate.</Text>
-          <Text><u>User content :</u> You are solely responsible for the username you choose and the messages you send. We reserve the right to modify or remove any content that violates these terms.</Text>
-          <Text variant="error"><u>Cheating :</u> The use of bots, scripts or any other tool automating typing is prohibited, under penalty of invalidated score or even banishment from the leaderboard.</Text>
-          <Text variant="error"><u>Sanctions :</u> Depending on the severity of the breach, we may issue a warning, a temporary suspension or a permanent ban of the account. No refund is owed in the event of a sanction.</Text>
-          <Text><u>Intellectual property :</u> The game, its code, its design and its content belong to Typerun. The user may not copy, redistribute or modify the game under any circumstances.</Text>
-          <Text><u>Service availability :</u> Typerun does not guarantee 24/7 availability due to possible maintenance and outages. We are not responsible for any loss of progress related to a technical incident.</Text>
-          <Text variant="muted"><u>Limitation of liability :</u> Typerun is provided "as is", without warranty of any kind. We cannot be held liable for any indirect damages resulting from the use of the service.</Text>
-          <Text><u>Modification of terms :</u> In case of modification of our terms, you will be informed by email. Continued use of the service constitutes acceptance of the new terms.</Text>
-          <Text variant="dim"><u>Governing law :</u> These terms are governed by French law. Any dispute will be brought before the competent courts.</Text>
+          <Heading level={4}>Account management</Heading>
+          <Text variant="accent">Your account must be created by a natural person. You must be at least 13 years old and provide a valid email address. You are responsible for keeping your password confidential and for any activity carried out from your account. You can delete your account at any time from your settings.</Text>
+          <Heading level={4}>Rules of conduct</Heading>
+          <Text>Be courteous with other players. Harassment, hate speech, racist, sexist or discriminatory remarks are not tolerated under any circumstances. If a message or username is reported by another user, we reserve the right to take action if we deem the report legitimate.</Text>
+          <Heading level={4}>User content</Heading>
+          <Text>You are solely responsible for the username you choose and the messages you send. We reserve the right to modify or remove any content that violates these terms.</Text>
+          <Heading level={4}>Cheating</Heading>
+          <Text variant="error">The use of bots, scripts or any other tool automating typing is prohibited, under penalty of invalidated score or even banishment from the leaderboard.</Text>
+          <Heading level={4}>Sanctions</Heading>
+          <Text variant="error">Depending on the severity of the breach, we may issue a warning, a temporary suspension or a permanent ban of the account. No refund is owed in the event of a sanction.</Text>
+          <Heading level={4}>Intellectual property</Heading>
+          <Text>The game, its code, its design and its content belong to Typerun. The user may not copy, redistribute or modify the game under any circumstances.</Text>
+          <Heading level={4}>Service availability</Heading>
+          <Text>Typerun does not guarantee 24/7 availability due to possible maintenance and outages. We are not responsible for any loss of progress related to a technical incident.</Text>
+          <Heading level={4}>Limitation of liability</Heading>
+          <Text variant="dim">Typerun is provided "as is", without warranty of any kind. We cannot be held liable for any indirect damages resulting from the use of the service.</Text>
+          <Heading level={4}>Modification of terms</Heading>
+          <Text>In case of modification of our terms, you will be informed by email. Continued use of the service constitutes acceptance of the new terms.</Text>
+          <Heading level={4}>Governing law</Heading>
+          <Text variant="dim">These terms are governed by French law. Any dispute will be brought before the competent courts.</Text>
           <Text>To learn more about the privacy of your data, <Link to="/privacy" className="hover:text-glow"><u>click here</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Last updated on May 27th, 2026</i></Text>
+        </div>
       </PageLayout>
     );
   }
 
   else if (i18n.language === "fr") {
     return (
-      <PageLayout maxWidth="max-w-240">
+      <PageLayout maxWidth="max-w-150">
+        <div className="flex flex-col gap-4">
           <Heading level={2}>Conditions</Heading>
           <Text variant="prompt">Merci d'utiliser Typerun. En créant un compte et en utilisant nos services, vous acceptez l'intégralité des conditions ci-dessous.</Text>
           <Text variant="accent"><u>Gestion du compte :</u> Votre compte doit être créé par une personne physique. Vous devez avoir au minimum 13 ans et fournir une adresse e-mail valide. Vous êtes responsable de la confidentialité de votre mot de passe et de toute activité effectuée depuis votre compte. Vous pouvez supprimer votre compte à tout moment depuis vos paramètres.</Text>
@@ -44,13 +57,15 @@ export default function Terms() {
           <Text>Pour en savoir plus sur la confidentialité de vos données, <Link to="/privacy" className="hover:text-glow"><u>cliquez ici</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Dernière mise à jour le 27 mai 2026</i></Text>
+        </div>
       </PageLayout>
     );
   }
 
   else {
     return (
-      <PageLayout maxWidth="max-w-240">
+      <PageLayout maxWidth="max-w-150">
+        <div className="flex flex-col gap-4">
           <Heading level={2}>Términos</Heading>
           <Text variant="prompt">Gracias por usar Typerun. Al crear una cuenta y utilizar nuestros servicios, aceptas la totalidad de las condiciones que figuran a continuación.</Text>
           <Text variant="accent"><u>Gestión de la cuenta :</u> Tu cuenta debe ser creada por una persona física. Debes tener mínimo 13 años y proporcionar una dirección de correo electrónico válida. Eres responsable de la confidencialidad de tu contraseña y de toda actividad realizada desde tu cuenta. Puedes eliminar tu cuenta en cualquier momento desde tus ajustes.</Text>
@@ -66,6 +81,7 @@ export default function Terms() {
           <Text>Para saber más sobre la privacidad de tus datos, <Link to="/privacy" className="hover:text-glow"><u>haz clic aquí</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Última actualización el 27 de mayo de 2026</i></Text>
+        </div>
       </PageLayout>
     );
   }

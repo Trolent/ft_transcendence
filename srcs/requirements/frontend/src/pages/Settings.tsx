@@ -28,6 +28,9 @@ export default function Settings() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // set variant here for all containers on settings !!
+  const containerVariant = "terminal";
+
   function clearFeedback() {
     setErrors({});
     setGlobalError(null);
@@ -91,8 +94,8 @@ export default function Settings() {
         <Alert variant="warning" className="mt-4">{t("settings.alert_set_password")}</Alert>
       )}
 
-      <form onSubmit={handleSave} className="flex flex-col gap-6 mt-3">
-        <Container variant="panel" label={t("settings.change_email")} className="flex flex-col gap-3 mt-1">
+      <form onSubmit={handleSave} className="flex flex-col gap-6 mt-5">
+        <Container variant={containerVariant ?? "default"} label={t("settings.change_email")} className="flex flex-col gap-3 mt-1">
           <Input
             type="email"
             label={t("settings.email_label")}
@@ -106,12 +109,12 @@ export default function Settings() {
             onFocus={(e) => e.currentTarget.removeAttribute("readonly")}
           />
           {isOAuthOnly && (
-            <p className="text-xs text-red-400">{t("settings.email_managed_by_oauth")}</p>
+            <p className="text-xs text-danger">{t("settings.email_managed_by_oauth")}</p>
           )}
         </Container>
 
         <Container
-          variant="panel"
+          variant={containerVariant ?? "default"}
           label={isOAuthOnly ? t("settings.set_password") : t("settings.change_password")}
           className="flex flex-col gap-3 mt-1"
         >
@@ -149,7 +152,7 @@ export default function Settings() {
           />
         </Container>
 
-        <Container variant="panel" label={t("settings.change_language")} className="flex gap-3 mt-1">
+        <Container variant={containerVariant ?? "default"} label={t("settings.change_language")} className="flex gap-3 mt-1">
           <LanguageSwitcher variant="settings" />
         </Container>
 
