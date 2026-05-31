@@ -30,14 +30,17 @@ export function ChatHeader({ username }: ChatHeaderProps) {
   const displayedStatus = getStatus(profile.status, profile.id, profile.username);
 
   return (
-    <div className="flex items-center gap-3">
-      <Avatar username={profile.username} src={profile.avatarUrl ?? undefined} size="md" />
-      <div className="flex flex-col flex-1">
-        <Heading level={2}>
+    <div className="flex items-center gap-2 sm:gap-3">
+      <Avatar username={profile.username} src={profile.avatarUrl ?? undefined} size="sm" />
+      <div className="flex flex-col flex-1 min-w-0">
+        <Heading level={4} className="truncate sm:hidden">
+          <Status status={displayedStatus} hoverText={displayedStatus} /> {profile.username}
+        </Heading>
+        <Heading level={2} className="truncate hidden sm:block">
           <Status status={displayedStatus} hoverText={displayedStatus} /> {profile.username}
         </Heading>
       </div>
-      <Btn as={Link} to={`/profile/${profile.username}`} variant="primary" size="sm">
+      <Btn as={Link} to={`/profile/${profile.username}`} variant="primary" size="sm" className="shrink-0 text-xs sm:text-xs">
         {t('chat.view_profile')}
       </Btn>
     </div>

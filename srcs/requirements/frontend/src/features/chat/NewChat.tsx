@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Avatar, Btn, Modal, SearchList, Status } from "@/components";
 import { FriendsList } from "@/features/friends";
@@ -14,7 +14,12 @@ interface NewChatProps {
 export function NewChat({ onSelectChat }: NewChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
   const { t } = useTranslation("pages");
   const getStatus = useStatus();
 
@@ -25,22 +30,26 @@ export function NewChat({ onSelectChat }: NewChatProps) {
   }, [onSelectChat, navigate]);
 
   const renderItem = useCallback((item: UserSearchResult) => (
-    <div className="flex items-center gap-3 px-1 py-0.5">
-      <button
-        className="flex items-center gap-3 flex-1 min-w-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default text-left"
-        onClick={() => handleAction(item)}
-      >
+    <button
+      onClick={() => handleAction(item)}
+      className="w-full flex items-center justify-between gap-4 text-left hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
+    >
+      <div className="flex items-center gap-4 min-w-0">
         <Avatar username={item.username} src={item.avatarUrl} size="sm" />
-        <span className="font-mono text-sm text-default truncate">{item.username}</span>
-        <Status status={getStatus(item.status, item.id as number, item.username)} />
-      </button>
-    </div>
-  ), [getStatus, handleAction]);
+        <span className="font-mono text-sm text-default truncate">
+          <Status status={getStatus(item.status, item.id as number, item.username)} /> {item.username}
+        </span>
+      </div>
+      <span className="font-mono uppercase tracking-widest text-xs px-3 py-1 border border-dim text-default shrink-0">
+        {t("common:new")}
+      </span>
+    </button>
+  ), [getStatus, handleAction, t]);
 
   return (
     <>
-      <Btn variant="primary" size="sm" onClick={() => setIsOpen(true)}>
-        {t("chat.new_chat")}
+      <Btn variant="primary" size="sm" className="font-bold" onClick={() => setIsOpen(true)}>
+        {t("chat.new_chat_btn")}
       </Btn>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title={t("chat.new_chat")}>
@@ -49,7 +58,7 @@ export function NewChat({ onSelectChat }: NewChatProps) {
           renderItem={renderItem}
           excludeUsername={user?.username}
         />
-        <FriendsList username={user?.username ?? ""} showMsgBtn className="mt-3"/>
+        <FriendsList username={user?.username ?? ""} showMsgBtn onMsgClick={() => setIsOpen(false)} className="mt-3"/>
       </Modal>
     </>
   );

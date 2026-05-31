@@ -26,7 +26,7 @@ export function List<T extends ListItem>({
         <li key={item.id}>
           <Container
             variant={containerVariant}
-            className={["transition-all duration-200 hover:shadow-lg hover:scale-102", getItemClassName?.(item, index) ?? ""].join(" ")}
+            className={["transition-colors duration-150 hover:border-default", getItemClassName?.(item, index) ?? ""].join(" ")}
           >
             {renderItem(item, index)}
           </Container>

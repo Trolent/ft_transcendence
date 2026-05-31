@@ -6,8 +6,7 @@ export default function Terms() {
   const { i18n } = useTranslation();
   if (i18n.language === "en") {
     return (
-      <div className="mx-auto w-240">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-240">
           <Heading level={2}>Terms</Heading>
           <Text variant="prompt">Thank you for using Typerun. By creating an account and using our services, you agree to all the terms below.</Text>
           <Text variant="accent"><u>Account management :</u> Your account must be created by a natural person. You must be at least 13 years old and provide a valid email address. You are responsible for keeping your password confidential and for any activity carried out from your account. You can delete your account at any time from your settings.</Text>
@@ -23,15 +22,13 @@ export default function Terms() {
           <Text>To learn more about the privacy of your data, <Link to="/privacy" className="hover:text-glow"><u>click here</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Last updated on May 27th, 2026</i></Text>
-        </PageLayout>
-      </div>
+      </PageLayout>
     );
   }
 
   else if (i18n.language === "fr") {
     return (
-      <div className="mx-auto w-240">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-240">
           <Heading level={2}>Conditions</Heading>
           <Text variant="prompt">Merci d'utiliser Typerun. En créant un compte et en utilisant nos services, vous acceptez l'intégralité des conditions ci-dessous.</Text>
           <Text variant="accent"><u>Gestion du compte :</u> Votre compte doit être créé par une personne physique. Vous devez avoir au minimum 13 ans et fournir une adresse e-mail valide. Vous êtes responsable de la confidentialité de votre mot de passe et de toute activité effectuée depuis votre compte. Vous pouvez supprimer votre compte à tout moment depuis vos paramètres.</Text>
@@ -47,15 +44,13 @@ export default function Terms() {
           <Text>Pour en savoir plus sur la confidentialité de vos données, <Link to="/privacy" className="hover:text-glow"><u>cliquez ici</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Dernière mise à jour le 27 mai 2026</i></Text>
-        </PageLayout>
-      </div>
+      </PageLayout>
     );
   }
 
   else {
     return (
-      <div className="mx-auto w-240">
-        <PageLayout>
+      <PageLayout maxWidth="max-w-240">
           <Heading level={2}>Términos</Heading>
           <Text variant="prompt">Gracias por usar Typerun. Al crear una cuenta y utilizar nuestros servicios, aceptas la totalidad de las condiciones que figuran a continuación.</Text>
           <Text variant="accent"><u>Gestión de la cuenta :</u> Tu cuenta debe ser creada por una persona física. Debes tener mínimo 13 años y proporcionar una dirección de correo electrónico válida. Eres responsable de la confidencialidad de tu contraseña y de toda actividad realizada desde tu cuenta. Puedes eliminar tu cuenta en cualquier momento desde tus ajustes.</Text>
@@ -71,8 +66,7 @@ export default function Terms() {
           <Text>Para saber más sobre la privacidad de tus datos, <Link to="/privacy" className="hover:text-glow"><u>haz clic aquí</u></Link></Text>
           <br />
           <Text variant="dim"><i><br />Última actualización el 27 de mayo de 2026</i></Text>
-        </PageLayout>
-      </div>
+      </PageLayout>
     );
   }
 }

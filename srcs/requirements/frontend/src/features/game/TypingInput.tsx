@@ -61,13 +61,13 @@ export default function TypingInput({
   const charNodes: React.ReactNode[] = passage.split("").map((char, i) => {
     let cls: string;
     if (i < charOffset) {
-      cls = "text-default";
-    } else if (!finished && i === absoluteCursor) {
-      cls = `text-dim underline ${cursorIsError ? "decoration-red-400" : "decoration-default"}`;
-    } else if (i < absoluteCursor) {
-      cls = i >= redStart ? "bg-red-500/40 text-dim" : "text-default";
-    } else {
       cls = "text-dim";
+    } else if (!finished && i === absoluteCursor) {
+      cls = `text underline ${cursorIsError ? "decoration-red-400" : "decoration-default text-accent"}`;
+    } else if (i < absoluteCursor) {
+      cls = i >= redStart ? "bg-red-500/40 text" : "text-dim";
+    } else {
+      cls = "text";
     }
     return <span key={i} className={cls}>{char}</span>;
   });
@@ -82,7 +82,7 @@ export default function TypingInput({
   return (
     <div className="w-full flex flex-col gap-3">
       {words.length > 0 && (
-        <div className="font-mono text-sm leading-relaxed p-3 bg-black/20 border border-dim rounded select-none" onCopy={(e) => e.preventDefault()}>
+        <div className="font-mono leading-relaxed p-3 bg-black/20 border border-dim rounded select-none" onCopy={(e) => e.preventDefault()}>
           {charNodes}
         </div>
       )}

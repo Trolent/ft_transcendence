@@ -12,7 +12,11 @@ export default function Modal({ isOpen, onClose, title, children, className = ""
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -26,6 +30,7 @@ export default function Modal({ isOpen, onClose, title, children, className = ""
         className={[
           "relative bg-black border border-default font-mono",
           "w-full max-w-md mx-4 p-6 flex flex-col gap-4",
+          "max-h-[90svh]",
           "shadow-[0_0_24px_0_rgba(0,255,65,0.15)]",
           className,
         ].join(" ")}
@@ -44,7 +49,7 @@ export default function Modal({ isOpen, onClose, title, children, className = ""
             </svg>
           </button>
         </div>
-        <div>{children}</div>
+        <div className="overflow-y-auto flex-1 min-h-0 pr-1 pb-2">{children}</div>
       </div>
     </div>
   );

@@ -70,7 +70,10 @@
     "history_date": "Date",
     "history_pos": "Pos",
     "history_wpm": "WPM",
+    "wpm_long": "Words per minute",
     "history_players": "Players",
+    "accuracy": "Accuracy",
+    "accuracy_short": "Acc",
     "achievements": "Achievements",
     "no_achievements": "No achievements yet.",
     "achievements_show_all": "Show locked",
@@ -109,15 +112,10 @@
     "enter_race": "Enter race",
     "practice_mode": "Practice",
     "main_menu": "← Main Menu",
-    "start": "Start",
-    "waiting": "Waiting for players…",
-    "countdown": "Get ready!",
-    "finished": "Race finished!",
-    "your_wpm": "Your WPM: {{wpm}}",
-    "position": "Position: {{pos}}/{{total}}",
     "results_label": "results",
     "stat_wpm": "WPM",
     "stat_time": "Time",
+    "stat_accuracy": "Accuracy",
     "stat_position": "Position",
     "try_again": "Try again",
     "race_again": "Race again",
@@ -130,15 +128,26 @@
     ],
     "you": "You",
     "player": "Player {{n}}",
-    "type_here": "Type here…",
-    "waiting_start": "Waiting for race to start…"
+    "type_here": "Type here...",
+    "waiting_start": "Waiting for race to start...",
+    "connecting": "Connecting…",
+    "waiting_for_players": "Waiting for players…",
+    "cancel": "Cancel",
+    "player_left": "{{name}} left the race.",
+    "race_voided": "Race cancelled — not enough players.",
+    "already_in_game": "You're already in a race in another tab.",
+    "join_failed": "Couldn't join the race. Please try again.",
+    "guest": "Guest",
+    "starting_in": "Starting in {{n}}…",
+    "bot": "Bot 🤖"
   },
   "oauth_callback": {
     "connecting": "Connecting…"
   },
   "chat": {
     "title": "Chats",
-    "new_chat": "New chat",
+    "new_chat": "Start a new chat",
+    "new_chat_btn": "+",
     "loading": "Loading chat…",
     "no_messages": "No messages yet",
     "no_chats": "No chats yet",
@@ -148,6 +157,8 @@
     "you": "Me",
     "open": "Open",
     "no_chat_selected": "No chat selected.",
-    "view_profile": "View Profile"
+    "view_profile": "View Profile",
+    "today": "Today",
+    "yesterday": "Yesterday"
   }
 }

@@ -21,7 +21,7 @@ export default function History({ username }: HistoryProps) {
 
   useEffect(() => {
     getUserHistory(username, currentPage, LIMIT).then(({ data, totalPages }) => {
-      setHistory(data);
+      setHistory(data.filter((e) => e.finishedAt != null));
       setTotalPages(totalPages);
     });
   }, [username, currentPage]);
@@ -34,40 +34,51 @@ export default function History({ username }: HistoryProps) {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full font-mono text-sm border-collapse">
+              <table className="w-full table-auto font-mono text-sm border-collapse">
                 <thead>
                   <tr className="border-b border-dim">
-                    <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_date')}</th>
+                    <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal whitespace-nowrap">{t('profile.history_date')}</th>
                     <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_pos')}</th>
-                    <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_wpm')}</th>
-                    <th className="text-left py-2 text-xs uppercase tracking-widest text-dim font-normal">{t('profile.history_players')}</th>
+                    <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal" title={t('profile.wpm_long')}>{t('profile.history_wpm')}</th>
+                    <th className="text-left py-2 pr-4 text-xs uppercase tracking-widest text-dim font-normal" title={t('profile.accuracy')}>{t('profile.accuracy_short')}.</th>
                   </tr>
                 </thead>
                 <tbody>
                   {history.map((entry) => (
-                    <tr key={entry.match.id} className="border-b border-dim/40 hover:bg-muted/30 transition-colors">
+                    <tr
+                      key={entry.match.id}
+                      onClick={() => setPlayers(entry.match.matchResult)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setPlayers(entry.match.matchResult);
+                        }
+                      }}
+                      tabIndex={0}
+                      role="button"
+                      className="border-b border-dim/40 hover:bg-muted/30 transition-colors cursor-pointer"
+                    >
                       <td className="py-2 pr-4">
-                        <Text size="sm" variant="muted" as="span">
-                          {entry.finishedAt ? new Date(entry.finishedAt).toLocaleDateString("fr-CA") : "—"}
+                        <Text
+                          size="sm"
+                          variant="muted"
+                          as="span"
+                          title={
+                            entry.finishedAt ? new Date(entry.finishedAt).toLocaleString("fr-CA", {
+                                  dateStyle: "short",
+                                  timeStyle: "short",
+                                }) : "—"}>
+                            {entry.finishedAt ? new Date(entry.finishedAt).toLocaleDateString("fr-CA") : "—"}
                         </Text>
                       </td>
                       <td className="py-2 pr-4">
-                        <Text size="sm" as="span">#{entry.position ?? "—"}</Text>
+                        <Text size="sm" as="span" >{entry.position ?? "—"}</Text><Text size="sm" as="span" variant="dim">/{entry.nbPlayers + entry.nbBots}</Text>
                       </td>
                       <td className="py-2 pr-4">
                         <Text size="sm" as="span">{entry.wpm != null ? `${Math.round(entry.wpm)}` : "—"}</Text>
                       </td>
-                      <td className="py-2 pl-2">
-                        <button
-                          onClick={() => setPlayers(entry.match.matchResult)}
-                          className="flex items-center gap-2 text-default hover:text-accent transition-colors cursor-pointer"
-                        >
-                          <Text size="sm" as="span">{entry.match.matchResult.length}</Text>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                          </svg>
-                        </button>
+                      <td className="py-2 pr-4">
+                        <Text size="sm" as="span">{entry.wpm != null ? `${Math.round(entry.accuracy)}` : "—"}%</Text>
                       </td>
                     </tr>
                   ))}
