@@ -41,13 +41,13 @@ export default function PendingRequests({ className = "", refreshKey = 0 }: Pend
           className="mt-4"
           items={pending}
           renderItem={(item: Friend) => (
-            <div className="flex flex-col gap-2 min-[370px]:flex-row min-[370px]:items-center min-[370px]:justify-between">
+            <div className="flex items-center justify-between gap-4">
               <Link
                 to={`/profile/${item.username}`}
-                className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
+                className="flex min-w-0 items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
               >
                 <Avatar username={item.username} src={item.avatarSrc} size="sm" />
-                <Text className="truncate">{item.username}</Text>
+                <Text>{item.username}</Text>
               </Link>
               <Btn size="sm" variant="ghost" disabled>
                 {t('friends.pending_btn')}

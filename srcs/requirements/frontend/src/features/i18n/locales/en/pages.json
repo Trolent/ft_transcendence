@@ -144,8 +144,7 @@
   },
   "chat": {
     "title": "Chats",
-    "new_chat": "Start a new chat",
-    "new_chat_btn": "+",
+    "new_chat": "New chat",
     "loading": "Loading chat…",
     "no_messages": "No messages yet",
     "no_chats": "No chats yet",

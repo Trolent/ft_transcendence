@@ -107,7 +107,7 @@
     "title": "JUGAR",
     "ready_to_race": "¿Listo para correr?",
     "race_description": "Escribe más rápido que tus oponentes para cruzar la línea de meta.",
-    "enter_race": "Multijugador",
+    "enter_race": "Entrar en la carrera",
     "practice_mode": "Entrenamiento",
     "main_menu": "← Menú principal",
     "results_label": "resultados",
@@ -143,9 +143,8 @@
     "connecting": "Conectando…"
   },
   "chat": {
-    "title": "conversacións",
-    "new_chat": "Nuevo conversación",
-    "new_chat_btn": "+",
+    "title": "Chats",
+    "new_chat": "Nuevo chat",
     "loading": "Cargando chat…",
     "no_messages": "Aún no hay mensajes",
     "no_chats": "Aún no hay conversaciones",

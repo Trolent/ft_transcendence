@@ -107,8 +107,8 @@
     "title": "JOUER",
     "ready_to_race": "Prêt à partir ?",
     "race_description": "Tapez plus vite que vos adversaires pour franchir la ligne d'arrivée.",
-    "enter_race": "Multijoueur",
-    "practice_mode": "Entrainement",
+    "enter_race": "Entrer dans la course",
+    "practice_mode": "Entraînement",
     "main_menu": "← Menu principal",
     "start": "Démarrer",
     "waiting": "En attente de joueurs…",
@@ -151,7 +151,6 @@
   "chat": {
     "title": "Discussions",
     "new_chat": "Nouvelle discussion",
-    "new_chat_btn": "+",
     "loading": "Chargement du chat…",
     "no_messages": "Aucun message pour le moment",
     "no_chats": "Aucune conversation pour le moment",

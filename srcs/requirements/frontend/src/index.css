@@ -37,11 +37,6 @@
     background: var(--color-dim);
   }
 
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-dim) var(--color-black);
-  }
-
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,

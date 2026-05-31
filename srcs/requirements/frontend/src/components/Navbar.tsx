@@ -10,15 +10,9 @@ const NAV_LINKS = [
   { key: "leaderboard", href: "/leaderboard" },
 ];
 
-const AUTH_NAV_LINKS = [
-  { key: "play",        href: "/play" },
-  { key: "leaderboard", href: "/leaderboard" },
-  { key: "profile",     href: "/profile" },
-];
-
 function isActive(href: string, pathname: string) {
-  if (href === "/play") return pathname === "/" || pathname.startsWith("/play");
-  return pathname === href || pathname.startsWith(href + "/");
+  if (href === "/play") return pathname === "/" || pathname === "/play";
+  return pathname === href;
 }
 
 // == NAVLINK ==
@@ -98,7 +92,7 @@ function MobileMenu({ pathname, user, onLogout }: {
   const linkClass = "block w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-100";
 
   return (
-    <ul className="md:hidden border-t border-muted px-4 pb-3 flex flex-col gap-1">
+    <ul className="sm:hidden border-t border-muted px-4 pb-3 flex flex-col gap-1">
       {NAV_LINKS.map(({ key, href }) => {
         const active = isActive(href, pathname);
         return (
@@ -113,7 +107,7 @@ function MobileMenu({ pathname, user, onLogout }: {
         );
       })}
 
-      <li>
+      <li className="border-t border-muted pt-1 mt-1">
         {user ? (
           <>
             <Link to="/profile"          className={`${linkClass} text-dim hover:text-default hover:bg-muted`}>{t('profile')}</Link>
@@ -145,32 +139,29 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-black font-mono">
-      <div className="relative flex items-center justify-between px-4 h-12">
-        <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none whitespace-nowrap flex items-center gap-2">
-          <img src="/favicon.png" className="w-5 h-5 object-contain" alt="" />
-          Typerun
-        </Link>
+      <div className="flex items-center justify-between px-4 h-12">
+        <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none">🚗 Typerun</Link>
 
-        <div className="md:hidden flex items-center gap-1">
+        <div className="sm:hidden flex items-center gap-2">
           {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           <button
             type="button"
             className="px-2 py-1 text-xs uppercase tracking-widest text-dim border border-dim hover:text-default hover:border-default transition-colors duration-100"
             onClick={() => setMenuOpen(!menuOpen)}>
-            {t('menu')}
+            {t('menu')} {menuOpen ? "[-]" : "[+]"}
           </button>
         </div>
 
-        <ul className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
-          {(user ? AUTH_NAV_LINKS : NAV_LINKS).map(({ key, href }) => (
+        <ul className="hidden sm:flex items-center gap-1">
+          {NAV_LINKS.map(({ key, href }) => (
             <li key={key}>
               <NavLink href={href} label={t(key)} pathname={pathname} />
             </li>
           ))}
         </ul>
 
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden sm:flex items-center gap-1">
           {user? ( <ChatNotif/> ) : null}
           <LanguageSwitcher />
           {user ? (

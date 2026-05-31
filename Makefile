@@ -72,10 +72,7 @@ trust-cert:
 seed:
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run seed
 
-seedstress:
-	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run seedstress
-
 seedclean:
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npx prisma migrate reset --force
 
-.PHONY: all up dev down re redev clean fclean logs ps hosts home trust-cert seed seedclean seedstress
+.PHONY: all up dev down re redev clean fclean logs ps hosts home trust-cert seed seedclean

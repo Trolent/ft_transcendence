@@ -63,7 +63,6 @@ export default function Profile() {
 
   return (
     <PageWithSidebar
-      centerContent
       sidebar={
         <Sidebar>
           <FriendsList username={targetUsername} className="h-full" refreshKey={friendsRefreshKey} showRequestsBtn />

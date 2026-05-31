@@ -35,9 +35,9 @@ export default function ProfileHeader({
         <Avatar username={profile.username} src={profile.avatarUrl ?? undefined} size="xl" />
       )}
 
-      <div className="flex flex-col gap-4 flex-1 min-w-0">
+      <div className="flex flex-col gap-4 flex-1">
         <div>
-          <Heading level={1} className="truncate !text-lg sm:!text-3xl"><Status status={displayedStatus} hoverText={displayedStatus}/> {profile.username}</Heading>
+          <Heading level={1}><Status status={displayedStatus} hoverText={displayedStatus}/> {profile.username}</Heading>
           {createdAt && (
             <Text variant="muted" size="xs">{t('profile.created_on', { date: createdAt })}</Text>
           )}
