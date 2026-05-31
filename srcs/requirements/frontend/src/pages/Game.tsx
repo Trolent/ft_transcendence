@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Btn, PageLayout, Alert } from "@/components";
+import { Btn, PageLayout, Alert, Modal } from "@/components";
+import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { GameArena } from "@/features/game";
 import { useRaceSocket } from "@/hooks/useRaceSocket";
 
@@ -14,6 +15,7 @@ export default function Game() {
   const { mode: modeParam } = useParams<{ mode: string }>();
   const mode: Mode = modeParam === "practice" ? "practice" : "multiplayer";
   const [gameKey, setGameKey] = useState(0);
+  const isTouch = useTouchDevice();
 
   // --- practice (offline, single-player) ---
   const [pPhase, setPPhase] = useState<PracticePhase>("racing");
@@ -22,10 +24,9 @@ export default function Game() {
   // --- multiplayer (socket-driven) ---
   const race = useRaceSocket();
 
-  // Auto-join queue when entering multiplayer
   useEffect(() => {
-    if (mode === "multiplayer") race.joinQueue();
-  }, [mode, race.joinQueue]);
+    if (mode === "multiplayer" && !isTouch) race.joinQueue();
+  }, [mode, race.joinQueue, isTouch]);
 
   // ---- practice countdown clock ----
   useEffect(() => {
@@ -56,6 +57,14 @@ export default function Game() {
     () => Object.values(race.racers),
     [race.racers],
   );
+
+  if (isTouch) {
+    return (
+      <Modal isOpen onClose={() => navigate('/')} title={t('play.mobile_title')}>
+        <p className="font-mono text-sm text-dim">{t('play.mobile_message')}</p>
+      </Modal>
+    );
+  }
 
   // ===== Back to menu =====
   const backToMenu = () => {
