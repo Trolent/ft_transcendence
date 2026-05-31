@@ -23,11 +23,13 @@ export class LeaderBoardController {
         @Query('limit') limit: string,
         @Query('q')     q?:    string,
         @Query('sortOrder') sortOrder?: string,
+        @Query('minLevel') minLevel?: string,
     ): Promise<PaginatedResponse<LeaderboardEntryDto>> {
         const parsedPage  = Math.max(1, parseInt(page)  || 1);
         const parsedLimit = Math.min(parseInt(limit) || LEADERBOARD_DEFAULT_LIMIT, LEADERBOARD_MAX_LIMIT);
         const safeSortOrder = sortOrder === 'asc' ? 'asc' : 'desc';
-        return this.leaderBoardService.getLeaderboard(parsedPage, parsedLimit, q, safeSortOrder);
+        const parseMinLevel = Math.max(1, parseInt(minLevel ?? '1') || 1);
+        return this.leaderBoardService.getLeaderboard(parsedPage, parsedLimit, q, safeSortOrder, parseMinLevel);
     }
 
 }

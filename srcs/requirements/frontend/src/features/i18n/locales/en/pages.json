@@ -10,7 +10,9 @@
     "level": "level: {{level}}",
     "games": "games: {{count}}",
     "sort_desc": "Highest WPM first",
-    "sort_asc": "Lowest WPM first"
+    "sort_asc": "Lowest WPM first",
+    "min_level": "min level",
+    "sort_label": "Sort"
   },
   "settings": {
     "title": "SETTINGS",
@@ -144,7 +146,8 @@
   },
   "chat": {
     "title": "Chats",
-    "new_chat": "New chat",
+    "new_chat": "Start a new chat",
+    "new_chat_btn": "+",
     "loading": "Loading chat…",
     "no_messages": "No messages yet",
     "no_chats": "No chats yet",

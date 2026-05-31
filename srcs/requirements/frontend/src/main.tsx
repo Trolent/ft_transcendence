@@ -14,10 +14,14 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <StatusProvider>
           <ChatProvider>
-            <App />
+                <App />
           </ChatProvider>
         </StatusProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )
+
+
+// ajouter bg à navbar et peut-être footer, peut-être faire circle du bas ?
+// mettre une transparence
