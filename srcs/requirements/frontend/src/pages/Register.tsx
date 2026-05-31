@@ -18,10 +18,10 @@ export default function Register() {
     password,
   }: {
     username?: string;
-    email: string;
+    email?: string;
     password: string;
   }) {
-    if (!username) return;
+    if (!username || !email) return;
     setError("");
     setLoading(true);
     try {

@@ -37,6 +37,8 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      - NODE_ENV=production
     logging:
       driver: json-file
       options:
@@ -48,6 +50,10 @@ services:
     build:
       context: ./requirements/backend
       dockerfile: Dockerfile
+    environment:
+      - FORTYTWO_CALLBACK_URL=https://${DOMAIN}/api/auth/42/callback
+      - FRONTEND_URL=https://${DOMAIN}
+      - NODE_ENV=production
     expose:
       - "3000"
     depends_on:

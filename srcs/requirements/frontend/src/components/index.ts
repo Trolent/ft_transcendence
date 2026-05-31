@@ -13,9 +13,11 @@ export { default as TextArea }              from "./TextArea";
 export { Pagination }                       from "./Pagination";
 export { Status }                           from './Status';
 export { LanguageSwitcher }                 from "./LanguageSwitcher";
-export { default as Modal }                from "./Modal";
-export { SearchList }                      from "./SearchList";
+export { default as Modal }                 from "./Modal";
+export { SearchList }                       from "./SearchList";
 export { FindUser }                         from "./FindUser";
+export { default as MatrixRain }            from "./MatrixRain";
+export { default as PillButton }            from "./PillButton";
 
 /* layout */
 export { default as Footer }                from "./Footer";
@@ -23,5 +25,3 @@ export { default as Navbar }                from "./Navbar";
 export { default as PageLayout }            from "./PageLayout";
 export { default as PageWithSidebar }       from "./PageWithSidebar";
 export { default as Sidebar }               from "./Sidebar";
-export { default as MatrixRain }            from "./MatrixRain";
-export { default as PillButton }            from "./PillButton";

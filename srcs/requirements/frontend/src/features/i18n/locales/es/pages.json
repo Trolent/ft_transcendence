@@ -10,7 +10,10 @@
     "level": "nivel: {{level}}",
     "games": "partidas: {{count}}",
     "sort_desc": "Mayor PPM primero",
-    "sort_asc": "Menor PPM primero"
+    "sort_asc": "Menor PPM primero",
+    "min_level": "Nivel mínimo",
+    "sort_label": "Orden",
+    "player_col": "Jugador"
   },
   "settings": {
     "title": "AJUSTES",
@@ -137,7 +140,9 @@
     "join_failed": "No se pudo unir a la carrera. Inténtalo de nuevo.",
     "guest": "Invitado",
     "starting_in": "Comienza en {{n}}…",
-    "bot": "Robot"
+    "bot": "Robot",
+    "mobile_title": "Solo escritorio",
+    "mobile_message": "Typerun está diseñado para jugar con teclado. Abre esta página en un ordenador para participar."
   },
   "oauth_callback": {
     "connecting": "Conectando…"

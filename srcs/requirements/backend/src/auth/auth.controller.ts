@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 
 //API LIMIT
 import { Throttle } from '@nestjs/throttler';
-import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_API } from '../common/throttle.constants';
+import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_AUTH_GLOBAL } from '../common/throttle.constants';
 
 //AUTH
 import { AuthService } from './auth.service';
@@ -24,7 +24,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User created', type: UserProfileDto })
   @ApiResponse({ status: 409, description: 'USER_ALREADY_EXISTS' })
-  @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @Throttle({ default: THROTTLE_LIMIT_AUTH })
   @Post('register')
   register(@Body() body: RegisterDto) {
     return this.authService.register(body.username, body.email, body.password);
@@ -33,7 +33,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login' })
   @ApiResponse({ status: 200, type: LoginResponseDto })
   @ApiResponse({ status: 401, description: 'INVALID_CREDENTIALS' })
-  @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @Throttle({ default: THROTTLE_LIMIT_AUTH })
   @Post('login')
   @HttpCode(200)
   login(@Body() body: LoginDto) {
@@ -43,7 +43,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user' })
   @ApiResponse({ status: 200, type: UserProfileDto })
-  @Throttle({ auth: THROTTLE_LIMIT_API })
+  @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
   @UseGuards(JwtAuthGuard)
   @Get('me')
   me(@CurrentUser() user: SafeUser) {
@@ -54,7 +54,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout' })
   @ApiResponse({ status: 200, type: LogoutResponseDto })
 
-  @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @Throttle({ default: THROTTLE_LIMIT_AUTH })
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(200)
@@ -64,7 +64,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Redirect to 42 OAuth login page' })
   @ApiResponse({ status: 302, description: 'Redirects to api.intra.42.fr/oauth/authorize' })
-  @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @Throttle({ default: THROTTLE_LIMIT_AUTH })
   @Get('42')
   @Redirect()
   redirectTo42(){
@@ -79,7 +79,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '42 OAuth callback — exchanges code for JWT and redirects to frontend' })
   @ApiResponse({ status: 302, description: 'Redirects to FRONTEND_URL/auth/callback?token=...' })
-  @Throttle({ auth: THROTTLE_LIMIT_AUTH })
+  @Throttle({ default: THROTTLE_LIMIT_AUTH })
   @Get('42/callback')
   @Redirect()
   async callback42(@Query('code') code:string, @Query('error') error: string){

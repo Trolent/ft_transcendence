@@ -14,10 +14,10 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <StatusProvider>
           <ChatProvider>
-            <App />
+                <App />
           </ChatProvider>
         </StatusProvider>
       </AuthProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )

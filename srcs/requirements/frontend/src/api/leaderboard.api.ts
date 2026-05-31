@@ -11,10 +11,11 @@ export interface LeaderboardResponse {
   totalPages: number;
 }
 
-export async function getLeaderboard(page = 1, limit = 20, q?: string, sortOrder?: 'asc' | 'desc'): Promise<LeaderboardResponse> {
+export async function getLeaderboard(page = 1, limit = 20, q?: string, sortOrder?: 'asc' | 'desc', minLevel?: number): Promise<LeaderboardResponse> {
   const params: Record<string, string> = { page: String(page), limit: String(limit) };
   if (q?.trim()) params.q = q.trim();
   if (sortOrder) params.sortOrder = sortOrder;
+  if (minLevel && minLevel > 1) params.minLevel = String(minLevel);
 
   const res = await fetch(`${API_LEADERBOARD}?${new URLSearchParams(params)}`, {
     headers: authHeaders(),

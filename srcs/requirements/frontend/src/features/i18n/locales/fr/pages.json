@@ -10,7 +10,10 @@
     "level": "niveau : {{level}}",
     "games": "parties : {{count}}",
     "sort_desc": "MPM décroissant",
-    "sort_asc": "MPM croissant"
+    "sort_asc": "MPM croissant",
+    "min_level": "Niveau minimum",
+    "sort_label": "Tri",
+    "player_col": "Joueur"
   },
   "settings": {
     "title": "PARAMÈTRES",
@@ -110,12 +113,6 @@
     "enter_race": "Multijoueur",
     "practice_mode": "Entrainement",
     "main_menu": "← Menu principal",
-    "start": "Démarrer",
-    "waiting": "En attente de joueurs…",
-    "countdown": "Prêt !",
-    "finished": "Course terminée !",
-    "your_wpm": "Votre MPM : {{wpm}}",
-    "position": "Position : {{pos}}/{{total}}",
     "results_label": "résultats",
     "stat_wpm": "MPM",
     "stat_time": "Temps",
@@ -143,7 +140,9 @@
     "join_failed": "Impossible de rejoindre la course. Veuillez réessayer.",
     "guest": "Invité",
     "starting_in": "Départ dans {{n}}…",
-    "bot": "Robot"
+    "bot": "Robot",
+    "mobile_title": "Desktop uniquement",
+    "mobile_message": "Typerun est conçu pour le jeu au clavier. Ouvre cette page sur un ordinateur pour participer."
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"

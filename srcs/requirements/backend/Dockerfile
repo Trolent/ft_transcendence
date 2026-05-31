@@ -6,7 +6,7 @@ COPY prisma ./prisma
 RUN npm install
 RUN npx prisma generate
 COPY . .
-COPY tools/prisma-entrypoint.sh /prisma-entrypoint.sh
-RUN chmod +x /prisma-entrypoint.sh
+COPY tools/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 EXPOSE 3000
-CMD ["sh", "/prisma-entrypoint.sh"]
+CMD ["sh", "/entrypoint.sh"]
