@@ -2,6 +2,7 @@ NAME		= Typerun
 COMPOSE		= srcs/docker-compose.yml
 COMPOSE_DEV	= srcs/docker-compose.dev.yml
 DOMAIN		:= $(shell grep '^DOMAIN=' srcs/.env 2>/dev/null | cut -d= -f2)
+DEV_DOMAIN	:= localhost
 
 all: check-env hosts up
 
@@ -19,15 +20,15 @@ up:
 	@printf "\033[1;36m  │\033[0m  https://$(DOMAIN)                        \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  └───────────────────────────────────────────┘\033[0m\n\n"
 
-dev: check-env hosts
+dev: check-env
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) up --build -d
 	@$(MAKE) prisma
 	@printf "\n\033[1;33m  [DEV] $(NAME) is up in dev mode!\033[0m\n\n"
 	@printf "\033[1;36m  ┌───────────────────────────────────────────┐\033[0m\n"
-	@printf "\033[1;36m  │\033[0m  Frontend  ->  http://$(DOMAIN):5173      \033[1;36m│\033[0m\n"
-	@printf "\033[1;36m  │\033[0m  Backend   ->  http://$(DOMAIN):3000      \033[1;36m│\033[0m\n"
-	@printf "\033[1;36m  │\033[0m  Database  ->  http://$(DOMAIN):5432      \033[1;36m│\033[0m\n"
-	@printf "\033[1;36m  │\033[0m  Prisma.   ->  http://$(DOMAIN):5555      \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  Frontend  ->  http://$(DEV_DOMAIN):5173  \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  Backend   ->  http://$(DEV_DOMAIN):3000  \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  Database  ->  http://$(DEV_DOMAIN):5432  \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  Prisma.   ->  http://$(DEV_DOMAIN):5555  \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  └───────────────────────────────────────────┘\033[0m\n\n"
 
 down:
