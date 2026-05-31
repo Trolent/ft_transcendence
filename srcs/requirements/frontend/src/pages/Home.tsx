@@ -7,7 +7,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="relative flex-1 flex items-center justify-center overflow-hidden">
+    <div className="no-background relative flex-1 flex items-center justify-center overflow-hidden">
       <MatrixRain />
 
       <div className="relative z-10 flex flex-col items-center gap-8 text-center px-10 py-10 bg-black/90">

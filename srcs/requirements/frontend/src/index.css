@@ -19,6 +19,23 @@
   }
 
   body {
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle 400px at 50% 150px, rgba(131, 204, 22, 0.32), transparent);
+  }
+
+  body:has(.no-background)::before {
+    display: none;
+  }
+
+  body {
     background-color: var(--color-black);
     color: var(--color-default);
     font-family: "Courier New", Courier, monospace;

@@ -20,9 +20,9 @@ import { ProtectedRoute, GuestRoute } from "@/features/auth";
 
 function App() {
   return (
-    <div className="min-h-screen bg-black flex flex-col font-mono">
+    <div className="relative min-h-screen bg-transparent flex flex-col font-mono overflow-hidden">
       <Navbar />
-      <main className="flex-1 flex flex-col">
+      <main className="relative z-10 flex-1 flex flex-col">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/play/:mode" element={<Game />} />
