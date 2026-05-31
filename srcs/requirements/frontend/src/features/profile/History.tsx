@@ -61,7 +61,7 @@ export default function History({ username }: HistoryProps) {
                       <td className="py-2 pr-4">
                         <Text
                           size="sm"
-                          variant="muted"
+                          variant="dim"
                           as="span"
                           title={
                             entry.finishedAt ? new Date(entry.finishedAt).toLocaleString("fr-CA", {

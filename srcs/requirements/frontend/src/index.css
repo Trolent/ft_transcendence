@@ -5,11 +5,10 @@
   --color-default: #00ff41;
   --color-danger: #ff3131;
   --color-accent: #00ffe7;
-  --color-dim: #008f11;
+  --color-dim: #00B72E;
   --color-muted: #1a4d1a;
   --color-glow: #39ff14;
-
-  --radius-none: 0px;
+  --color-darkgreen: #003D0F;
 }
 
 @layer base {
@@ -28,7 +27,7 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background-image: radial-gradient(circle 400px at 50% 150px, rgba(131, 204, 22, 0.32), transparent);
+    background-image: radial-gradient(circle 400px at 50% 150px, rgba(0, 255, 65, 0.32), transparent);
   }
 
   body:has(.no-background)::before {

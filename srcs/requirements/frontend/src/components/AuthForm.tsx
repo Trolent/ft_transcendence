@@ -113,11 +113,11 @@ export function AuthForm({ mode = "login", error, loading = false, onSubmit }: A
         {loading ? t('common:please_wait') : mode === "login" ? t('sign_in') : t('create_account')}
       </Btn>
 
-      <Text variant="dim" className="text-center text-sm">
+      <Text variant="dim" className="text-center text-base">
         {mode === "login" ? (
-          <>{t('no_account')}{" "}<Link to="/register" className="text-terminal-cyan hover:underline">{t('register_link')}</Link></>
+          <>{t('no_account')}{" "}<Link to="/register" className="text-default hover:underline">{t('register_link')}</Link></>
         ) : (
-          <>{t('have_account')}{" "}<Link to="/signin" className="text-terminal-cyan hover:underline">{t('sign_in_link')}</Link></>
+          <>{t('have_account')}{" "}<Link to="/signin" className="text-default hover:underline">{t('sign_in_link')}</Link></>
         )}
       </Text>
     </form>
