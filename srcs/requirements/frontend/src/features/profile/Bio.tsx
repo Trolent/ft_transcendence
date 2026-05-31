@@ -3,14 +3,16 @@ import { useTranslation } from "react-i18next";
 import { tError } from "@/features/i18n";
 import { TextArea, Btn, Container, Text } from "@/components";
 import { updateMyBio } from "@/api/users.api";
+import type { ContainerVariant } from "@/components/Container";
 
 interface BioProps {
   bio: string | null;
   isOwnProfile: boolean;
   onBioChange: (bio: string) => void;
+  containerVariant?: ContainerVariant | null;
 }
 
-export default function Bio({ bio, isOwnProfile, onBioChange }: BioProps) {
+export default function Bio({ bio, isOwnProfile, onBioChange, containerVariant }: BioProps) {
   const { t } = useTranslation('pages');
   const [bioDraft, setBioDraft] = useState(bio ?? "");
   const [isEditing, setIsEditing] = useState(false);
@@ -39,7 +41,7 @@ export default function Bio({ bio, isOwnProfile, onBioChange }: BioProps) {
   }
 
   return (
-    <Container label={t('profile.bio_label')} variant="panel">
+    <Container variant={containerVariant ?? "default"} label={t('profile.bio_label')}>
       {isOwnProfile ? (
         isEditing ? (
           <div className="flex flex-col gap-3">

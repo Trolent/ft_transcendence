@@ -2,16 +2,18 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Container, Text, Modal, Avatar, Pagination } from "@/components";
+import type { ContainerVariant } from "@/components/Container";
 import { useAuth } from "@/features/auth";
 import { getUserHistory, type HistoryEntry, type MatchPlayer } from "@/api/users.api";
 
 const LIMIT = 10;
 
 interface HistoryProps {
-  username: string;
+  username: string,
+  containerVariant?: ContainerVariant | null;
 }
 
-export default function History({ username }: HistoryProps) {
+export default function History({ username, containerVariant }: HistoryProps) {
   const { t } = useTranslation('pages');
   const { user: me } = useAuth();
   const [history, setHistory]     = useState<HistoryEntry[]>([]);
@@ -28,7 +30,7 @@ export default function History({ username }: HistoryProps) {
 
   return (
     <>
-      <Container label={t('profile.history_label')}>
+      <Container variant={containerVariant ?? "default"} label={t('profile.history_label')}>
         {history.length === 0 ? (
           <Text variant="muted">{t('profile.history_empty')}</Text>
         ) : (

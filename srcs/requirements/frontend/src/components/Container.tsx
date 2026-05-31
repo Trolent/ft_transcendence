@@ -25,13 +25,14 @@ interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
 
 const variantClasses: Record<ContainerVariant, string> = {
   default:
-    "bg-black/95 border border-dim",
+    "bg-black/80 border border-dim",
 
   panel:
-    "bg-darkgreen/50 border border-dim",
+    "bg-darkgreen/50 border border-dim" +
+    "shadow-[0_0_12px_0_rgba(0,255,65,0.15)]",
 
   terminal:
-    "bg-black/75 border border-default " +
+    "bg-black/25 " +
     "shadow-[0_0_12px_0_rgba(0,255,65,0.15)]",
 };
 
