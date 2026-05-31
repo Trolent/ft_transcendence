@@ -12,7 +12,8 @@
     "sort_desc": "Highest WPM first",
     "sort_asc": "Lowest WPM first",
     "min_level": "min level",
-    "sort_label": "Sort"
+    "sort_label": "Sort",
+    "player_col": "Player"
   },
   "settings": {
     "title": "SETTINGS",
