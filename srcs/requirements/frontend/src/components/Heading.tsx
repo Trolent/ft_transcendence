@@ -22,7 +22,7 @@ const headingClasses: Record<HeadingLevel, string> = {
   2: "text-2xl tracking-[0.2em] uppercase",
   3: "text-lg  tracking-[0.15em] uppercase",
   4: "text-base tracking-widest uppercase",
-  5: "text-xs tracking-widest uppercase"
+  5: "text-sm tracking-widest uppercase"
 };
 
 export function Heading({
