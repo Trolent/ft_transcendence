@@ -144,7 +144,7 @@ export default function Navbar() {
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   return (
-    <nav className="w-full bg-black font-mono">
+    <nav className="w-full bg-black/90 font-mono">
       <div className="relative flex items-center justify-between px-4 h-12">
         <Link to="/" className="text-default font-bold uppercase tracking-[0.3em] text-sm select-none whitespace-nowrap flex items-center gap-2">
           <img src="/favicon.png" className="w-5 h-5 object-contain" alt="" />

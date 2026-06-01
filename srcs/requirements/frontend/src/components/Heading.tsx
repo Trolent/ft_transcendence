@@ -11,7 +11,7 @@ Examples:
 
 */
 
-type HeadingLevel = 1 | 2 | 3 | 4;
+type HeadingLevel = 1 | 2 | 3 | 4 | 5;
 
 interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
   level?: HeadingLevel;
@@ -21,7 +21,8 @@ const headingClasses: Record<HeadingLevel, string> = {
   1: "text-3xl tracking-[0.3em] uppercase",
   2: "text-2xl tracking-[0.2em] uppercase",
   3: "text-lg  tracking-[0.15em] uppercase",
-  4: "text-base tracking-widest  uppercase",
+  4: "text-base tracking-widest uppercase",
+  5: "text-sm tracking-widest uppercase"
 };
 
 export function Heading({
@@ -30,7 +31,7 @@ export function Heading({
   children,
   ...props
 }: HeadingProps) {
-  const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4";
+  const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4" | "h5";
   return (
     <Tag
       className={[

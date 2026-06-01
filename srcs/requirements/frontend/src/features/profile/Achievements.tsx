@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Container, Text, Btn } from "@/components";
 import type { UserAchievement } from "@/api/users.api";
 import { useTranslation } from 'react-i18next';
+import type { ContainerVariant } from "@/components/Container";
 
 type Props = {
-  achievements: UserAchievement[];
+  achievements: UserAchievement[],
+  containerVariant?: ContainerVariant | null;
 };
 
-export default function Achievements({ achievements }: Props) {
+export default function Achievements({ achievements, containerVariant }: Props) {
   const { t } = useTranslation(['pages', 'achievements']);
   const [showAll, setShowAll] = useState(false);
 
@@ -15,7 +17,7 @@ export default function Achievements({ achievements }: Props) {
   const visible = showAll ? achievements : unlocked;
 
   return (
-    <Container label={t('profile.achievements')}>
+    <Container variant={containerVariant ?? "default"} label={t('profile.achievements')}>
       {unlocked.length === 0 && !showAll ? (
         <Text variant="muted">{t('profile.no_achievements')}</Text>
       ) : (

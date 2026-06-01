@@ -38,13 +38,13 @@ type BtnProps<E extends ElementType = "button"> = BtnOwnProps<E> &
 const variantClasses: Record<BtnVariant, string> = {
   primary:
     "bg-default text-black border border-default " +
-    "hover:bg-glow hover:border-glow " +
+    "hover:bg-dim " +
     "active:bg-dim " +
      "disabled:opacity-40 disabled:bg-default disabled:text-black disabled:border-default disabled:cursor-not-allowed disabled:saturate-0",
 
   secondary:
     "bg-transparent text-default border border-default " +
-    "hover:bg-muted " +
+    "hover:bg-default hover:text-black " +
     "active:bg-dim " +
     "disabled:opacity-30 disabled:cursor-not-allowed",
 

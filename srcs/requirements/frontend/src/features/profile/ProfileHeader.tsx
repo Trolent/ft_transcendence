@@ -39,7 +39,7 @@ export default function ProfileHeader({
         <div>
           <Heading level={1} className="truncate !text-lg sm:!text-3xl"><Status status={displayedStatus} hoverText={displayedStatus}/> {profile.username}</Heading>
           {createdAt && (
-            <Text variant="muted" size="xs">{t('profile.created_on', { date: createdAt })}</Text>
+            <Text variant="dim" size="xs">{t('profile.created_on', { date: createdAt })}</Text>
           )}
         </div>
         {!isOwnProfile && (

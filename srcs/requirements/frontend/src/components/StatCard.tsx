@@ -14,16 +14,18 @@ Example:
 */
 
 import { type ReactNode } from "react";
-import Container from "./Container";
+import { Container } from "@/components";
+import type { ContainerVariant } from "@/components/Container";
 
 export interface StatCardProps {
   label?: string;
-  children: ReactNode;
+  children: ReactNode,
+  variant?: ContainerVariant | null;
 }
 
-export function StatCard({ label, children }: StatCardProps) {
+export function StatCard({ label, children, variant }: StatCardProps) {
   return (
-    <Container label={label}>
+    <Container variant={variant ?? "default"} label={label}>
       <div className="@container"> {/* @container : width instead of viewport */}
         <div className="flex flex-col gap-2 py-1 @[24rem]:flex-row @[24rem]:justify-around @[24rem]:items-center @[24rem]:gap-0">
           {children}
