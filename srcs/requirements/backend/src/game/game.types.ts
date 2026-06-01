@@ -31,6 +31,7 @@ export type Participant = {
 	accuracy: number; // 0..100, last value reported by the client (bots stay 0)
 	finished: boolean;
 	finishedAt: number | null;
+	left?: boolean; // human who dropped mid-race: keeps a standings slot, not persisted
 	lastProgressAt?: number; // last accepted progress msg, for rate-limiting
 	bot?: BotState;
 };

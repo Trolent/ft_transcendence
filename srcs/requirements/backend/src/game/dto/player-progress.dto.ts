@@ -3,6 +3,7 @@ import { IsInt, IsNumber, IsOptional, Max, Min } from 'class-validator';
 export class PlayerProgressDto {
   @IsInt()
   @Min(0)
+  @Max(100_000)
   chars: number;
 
   // Milliseconds since the client saw the green light, by the client's own
@@ -10,6 +11,7 @@ export class PlayerProgressDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
+  @Max(3_600_000)
   durationMs?: number;
 
   // Current accuracy as a whole-number percentage (0..100), reported by the

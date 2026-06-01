@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Car, { CAR_COUNT } from "./Car";
-import type { Racer } from "@/hooks/useRaceSocket";
+import type { Racer, RaceResult } from "@/hooks/useRaceSocket";
 
 const LANES = [0, 1, 2];
 const SEGMENT_DURATION = 2;
@@ -72,6 +72,7 @@ type Props =
   multiplayer?: boolean;
   racers?: Racer[];        // ordered list of participants from the server
   youPid?: string | null;  // local player's pid, to label "You"
+  results?: RaceResult[] | null; // final standings; present once the race ends
   // --- practice / cosmetic (client-driven fake bots) ---
   playerProgress: number;
   playerWpm: number;
@@ -90,18 +91,41 @@ export default function RaceTrack(props: Props) {
 // ---------------------------------------------------------------------------
 //  Multiplayer: one lane per server participant, all data from the server.
 // ---------------------------------------------------------------------------
-function MultiplayerTrack({ racers = [], youPid }: Props) {
+function MultiplayerTrack({ racers = [], youPid, results, passageLength, elapsed, playerWpm, playerProgress }: Props) {
   const { t } = useTranslation('pages');
   const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
   const [variants] = useState<number[]>(() => randomUniqueVariants(CAR_COUNT));
+  const ordinal = (place: number): string => ordinals[place - 1] ?? `${place}th`;
+
+  // One source of truth per lane. Once the race ends, the authoritative number
+  // is the one in `results` (the same value the result card shows). Your own
+  // lane otherwise mirrors the local engine, so your car always agrees with the
+  // HUD. Opponents' live wpm is derived from their progress + the race clock
+  // (chars/5 over elapsed minutes), so it keeps falling when they stall instead
+  // of freezing on their last `race_update`; a racer who finished early carries
+  // their finish value on that update.
+  const finalWpm = results ? new Map(results.map(r => [r.pid, r.wpm])) : null;
+  const wpmFor = (r: Racer): number => {
+    const settled = finalWpm?.get(r.pid);
+    if (settled != null) return Math.round(settled);
+    if (r.pid === youPid) return Math.round(playerWpm);
+    if (r.progress >= 1) return Math.round(r.wpm);
+    const minutes = elapsed / 60;
+    return minutes > 0 ? Math.round((r.progress * passageLength) / 5 / minutes) : 0;
+  };
 
   // Standings among finished racers (progress >= 1), ordered by who is ahead.
   const finished = [...racers]
     .filter(r => r.progress >= 1)
     .sort((a, b) => b.progress - a.progress);
+  const finalPlace = results ? new Map(results.map(r => [r.pid, r.position])) : null;
   const placeFor = (pid: string): string | null => {
+    if (finalPlace) {
+      const pos = finalPlace.get(pid);
+      return pos != null ? ordinal(pos) : null;
+    }
     const i = finished.findIndex(r => r.pid === pid);
-    return i >= 0 ? (ordinals[i] ?? `${i + 1}th`) : null;
+    return i >= 0 ? ordinal(i + 1) : null;
   };
 
   return (
@@ -122,7 +146,7 @@ function MultiplayerTrack({ racers = [], youPid }: Props) {
 
             <div className="flex-1 relative">
               <div className="bg-black/30 h-10 rounded-md relative overflow-hidden">
-                <Car progress={r.progress} variant={variants[idx % variants.length]} />
+                <Car progress={isYou ? playerProgress : r.progress} variant={variants[idx % variants.length]} />
               </div>
             </div>
 
@@ -130,7 +154,7 @@ function MultiplayerTrack({ racers = [], youPid }: Props) {
               {place && (
                 <span className="text-xs text-dim uppercase tracking-widest">{place}</span>
               )}
-              <span className="text-xs sm:text-sm text-default">{Math.round(r.wpm)} WPM</span>
+              <span className="text-xs sm:text-sm text-default">{wpmFor(r)} WPM</span>
             </div>
           </div>
         );

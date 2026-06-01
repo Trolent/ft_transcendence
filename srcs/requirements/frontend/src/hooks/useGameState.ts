@@ -31,10 +31,11 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   const totalCorrect = completedChars + correctInCurrent;
   const progress = passage.length > 0 ? totalCorrect / passage.length : 0;
   const finished = wordIndex >= words.length;
-  const timedOut = !practice && active && elapsed >= maxTime && !finished;
-  const playerDone = finished || forcedEnd || timedOut;
-  const raceOver = forcedEnd || timedOut;
-  const timeLeft = Math.max(0, maxTime - elapsed);
+  const localTimeout = !practice && active && elapsed >= maxTime && !finished;
+  const playerDone = finished || forcedEnd || localTimeout;
+  const timedOut = !practice && !finished && (localTimeout || forcedEnd);
+  const raceOver = forcedEnd || localTimeout;
+  const timeLeft = timedOut ? 0 : Math.max(0, maxTime - elapsed);
   // WPM is timed at millisecond precision, not the whole-second `elapsed` clock,
   // so short runs aren't over- or under-counted.
   const liveMinutes = startedAt.current != null ? (Date.now() - startedAt.current) / 60000 : 0;
@@ -86,7 +87,7 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   return {
     passage, words, wordIndex, typed,
     handleType, completeWord,
-    elapsed, timeLeft, wpm, progress, finished, playerDone,
+    elapsed, timeLeft, wpm, progress, finished, playerDone, timedOut,
     finishTime: lockedElapsed,
     accuracy,
     totalCorrect,

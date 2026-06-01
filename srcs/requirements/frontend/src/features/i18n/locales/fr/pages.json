@@ -125,6 +125,7 @@
     "stat_position": "Position",
     "try_again": "Réessayer",
     "race_again": "Rejouer",
+    "timed_out": "Temps écoulé !",
     "hud_time": "Temps",
     "hud_wpm": "MPM",
     "ordinals": [

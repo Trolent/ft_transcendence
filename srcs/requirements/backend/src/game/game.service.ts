@@ -315,23 +315,36 @@ export class GameService {
 		room.playerCount = room.players.size;
 
 		const userIds = this.userIdsOf(room);
-		const match = await this.prisma.match.create({
-			data: {
-				textSnippet: room.text,
-				startedAt: new Date(),
-				status: MatchStatus.IN_PROGRESS,
-			},
-		});
-		room.matchId = match.id;
-
-		if (userIds.length > 0) {
-			await this.prisma.user.updateMany({
-				where: { id: { in: userIds } },
-				data: { status: UserStatus.IN_GAME },
+		// A DB hiccup must not strand the room half-started: run the race anyway
+		// (matchId stays 0, so finalize just persists nothing) rather than leaving
+		// clients on a frozen countdown with no timers armed.
+		try {
+			const match = await this.prisma.match.create({
+				data: {
+					textSnippet: room.text,
+					startedAt: new Date(),
+					status: MatchStatus.IN_PROGRESS,
+				},
 			});
+			room.matchId = match.id;
+
+			if (userIds.length > 0) {
+				await this.prisma.user.updateMany({
+					where: { id: { in: userIds } },
+					data: { status: UserStatus.IN_GAME },
+				});
+			}
+		} catch (err) {
+			console.error(`[Race][${room.id}] start persistence failed; running unranked`, err);
 		}
 
-		const anchor = await this.botService.anchorWpm(userIds);
+		let anchor: number;
+		try {
+			anchor = await this.botService.anchorWpm(userIds);
+		} catch (err) {
+			console.error(`[Race][${room.id}] anchorWpm failed; using fallback`, err);
+			anchor = await this.botService.anchorWpm([]);
+		}
 		this.botService.initBots(room, anchor);
 
 		this.server.to(room.id).emit('race_start', {
@@ -355,9 +368,10 @@ export class GameService {
 		if (!room || room.phase !== 'racing') return;
 
 		for (const bot of this.botService.step(room)) {
-			// Same cumulative formula as human racers (see updateProgress), so
-			// bot and human wpm labels behave identically.
-			bot.wpm = this.calcWpm(bot.chars, room.startedAt!);
+			// Live wpm is derived on the client from progress + the race clock; the
+			// server only pins the authoritative value when the bot crosses the
+			// line, mirroring the human finish path.
+			if (bot.finished) bot.wpm = this.calcWpm(bot.chars, room.startedAt!);
 			this.server.to(room.id).emit('race_update', {
 				pid: bot.pid,
 				username: bot.username,
@@ -413,9 +427,10 @@ export class GameService {
 			dur = Math.min(dur, serverElapsedMs);
 			dur = Math.max(dur, minDurationMs);
 			p.wpm = Math.round((len / 5) / (dur / 60000));
-		} else {
-			p.wpm = this.calcWpm(safe, room.startedAt);
 		}
+		// Live (non-finish) wpm is derived on the client; finalizeRace recomputes
+		// the average for anyone who never crossed the line, so the server doesn't
+		// maintain a live wpm here.
 
 		return {
 			roomId: room.id,
@@ -440,7 +455,7 @@ export class GameService {
 		p.finishedAt = Date.now();
 		p.progress = 1;
 
-		const position = [...room.players.values()].filter(x => x.finished).length;
+		const position = [...room.players.values()].filter(x => x.finishedAt != null).length;
 		const allDone = this.allFinished(room);
 		if (allDone) room.phase = 'finished';
 		return { roomId: room.id, allDone, position, playerCount: room.playerCount };
@@ -454,12 +469,7 @@ export class GameService {
 	async forceFinish(roomId: string): Promise<void> {
 		const room = this.rooms.get(roomId);
 		if (!room || room.phase === 'finished') return;
-		for (const p of room.players.values()) {
-			if (!p.finished) {
-				p.finished = true;
-				p.finishedAt = Date.now();
-			}
-		}
+		for (const p of room.players.values()) p.finished = true;
 		room.phase = 'finished';
 		await this.finalizeRace(roomId);
 	}
@@ -485,6 +495,14 @@ export class GameService {
 			return b.progress - a.progress;
 		});
 
+		// Anyone who never actually crossed the line — timed out or left mid-race —
+		// is scored on their real average (chars over the whole race), so a stall or
+		// immobility drags the number down instead of freezing the last snapshot.
+		if (room.startedAt) {
+			for (const p of room.players.values())
+				if (p.finishedAt == null) p.wpm = this.calcWpm(p.chars, room.startedAt);
+		}
+
 		const results: RaceResult[] = sorted.map((p, i) => ({
 			pid: p.pid,
 			username: p.username,
@@ -493,51 +511,59 @@ export class GameService {
 			wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 		}));
 
-		const userRows = sorted
-			.map((p, i) => ({ p, position: i + 1 }))
-			.filter(({ p }) => p.kind === 'user' && p.userId != null);
+		// Persistence must never block the race from ending: whatever happens with
+		// the DB, the clients still get their standings and the room is torn down.
+		try {
+			const userRows = sorted
+				.map((p, i) => ({ p, position: i + 1 }))
+				.filter(({ p }) => p.kind === 'user' && p.userId != null && !p.left);
 
-		const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
-		const nbPlayers = room.players.size - nbBots;
+			const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
+			const nbPlayers = room.players.size - nbBots;
 
-		await this.prisma.match.update({
-			where: { id: room.matchId },
-			data: { endedAt: new Date(), status: MatchStatus.FINISHED },
-		});
-
-		if (userRows.length > 0) {
-			await this.prisma.matchResult.createMany({
-				data: userRows.map(({ p, position }) => ({
-					matchId: room.matchId,
-					userId: p.userId as number,
-					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
-					accuracy: p.accuracy,
-					position,
-					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
-					nbPlayers,
-					nbBots,
-				})),
+			await this.prisma.match.update({
+				where: { id: room.matchId },
+				data: { endedAt: new Date(), status: MatchStatus.FINISHED },
 			});
 
-			await this.prisma.user.updateMany({
-				where: { id: { in: userRows.map(({ p }) => p.userId as number) } },
-				data: { status: UserStatus.ONLINE },
-			});
+			if (userRows.length > 0) {
+				await this.prisma.matchResult.createMany({
+					data: userRows.map(({ p, position }) => ({
+						matchId: room.matchId,
+						userId: p.userId as number,
+						wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+						accuracy: p.accuracy,
+						position,
+						finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+						nbPlayers,
+						nbBots,
+					})),
+				});
 
-			const saved = await this.prisma.matchResult.findMany({
-				where: { matchId: room.matchId },
+				await this.prisma.user.updateMany({
+					where: { id: { in: userRows.map(({ p }) => p.userId as number) } },
+					data: { status: UserStatus.ONLINE },
+				});
+
+				const saved = await this.prisma.matchResult.findMany({
+					where: { matchId: room.matchId },
+				});
+				for (const r of saved)
+					await this.achievementService.checkAndUnlockAchievements(r.userId, r);
+			}
+		} catch (err) {
+			console.error(`[Race][${room.id}] finalize persistence failed`, err);
+			// Best effort: don't leave racers stuck IN_GAME if the status flip above
+			// never ran.
+			await this.releaseUsers(room);
+		} finally {
+			this.server.to(room.id).emit('race_finished', {
+				results,
+				playerCount: room.playerCount,
 			});
-			for (const r of saved)
-				await this.achievementService.checkAndUnlockAchievements(r.userId, r);
+			console.log(`[Race][${room.id}] finished / ${room.playerCount} racers`);
+			this.cleanRoom(roomId);
 		}
-
-		this.server.to(room.id).emit('race_finished', {
-			results,
-			playerCount: room.playerCount,
-		});
-
-		console.log(`[Race][${room.id}] finished / ${room.playerCount} racers`);
-		this.cleanRoom(roomId);
 	}
 
 	// --------------------------------------------------------------- disconnect
@@ -567,6 +593,7 @@ export class GameService {
 
 		p.socketId = null;
 		p.finished = true;
+		p.left = true;
 		if (p.userId != null) {
 			await this.prisma.user.update({
 				where: { id: p.userId },

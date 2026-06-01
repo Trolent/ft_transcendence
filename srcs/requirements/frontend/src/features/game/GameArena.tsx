@@ -61,7 +61,7 @@ export default function GameArena({
   const {
     passage, words, wordIndex, typed,
     handleType, completeWord,
-    elapsed, timeLeft, wpm, progress, playerDone,
+    elapsed, timeLeft, wpm, progress, playerDone, timedOut,
     finishTime, accuracy, totalCorrect,
   } = useGameState(
     active,
@@ -71,12 +71,14 @@ export default function GameArena({
     multiplayer ? mpMaxTime : undefined,
   );
 
-  // Report correct-char count to the server on every change while racing.
-  const lastSent = useRef<number>(-1);
+  // Report correct-char count + accuracy to the server while racing. Send when
+  // either changes, so a streak of wrong keystrokes (which drops accuracy without
+  // advancing correct chars) still reaches the server. The server rate-limits.
+  const lastSent = useRef<{ chars: number; accuracy: number }>({ chars: -1, accuracy: -1 });
   useEffect(() => {
     if (!multiplayer || !active) return;
-    if (totalCorrect === lastSent.current) return;
-    lastSent.current = totalCorrect;
+    if (totalCorrect === lastSent.current.chars && accuracy === lastSent.current.accuracy) return;
+    lastSent.current = { chars: totalCorrect, accuracy };
     onProgress?.(totalCorrect, accuracy);
   }, [multiplayer, active, totalCorrect, accuracy, onProgress]);
 
@@ -111,6 +113,7 @@ export default function GameArena({
                 multiplayer
                 racers={racers}
                 youPid={youPid}
+                results={results}
                 playerProgress={progress}
                 playerWpm={wpm}
                 elapsed={elapsed}
@@ -139,6 +142,11 @@ export default function GameArena({
             />
             {effectiveFinish && (
               <div className="flex flex-col gap-4">
+                {timedOut && (
+                  <div className="text-center font-mono text-sm sm:text-base font-bold uppercase tracking-widest text-default">
+                    {t('play.timed_out')}
+                  </div>
+                )}
                 <StatCard label={t('play.results_label')}>
                   <StatItem label={t('play.stat_wpm')}      value={myResult ? Math.round(myResult.wpm) : wpm} accent />
                   <StatDivider />

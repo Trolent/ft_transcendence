@@ -119,6 +119,7 @@
     "stat_position": "Position",
     "try_again": "Try again",
     "race_again": "Race again",
+    "timed_out": "Time's up!",
     "hud_time": "Time",
     "hud_wpm": "WPM",
     "ordinals": [
