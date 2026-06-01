@@ -46,13 +46,13 @@ export type RoomState = {
 	playerCount: number; // locked when the race starts (humans + bots + guests)
 	botTarget: number;
 	// timers
-	waitTimer: NodeJS.Timeout | null; // 5s "waiting for players" window
-	botFillTimer: NodeJS.Timeout | null;
-	countdownTimer: NodeJS.Timeout | null; // 10s pre-race countdown
+	waitTimer: ReturnType<typeof setTimeout> | null; // 5s "waiting for players" window
+	botFillTimer: ReturnType<typeof setTimeout> | null;
+	countdownTimer: ReturnType<typeof setTimeout> | null; // 10s pre-race countdown
 	countdownEndsAt: number | null;
 	startedAt: number | null;
-	raceTimeout: NodeJS.Timeout | null; // hard cap on race duration
-	botTicker: NodeJS.Timeout | null; // bot-engine interval
+	raceTimeout: ReturnType<typeof setTimeout> | null; // hard cap on race duration
+	botTicker: ReturnType<typeof setTimeout> | null; // bot-engine interval
 };
 
 // ---------------------------------------------------------------------------

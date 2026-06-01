@@ -8,4 +8,5 @@ export class LeaderboardEntryDto {
     @ApiProperty({ example: 120 }) avgWpm: number;
     @ApiProperty({ example: 42 }) gamesPlayed: number;
     @ApiProperty({ example: 15 }) level: number;
+    @ApiProperty({ example: 92}) avgAccuracy: number;
 }

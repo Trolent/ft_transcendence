@@ -7,7 +7,7 @@ import { UsersModule } from './users/users.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { THROTTLE_LIMIT_AUTH, THROTTLE_LIMIT_API, THROTTLE_LIMIT_UP_AVATAR, THROTTLE_LIMIT_SETTINGS, THROTTLE_LIMIT_CHAT } from './common/throttle.constants';
+import { THROTTLE_LIMIT_AUTH_GLOBAL } from './common/throttle.constants';
 import { FriendsModule } from './friends/friends.module';
 import { StatusModule } from './status/status.module';
 import { ChatModule } from './chat/chat.module';
@@ -16,11 +16,7 @@ import { AchievementModule } from './achievement/achievement.module';
 @Module({
   imports: [
     ThrottlerModule.forRoot([
-      { name: 'auth', ...THROTTLE_LIMIT_AUTH },
-      { name: 'api',  ...THROTTLE_LIMIT_API },
-      { name: 'up_avatar', ...THROTTLE_LIMIT_UP_AVATAR },
-      { name: 'settings', ...THROTTLE_LIMIT_SETTINGS },
-      { name: 'chat', ...THROTTLE_LIMIT_CHAT },
+      { name: 'default', ...THROTTLE_LIMIT_AUTH_GLOBAL },
     ]),
     PrismaModule,
     AuthModule,

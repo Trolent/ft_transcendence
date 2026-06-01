@@ -19,7 +19,7 @@ import { UpdateProfileDto, UpdateSettingsDto } from './dto'
 //API LIMIT
 import { Throttle } from '@nestjs/throttler';
 import {
-    THROTTLE_LIMIT_API,
+    THROTTLE_LIMIT_AUTH_GLOBAL,
     THROTTLE_LIMIT_UP_AVATAR,
     THROTTLE_LIMIT_SETTINGS
 } from '../common/throttle.constants';
@@ -51,7 +51,7 @@ export class UsersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get my profile' })
     @ApiResponse({ status: 200, type: UserProfileDto })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get('me')
     me(@CurrentUser() user: SafeUser) {
@@ -61,7 +61,7 @@ export class UsersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update my bio' })
     @ApiResponse({ status: 200, schema: { example: { bio: 'Hello world' } } })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Patch('me')
     updateProfile(@Body() dto:UpdateProfileDto, @CurrentUser() user: SafeUser){
@@ -72,7 +72,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Update settings (email, password, language)' })
     @ApiResponse({ status: 200, schema: { example: { email: 'new@example.com', language: 'EN' } } })
     @ApiResponse({ status: 409, description: 'EMAIL_ALREADY_TAKEN' })
-    @Throttle({ auth: THROTTLE_LIMIT_SETTINGS })
+    @Throttle({ default: THROTTLE_LIMIT_SETTINGS })
     @UseGuards(JwtAuthGuard)
     @Patch('me/settings')
     updateSettings(@Body() dto:UpdateSettingsDto, @CurrentUser() user: SafeUser){
@@ -84,7 +84,7 @@ export class UsersController {
     @ApiQuery({ name: 'page', description: 'Page number', required: false, example: 1 })
     @ApiQuery({ name: 'limit', description: 'Items per page', required: false, example: 10 })
     @ApiResponse({ status: 200, description: 'PaginatedResponse<UserSearchDto>' })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get('search')
     searchUsers(
         @Query('q') q: string,
@@ -98,7 +98,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Get user profile by username' })
     @ApiResponse({ status: 200, type: UserProfileDto })
     @ApiResponse({ status: 404, description: 'USER_NOT_FOUND' })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get(':username')
     getProfile(@Param('username') username: string) {
         return this.UsersService.getProfile(username, false);
@@ -106,7 +106,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Get user stats' })
     @ApiResponse({ status: 200, type: UserStatsDto })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get(':username/stats')
     getStats(@Param('username') username: string) {
         return this.UsersService.calculateStats(username);
@@ -115,7 +115,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Get multiple profiles by usernames' })
     @ApiQuery({ name: 'users', example: 'john,jane,bob' })
     @ApiResponse({ status: 200, type: [UserProfileDto] })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get()
     getProfiles(@Query('users') users: string) {
         if (!users) throw new BadRequestException('MISSING_USERS_PARAM');
@@ -125,7 +125,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Get match history' })
     @ApiResponse({ status: 200, schema: { example: [{ wpm: 85, position: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox' } }] } })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get(':username/history')
     getHistory(
         @Param('username') username: string,
@@ -139,7 +139,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Upload avatar' })
     @ApiConsumes('multipart/form-data')
     @ApiResponse({ status: 201, type: AvatarResponseDto })
-    @Throttle({ auth: THROTTLE_LIMIT_UP_AVATAR })
+    @Throttle({ default: THROTTLE_LIMIT_UP_AVATAR })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
     @Post('me/avatar')

@@ -1,12 +1,25 @@
 services:
+  nginx:
+    environment:
+      - DOMAIN=localhost
+
   frontend:
     ports:
       - "5173:5173"
+    environment:
+      - NODE_ENV=development
 
   backend:
     ports:
       - "3000:3000"
       - "5555:5555"
+    environment:
+      - DOMAIN=localhost
+      - NODE_ENV=development
+      - FORTYTWO_CLIENT_ID=${FORTYTWO_CLIENT_ID_DEV:-}
+      - FORTYTWO_CLIENT_SECRET=${FORTYTWO_CLIENT_SECRET_DEV:-}
+      - FORTYTWO_CALLBACK_URL=http://localhost:3000/auth/42/callback
+      - FRONTEND_URL=http://localhost:5173
 
   postgresql:
     ports:
