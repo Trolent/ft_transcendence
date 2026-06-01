@@ -18,6 +18,7 @@ export { SearchList }                       from "./SearchList";
 export { FindUser }                         from "./FindUser";
 export { default as MatrixRain }            from "./MatrixRain";
 export { default as PillButton }            from "./PillButton";
+export { default as ProgressBar }           from "./ProgressBar";
 
 /* layout */
 export { default as Footer }                from "./Footer";
