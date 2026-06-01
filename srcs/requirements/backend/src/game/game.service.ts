@@ -65,7 +65,6 @@ export class GameService {
 		this.server = server;
 	}
 
-	// ----------------------------------------------------------------- helpers
 	getRoom(roomId: string): RoomState | undefined {
 		return this.rooms.get(roomId);
 	}
@@ -118,7 +117,6 @@ export class GameService {
 		return `b${++this.botSeq}`;
 	}
 
-	// --------------------------------------------------------------- matchmaking
 	assign(input: JoinInput): AssignResult {
 		if (this.isInRoom(input.socketId)) return { status: 'busy' };
 		if (input.kind === 'user' && input.userId != null && this.userInRoom(input.userId))
@@ -251,7 +249,7 @@ export class GameService {
 	}
 
 	private scheduleBotFill(room: RoomState): void {
-		if (room.botFillTimer) 
+		if (room.botFillTimer)
 			return;
 		room.botFillTimer = setInterval(() => this.botFillTick(room.id), BOT_FILL_INTERVAL_MS);
 	}
@@ -302,7 +300,6 @@ export class GameService {
 		void this.startRace(room);
 	}
 
-	// ------------------------------------------------------------------ racing
 	private async startRace(room: RoomState): Promise<void> {
 		if (room.countdownTimer) {
 			clearTimeout(room.countdownTimer);
@@ -315,9 +312,8 @@ export class GameService {
 		room.playerCount = room.players.size;
 
 		const userIds = this.userIdsOf(room);
-		// A DB hiccup must not strand the room half-started: run the race anyway
-		// (matchId stays 0, so finalize just persists nothing) rather than leaving
-		// clients on a frozen countdown with no timers armed.
+		// DB failure must not strand the room: race runs unranked (matchId stays 0) rather
+		// than leaving clients on a frozen countdown with no timers armed.
 		try {
 			const match = await this.prisma.match.create({
 				data: {
@@ -368,9 +364,6 @@ export class GameService {
 		if (!room || room.phase !== 'racing') return;
 
 		for (const bot of this.botService.step(room)) {
-			// Live wpm is derived on the client from progress + the race clock; the
-			// server only pins the authoritative value when the bot crosses the
-			// line, mirroring the human finish path.
 			if (bot.finished) bot.wpm = this.calcWpm(bot.chars, room.startedAt!);
 			this.server.to(room.id).emit('race_update', {
 				pid: bot.pid,
@@ -383,8 +376,6 @@ export class GameService {
 		if (this.allFinished(room)) void this.finalizeRace(room.id);
 	}
 
-	// chars = correct characters typed so far this race. durationMs = the client's
-	// own elapsed-since-green-light, used only to time the finish accurately.
 	updateProgress(
 		socketId: string,
 		chars: number,
@@ -401,14 +392,11 @@ export class GameService {
 
 		const now = Date.now();
 		const len = room.text.length;
-		// Server clock is the ceiling: nobody can have typed more than MAX_WPM
-		// allows for the elapsed time, so a fake chars count can't outrun it.
+		// Anti-cheat: chars can't exceed what MAX_WPM allows for the elapsed time.
 		const maxReachable = Math.ceil(((now - room.startedAt) / 1000) * (MAX_WPM * 5 / 60));
 		const safe = Math.min(chars, len, maxReachable);
 		const isFinish = len > 0 && safe >= len;
 
-		// Rate-limit live updates, but never the finishing one, so a fast typist's
-		// final keystroke is always registered.
 		if (!isFinish && p.lastProgressAt != null && now - p.lastProgressAt < PROGRESS_MIN_INTERVAL_MS)
 			return null;
 		p.lastProgressAt = now;
@@ -418,9 +406,8 @@ export class GameService {
 		if (accuracy != null) p.accuracy = Math.max(0, Math.min(100, accuracy));
 
 		if (isFinish) {
-			// Time the finish by the player's own clock (latency-free, like
-			// TypeRacer), clamped so it can't beat MAX_WPM and can't claim less
-			// elapsed than the server actually observed.
+			// Use the client's own elapsed time (latency-free finish), clamped between
+			// the server's observed duration and the minimum a MAX_WPM typist could achieve.
 			const minDurationMs = (len / 5) / MAX_WPM * 60000;
 			const serverElapsedMs = now - room.startedAt;
 			let dur = durationMs && durationMs > 0 ? durationMs : serverElapsedMs;
@@ -428,9 +415,6 @@ export class GameService {
 			dur = Math.max(dur, minDurationMs);
 			p.wpm = Math.round((len / 5) / (dur / 60000));
 		}
-		// Live (non-finish) wpm is derived on the client; finalizeRace recomputes
-		// the average for anyone who never crossed the line, so the server doesn't
-		// maintain a live wpm here.
 
 		return {
 			roomId: room.id,
@@ -442,8 +426,6 @@ export class GameService {
 		};
 	}
 
-	// Called when a socket reports 100%. The finisher's `position` is final the
-	// moment they finish (later finishers can only place behind them).
 	handleFinish(socketId: string): { roomId: string; allDone: boolean; position: number; playerCount: number } | null {
 		const room = this.roomOf(socketId);
 		if (!room || room.phase !== 'racing') return null;
@@ -490,14 +472,13 @@ export class GameService {
 		const sorted = [...room.players.values()].sort((a, b) => {
 			const fa = a.finishedAt ?? Infinity;
 			const fb = b.finishedAt ?? Infinity;
-			if (fa !== fb) 
+			if (fa !== fb)
 				return fa - fb;
 			return b.progress - a.progress;
 		});
 
-		// Anyone who never actually crossed the line — timed out or left mid-race —
-		// is scored on their real average (chars over the whole race), so a stall or
-		// immobility drags the number down instead of freezing the last snapshot.
+		// Non-finishers (timed out or left) are scored on their true average over the
+		// full race so idle time drags the number down, not the last live snapshot.
 		if (room.startedAt) {
 			for (const p of room.players.values())
 				if (p.finishedAt == null) p.wpm = this.calcWpm(p.chars, room.startedAt);
@@ -511,12 +492,10 @@ export class GameService {
 			wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 		}));
 
-		// Persistence must never block the race from ending: whatever happens with
-		// the DB, the clients still get their standings and the room is torn down.
 		try {
 			const userRows = sorted
 				.map((p, i) => ({ p, position: i + 1 }))
-				.filter(({ p }) => p.kind === 'user' && p.userId != null && !p.left);
+				.filter(({ p }) => p.kind === 'user' && p.userId != null && !p.left); // leavers not persisted
 
 			const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
 			const nbPlayers = room.players.size - nbBots;
@@ -553,10 +532,9 @@ export class GameService {
 			}
 		} catch (err) {
 			console.error(`[Race][${room.id}] finalize persistence failed`, err);
-			// Best effort: don't leave racers stuck IN_GAME if the status flip above
-			// never ran.
-			await this.releaseUsers(room);
+			await this.releaseUsers(room); // best effort: don't leave users stuck IN_GAME
 		} finally {
+			// Guaranteed: clients always receive standings and the room is always torn down.
 			this.server.to(room.id).emit('race_finished', {
 				results,
 				playerCount: room.playerCount,
@@ -566,7 +544,6 @@ export class GameService {
 		}
 	}
 
-	// --------------------------------------------------------------- disconnect
 	async handleDisconnect(socketId: string): Promise<{ roomId: string } | null> {
 		const room = this.roomOf(socketId);
 		if (!room) return null;
@@ -622,7 +599,6 @@ export class GameService {
 		return { roomId: room.id };
 	}
 
-	// -------------------------------------------------------------------- utils
 	private userIdsOf(room: RoomState): number[] {
 		const ids: number[] = [];
 		for (const p of room.players.values())
@@ -659,7 +635,6 @@ export class GameService {
 		console.log(`[Room][${roomId}] deleted`);
 	}
 
-	// ------------------------------------------------------------------- emits
 	private emitLobbyUpdate(room: RoomState): void {
 		const players: LobbyParticipant[] = [...room.players.values()].map((p) => ({
 			pid: p.pid,

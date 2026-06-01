@@ -7,7 +7,6 @@ function correctPrefixLength(typed: string, word: string): number {
   return i;
 }
 
-// Allow ~30 WPM (2.5 chars/sec) to finish, minimum 20 s
 function calcMaxTime(passageLength: number): number {
   return Math.max(20, Math.ceil(passageLength / 2.5));
 }
@@ -36,8 +35,6 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   const timedOut = !practice && !finished && (localTimeout || forcedEnd);
   const raceOver = forcedEnd || localTimeout;
   const timeLeft = timedOut ? 0 : Math.max(0, maxTime - elapsed);
-  // WPM is timed at millisecond precision, not the whole-second `elapsed` clock,
-  // so short runs aren't over- or under-counted.
   const liveMinutes = startedAt.current != null ? (Date.now() - startedAt.current) / 60000 : 0;
   const wpm = lockedWpm ?? (liveMinutes > 0 ? Math.round(totalCorrect / 5 / liveMinutes) : 0);
   const accuracy = totalTyped > 0
@@ -59,7 +56,6 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
     if (!isLast) setTotalTyped((t: number) => t + 1);
   };
 
-  // Lock WPM and elapsed when the race is over, captured at millisecond precision.
   useEffect(() => {
     if (playerDone && lockedWpm === null) {
       const mins = startedAt.current != null ? (Date.now() - startedAt.current) / 60000 : 0;

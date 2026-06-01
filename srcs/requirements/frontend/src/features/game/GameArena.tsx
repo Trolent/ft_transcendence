@@ -19,17 +19,16 @@ type Props = {
   overlay?: string | null;
   onReplay?: () => void;
   practice?: boolean;
-  // --- multiplayer (server-driven) ---
   multiplayer?: boolean;
-  serverText?: string | null;          // race passage from lobby_update
-  racers?: Racer[];                     // live participants from the server
-  youPid?: string | null;              // local player's pid
-  results?: RaceResult[] | null;       // final standings from race_finished
-  playerCount?: number;                // denominator for "x / N"
-  myPosition?: number | null;          // own placement, the instant we finish
-  onProgress?: (correctChars: number, accuracy: number) => void; // report correct chars + accuracy to server
-  started?: boolean;                   // typing is live only once the race starts
-  status?: string | null;             // pre-race banner (waiting / countdown)
+  serverText?: string | null;
+  racers?: Racer[];
+  youPid?: string | null;
+  results?: RaceResult[] | null;
+  playerCount?: number;
+  myPosition?: number | null;
+  onProgress?: (correctChars: number, accuracy: number) => void;
+  started?: boolean;
+  status?: string | null;
 };
 
 export default function GameArena({
@@ -41,18 +40,12 @@ export default function GameArena({
   const { t } = useTranslation('pages');
   const active = started && overlay == null;
 
-  // --- legacy / practice finish tracking (client-side fake bots) ---
   const [finishOrder, setFinishOrder] = useState<number[]>([]);
   const totalPlayers = practice ? 1 : 3;
   const allDone = finishOrder.length === totalPlayers;
 
-  // In multiplayer the server is the source of truth for "race over": we stop
-  // the local clock only once results arrive. The local engine still drives the
-  // typing box + WPM + correct-char count.
   const serverFinished = multiplayer && results != null;
 
-  // Match the server's force-finish deadline so the visible race timer agrees
-  // with when the backend cuts the race off.
   const mpMaxTime =
     multiplayer && serverText
       ? Math.max(MIN_RACE_SECONDS, Math.ceil(serverText.length / MIN_CHARS_PER_SEC))
@@ -71,9 +64,6 @@ export default function GameArena({
     multiplayer ? mpMaxTime : undefined,
   );
 
-  // Report correct-char count + accuracy to the server while racing. Send when
-  // either changes, so a streak of wrong keystrokes (which drops accuracy without
-  // advancing correct chars) still reaches the server. The server rate-limits.
   const lastSent = useRef<{ chars: number; accuracy: number }>({ chars: -1, accuracy: -1 });
   useEffect(() => {
     if (!multiplayer || !active) return;
@@ -82,19 +72,13 @@ export default function GameArena({
     onProgress?.(totalCorrect, accuracy);
   }, [multiplayer, active, totalCorrect, accuracy, onProgress]);
 
-  // ---- results derivation ----
   const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
 
-  // multiplayer: place from server standings (1-based position / playerCount).
   const myResult = multiplayer && results ? results.find(r => r.pid === youPid) : undefined;
   const mpFinished = serverFinished;
 
-  // practice/legacy: client-side place.
   const playerPlace = finishOrder.indexOf(0);
 
-  // Finishing the passage (or running out of time) ends the race for you
-  // immediately — results show at once; the server position fills in when the
-  // whole race wraps up.
   const effectiveFinish = multiplayer ? (playerDone || mpFinished) : playerDone;
 
   return (

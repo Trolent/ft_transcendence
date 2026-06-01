@@ -38,15 +38,12 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   async handleConnection(client: Socket) {
     const auth = client.handshake.auth ?? {};
-    // Logged-in players authenticate by JWT (sets client.data.user).
     if (auth.token) {
         const ok = await this.authService.validateWsClient(client);
         if (!ok)
             return client.disconnect();
         return;
     }
-    // Guests opt in explicitly; they race + count toward placement but are
-    // never persisted. Any other tokenless connection is rejected.
     if (auth.guest === true) {
         client.data.guest = { username: sanitizeGuestName(auth.nickname) };
         return;
@@ -58,9 +55,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	await this.gameService.handleDisconnect(client.id);
   }
 
-  // Identity comes from the JWT (client.data.user) or the guest handshake
-  // (client.data.guest). Guests race and count toward placement but are never
-  // persisted; the guest path is enabled in the ws guard.
   private resolveJoin(client: Socket): JoinInput | null {
 	const user = client.data.user;
 	if (user)

@@ -68,12 +68,10 @@ function finishedWpm(curve: Waypoint[], passageLength: number): number
 
 type Props =
 {
-  // --- multiplayer (server-driven) ---
   multiplayer?: boolean;
-  racers?: Racer[];        // ordered list of participants from the server
-  youPid?: string | null;  // local player's pid, to label "You"
-  results?: RaceResult[] | null; // final standings; present once the race ends
-  // --- practice / cosmetic (client-driven fake bots) ---
+  racers?: Racer[];
+  youPid?: string | null;
+  results?: RaceResult[] | null;
   playerProgress: number;
   playerWpm: number;
   elapsed: number;
@@ -88,22 +86,15 @@ export default function RaceTrack(props: Props) {
   return <CosmeticTrack {...props} />;
 }
 
-// ---------------------------------------------------------------------------
-//  Multiplayer: one lane per server participant, all data from the server.
-// ---------------------------------------------------------------------------
 function MultiplayerTrack({ racers = [], youPid, results, passageLength, elapsed, playerWpm, playerProgress }: Props) {
   const { t } = useTranslation('pages');
   const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
   const [variants] = useState<number[]>(() => randomUniqueVariants(CAR_COUNT));
   const ordinal = (place: number): string => ordinals[place - 1] ?? `${place}th`;
 
-  // One source of truth per lane. Once the race ends, the authoritative number
-  // is the one in `results` (the same value the result card shows). Your own
-  // lane otherwise mirrors the local engine, so your car always agrees with the
-  // HUD. Opponents' live wpm is derived from their progress + the race clock
-  // (chars/5 over elapsed minutes), so it keeps falling when they stall instead
-  // of freezing on their last `race_update`; a racer who finished early carries
-  // their finish value on that update.
+  // Three sources, in priority order: server results (authoritative once race ends),
+  // local engine for own car (matches HUD exactly), derived from progress+clock for
+  // live opponents (decays when they stall, unlike the frozen race_update snapshot).
   const finalWpm = results ? new Map(results.map(r => [r.pid, r.wpm])) : null;
   const wpmFor = (r: Racer): number => {
     const settled = finalWpm?.get(r.pid);
@@ -114,7 +105,6 @@ function MultiplayerTrack({ racers = [], youPid, results, passageLength, elapsed
     return minutes > 0 ? Math.round((r.progress * passageLength) / 5 / minutes) : 0;
   };
 
-  // Standings among finished racers (progress >= 1), ordered by who is ahead.
   const finished = [...racers]
     .filter(r => r.progress >= 1)
     .sort((a, b) => b.progress - a.progress);
@@ -163,9 +153,6 @@ function MultiplayerTrack({ racers = [], youPid, results, passageLength, elapsed
   );
 }
 
-// ---------------------------------------------------------------------------
-//  Cosmetic: practice (single lane) or legacy fake-bot view (3 lanes).
-// ---------------------------------------------------------------------------
 function CosmeticTrack({
   playerProgress, playerWpm,
   elapsed, active, passageLength, practice = false, onFinishOrderChange,
@@ -190,7 +177,6 @@ function CosmeticTrack({
     return segmentWpm(botCurves[idx - 1], elapsed, passageLength);
   };
 
-  // Track finish order
   useEffect(() => {
     if (!active) return;
     setFinishOrder((prev: number[]) => {

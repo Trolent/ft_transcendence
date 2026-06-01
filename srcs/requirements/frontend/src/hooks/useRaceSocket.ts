@@ -12,7 +12,6 @@ import type {
 	RaceResult,
 } from "@backend/game/game.types";
 
-// Re-export the contract shapes so the UI can consume them from one place.
 export type {
 	ParticipantKind,
 	LobbyParticipant,
@@ -21,14 +20,12 @@ export type {
 	RaceFinishedPayload,
 } from "@backend/game/game.types";
 
-// Live per-participant race state, keyed by pid. Seeded from the lobby roster
-// and updated by `race_update` broadcasts.
 export type Racer = {
 	pid: string;
 	username: string;
 	kind: ParticipantKind;
 	avatarUrl: string | null;
-	progress: number; // 0..1
+	progress: number;
 	wpm: number;
 };
 
@@ -36,9 +33,7 @@ export type RacePhase = "idle" | "waiting" | "countdown" | "racing" | "finished"
 
 export function useRaceSocket() {
 	const socketRef = useRef<Socket | null>(null);
-	// When this client saw the green light (its own clock), to time the finish
-	// free of network latency.
-	const raceStartClientRef = useRef<number | null>(null);
+	const raceStartClientRef = useRef<number | null>(null); // client-side start time for latency-free finish timing
 
 	const [phase, setPhase]               = useState<RacePhase>("idle");
 	const [connected, setConnected]       = useState(false);
@@ -75,14 +70,11 @@ export function useRaceSocket() {
 		setRejected(null);
 	}, []);
 
-	// Connect, join matchmaking and wire all server -> client events.
 	const joinQueue = useCallback(() => {
 		teardown();
 		resetState();
 		raceStartClientRef.current = null;
 
-		// Logged-in players authenticate by JWT; logged-out players join as a
-		// guest (the server tags them "Guest" — results are never saved).
 		const token = getToken();
 		const socket: Socket = io("/game", {
 			auth: token ? { token } : { guest: true },
@@ -107,8 +99,6 @@ export function useRaceSocket() {
 			setConnected(false);
 		});
 
-		// Server refused this socket (e.g. this account is already racing in
-		// another tab). Tear down and surface why; the active tab is untouched.
 		socket.on("join_rejected", (payload: { reason: string }) => {
 			setRejected(payload?.reason ?? "rejected");
 			setPhase("idle");
@@ -120,8 +110,6 @@ export function useRaceSocket() {
 			setMatchText(payload.text);
 			setCountdownEndsAt(payload.phase === "countdown" ? payload.countdownEndsAt : null);
 			setPhase(payload.phase === "countdown" ? "countdown" : "waiting");
-			// Seed racers from the roster so every car shows up before the first
-			// race_update arrives.
 			setRacers((prev) => {
 				const next: Record<string, Racer> = {};
 				for (const p of payload.players) {
@@ -146,7 +134,6 @@ export function useRaceSocket() {
 			setPhase("racing");
 		});
 
-		// Our own placement, the instant we finish (before the race fully ends).
 		socket.on("you_finished", (payload: YouFinishedPayload) => {
 			setMyPosition(payload.position);
 			setPlayerCount(payload.playerCount);
@@ -174,7 +161,6 @@ export function useRaceSocket() {
 
 	}, [teardown, resetState]);
 
-	// Tell the server we left; disconnect tears the socket down.
 	const leaveQueue = useCallback(() => {
 		const s = socketRef.current;
 		if (s && s.connected) s.emit("leave_queue");
@@ -182,9 +168,6 @@ export function useRaceSocket() {
 		resetState();
 	}, [teardown, resetState]);
 
-	// Report correct-char count + current accuracy to the server (chars is an
-	// idempotent total, not a delta). The backend consumes chars today; accuracy
-	// is included in the payload for a teammate to persist.
 	const sendProgress = useCallback((chars: number, accuracy: number) => {
 		const s = socketRef.current;
 		if (!s || !s.connected) return;
@@ -192,7 +175,6 @@ export function useRaceSocket() {
 		s.emit("player_progress", { chars, accuracy, durationMs });
 	}, []);
 
-	// Tear the socket down when the consuming component unmounts.
 	useEffect(() => () => { teardown(); }, [teardown]);
 
 	return {
