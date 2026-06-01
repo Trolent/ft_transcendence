@@ -124,7 +124,9 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: 'Get match history' })
-    @ApiResponse({ status: 200, schema: { example: [{ wpm: 85, position: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox' } }] } })
+    @ApiQuery({ name: 'page', required: false, example: 1 })
+    @ApiQuery({ name: 'limit', required: false, example: 20 })
+    @ApiResponse({ status: 200, schema: { example: { data: [{ wpm: 85, position: 1, accuracy: 96.5, nbPlayers: 3, nbBots: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox', matchResult: [{ position: 1, wpm: 85, user: { id: 1, username: 'johndoe', avatarUrl: null } }] } }], total: 1, totalPages: 1 } } })
     @Throttle({ auth: THROTTLE_LIMIT_API })
     @Get(':username/history')
     getHistory(
