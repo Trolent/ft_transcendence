@@ -88,7 +88,8 @@ export class AchievementService implements OnModuleInit {
 
     async getUserAchievements(username: string) {
         const user = await this.users.findByUsername(username);
-        if (!user) return [];
+        if (!user)
+            return [];
 
         const [allAchievements, userAchievements] = await Promise.all([
             this.prisma.achievement.findMany(),
@@ -103,9 +104,12 @@ export class AchievementService implements OnModuleInit {
                 unlockedAt: unlockedMap.get(achievement.id) ?? null,
             }))
             .sort((a, b) => {
-                if (a.unlockedAt && b.unlockedAt) return b.unlockedAt.getTime() - a.unlockedAt.getTime();
-                if (a.unlockedAt) return -1;
-                if (b.unlockedAt) return 1;
+                if (a.unlockedAt && b.unlockedAt)
+                    return b.unlockedAt.getTime() - a.unlockedAt.getTime();
+                if (a.unlockedAt)
+                    return -1;
+                if (b.unlockedAt)
+                    return 1;
                 return 0;
             });
     }

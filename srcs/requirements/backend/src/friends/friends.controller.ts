@@ -10,7 +10,7 @@ import {
     HttpCode,
 } from '@nestjs/common';
 import { FriendsService } from './friends.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { FriendUserDto, FriendRequestDto, RelationshipResponseDto, FriendMessageResponseDto } from '../common/dto/friends-response.dto';
 
 //API LIMIT
@@ -61,8 +61,7 @@ export class FriendsController {
         return this.FriendsService.getFriendRequestsSent(user);
     }
 
-    @ApiOperation({ summary: 'Get blocked users list' })
-    @ApiResponse({ status: 200, type: [FriendUserDto] })
+    @ApiExcludeEndpoint()
     @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get('/blocked')
@@ -131,9 +130,7 @@ export class FriendsController {
         return this.FriendsService.deleteFriend(user, username);
     }
 
-    @ApiOperation({ summary: 'Block a user' })
-    @ApiResponse({ status: 200, type: FriendMessageResponseDto })
-    @ApiResponse({ status: 409, description: 'ALREADY_BLOCKED' })
+    @ApiExcludeEndpoint()
     @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
@@ -142,10 +139,7 @@ export class FriendsController {
         return this.FriendsService.friendBlock(user, username);
     }
 
-    @ApiOperation({ summary: 'Unblock a user' })
-    @ApiResponse({ status: 200, type: FriendMessageResponseDto })
-    @ApiResponse({ status: 403, description: 'NOT_YOUR_BLOCK' })
-    @ApiResponse({ status: 404, description: 'REQUEST_NOT_FOUND' })
+    @ApiExcludeEndpoint()
     @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Delete(':username/unblock')

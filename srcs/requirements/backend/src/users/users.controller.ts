@@ -34,7 +34,7 @@ import { SafeUser } from '../common/types';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 //SWAGGER
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { UserProfileDto, AvatarResponseDto, UserStatsDto, UserSearchDto } from '../common/dto/users-response.dto';
 import { PaginatedResponse } from '../common/dto/paginated-response.dto';
 
@@ -91,7 +91,8 @@ export class UsersController {
         @Query('page') page = '1',
         @Query('limit') limit = '10',
     ): Promise<PaginatedResponse<UserSearchDto>> {
-        if (!q?.trim()) throw new BadRequestException('MISSING_SEARCH_QUERY');
+        if (!q?.trim())
+            throw new BadRequestException('MISSING_SEARCH_QUERY');
         return this.UsersService.searchUsers(q.trim(), Number(page), Number(limit));
     }
 
@@ -118,13 +119,16 @@ export class UsersController {
     @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get()
     getProfiles(@Query('users') users: string) {
-        if (!users) throw new BadRequestException('MISSING_USERS_PARAM');
+        if (!users)
+            throw new BadRequestException('MISSING_USERS_PARAM');
         const usernameList = users.split(',').map(s => s.trim()).filter(Boolean).slice(0, MAX_PROFILES_REQUEST);
         return this.UsersService.getProfiles(usernameList);
     }
 
     @ApiOperation({ summary: 'Get match history' })
-    @ApiResponse({ status: 200, schema: { example: [{ wpm: 85, position: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox' } }] } })
+    @ApiQuery({ name: 'page', required: false, example: 1 })
+    @ApiQuery({ name: 'limit', required: false, example: 20 })
+    @ApiResponse({ status: 200, schema: { example: { data: [{ wpm: 85, position: 1, accuracy: 96.5, nbPlayers: 3, nbBots: 1, finishedAt: '2026-01-01T00:00:00.000Z', match: { id: 1, startedAt: '2026-01-01T00:00:00.000Z', textSnippet: 'The quick brown fox', matchResult: [{ position: 1, wpm: 85, user: { id: 1, username: 'johndoe', avatarUrl: null } }] } }], total: 1, totalPages: 1 } } })
     @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get(':username/history')
     getHistory(
@@ -138,6 +142,7 @@ export class UsersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Upload avatar' })
     @ApiConsumes('multipart/form-data')
+    @ApiBody({ schema: { type: 'object', properties: { avatar: { type: 'string', format: 'binary' } } } })
     @ApiResponse({ status: 201, type: AvatarResponseDto })
     @Throttle({ default: THROTTLE_LIMIT_UP_AVATAR })
     @UseGuards(JwtAuthGuard)
