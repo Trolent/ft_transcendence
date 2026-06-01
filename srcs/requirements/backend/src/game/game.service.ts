@@ -450,10 +450,71 @@ export class GameService {
 
 	async forceFinish(roomId: string): Promise<void> {
 		const room = this.rooms.get(roomId);
-		if (!room || room.phase === 'finished') return;
-		for (const p of room.players.values()) p.finished = true;
+		if (!room || room.phase === 'finished') {
+			return;
+		}
+
+		const endedAt = Date.now();
+		let position = [...room.players.values()].filter((p) => p.finishedAt != null).length;
+		const pending = [...room.players.values()]
+			.filter((p) => p.finishedAt == null)
+			.sort((a, b) => b.progress - a.progress);
+
+		for (const p of pending) {
+			p.finished = true;
+			p.finishedAt = endedAt;
+			if (room.startedAt) {
+				p.wpm = this.calcWpm(p.chars, room.startedAt);
+			}
+			await this.completePlayer(room, p, ++position);
+		}
+
 		room.phase = 'finished';
 		await this.finalizeRace(roomId);
+	}
+
+	async recordFinish(socketId: string, position: number): Promise<void> {
+		const room = this.roomOf(socketId);
+		if (!room) {
+			return;
+		}
+		const p = this.participantOf(room, socketId);
+		if (!p) {
+			return;
+		}
+		await this.completePlayer(room, p, position);
+	}
+
+	private async completePlayer(room: RoomState, p: Participant, position: number): Promise<void> {
+		if (p.kind !== 'user' || p.userId == null || p.left) {
+			return;
+		}
+		if (room.matchId === 0) {
+			return;
+		}
+
+		const nbBots = [...room.players.values()].filter((x) => x.kind === 'bot').length;
+		const nbPlayers = room.players.size - nbBots;
+
+		try {
+			const result = await this.prisma.matchResult.upsert({
+				where: { matchId_userId: { matchId: room.matchId, userId: p.userId } },
+				update: {},
+				create: {
+					matchId: room.matchId,
+					userId: p.userId,
+					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+					accuracy: p.accuracy,
+					position,
+					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+					nbPlayers,
+					nbBots,
+				},
+			});
+			await this.achievementService.checkAndUnlockAchievements(p.userId, result);
+		} catch (err) {
+			console.error(`[Race][${room.id}] finish persistence for ${p.username} failed`, err);
+		}
 	}
 
 	async finalizeRace(roomId: string): Promise<void> {
@@ -472,16 +533,18 @@ export class GameService {
 		const sorted = [...room.players.values()].sort((a, b) => {
 			const fa = a.finishedAt ?? Infinity;
 			const fb = b.finishedAt ?? Infinity;
-			if (fa !== fb)
+			if (fa !== fb) {
 				return fa - fb;
+			}
 			return b.progress - a.progress;
 		});
 
-		// Non-finishers (timed out or left) are scored on their true average over the
-		// full race so idle time drags the number down, not the last live snapshot.
 		if (room.startedAt) {
-			for (const p of room.players.values())
-				if (p.finishedAt == null) p.wpm = this.calcWpm(p.chars, room.startedAt);
+			for (const p of room.players.values()) {
+				if (p.finishedAt == null) {
+					p.wpm = this.calcWpm(p.chars, room.startedAt);
+				}
+			}
 		}
 
 		const results: RaceResult[] = sorted.map((p, i) => ({
@@ -493,46 +556,16 @@ export class GameService {
 		}));
 
 		try {
-			const userRows = sorted
-				.map((p, i) => ({ p, position: i + 1 }))
-				.filter(({ p }) => p.kind === 'user' && p.userId != null && !p.left); // leavers not persisted
-
-			const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
-			const nbPlayers = room.players.size - nbBots;
-
-			await this.prisma.match.update({
-				where: { id: room.matchId },
-				data: { endedAt: new Date(), status: MatchStatus.FINISHED },
-			});
-
-			if (userRows.length > 0) {
-				await this.prisma.matchResult.createMany({
-					data: userRows.map(({ p, position }) => ({
-						matchId: room.matchId,
-						userId: p.userId as number,
-						wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
-						accuracy: p.accuracy,
-						position,
-						finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
-						nbPlayers,
-						nbBots,
-					})),
+			if (room.matchId !== 0) {
+				await this.prisma.match.update({
+					where: { id: room.matchId },
+					data: { endedAt: new Date(), status: MatchStatus.FINISHED },
 				});
-
-				await this.prisma.user.updateMany({
-					where: { id: { in: userRows.map(({ p }) => p.userId as number) } },
-					data: { status: UserStatus.ONLINE },
-				});
-
-				const saved = await this.prisma.matchResult.findMany({
-					where: { matchId: room.matchId },
-				});
-				for (const r of saved)
-					await this.achievementService.checkAndUnlockAchievements(r.userId, r);
 			}
+			await this.releaseUsers(room);
 		} catch (err) {
-			console.error(`[Race][${room.id}] finalize persistence failed`, err);
-			await this.releaseUsers(room); // best effort: don't leave users stuck IN_GAME
+			console.error(`[Race][${room.id}] finalize failed`, err);
+			await this.releaseUsers(room);
 		} finally {
 			// Guaranteed: clients always receive standings and the room is always torn down.
 			this.server.to(room.id).emit('race_finished', {
