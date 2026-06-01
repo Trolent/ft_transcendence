@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Btn, PageLayout, Alert, Modal } from "@/components";
 import { useTouchDevice } from "@/hooks/useTouchDevice";
@@ -12,6 +12,7 @@ type PracticePhase = "countdown" | "go" | "racing";
 export default function Game() {
   const { t } = useTranslation('pages');
   const navigate = useNavigate();
+  const location = useLocation();
   const { mode: modeParam } = useParams<{ mode: string }>();
   const mode: Mode = modeParam === "practice" ? "practice" : "multiplayer";
   const [gameKey, setGameKey] = useState(0);
@@ -23,7 +24,17 @@ export default function Game() {
   const race = useRaceSocket();
 
   useEffect(() => {
-    if (mode === "multiplayer" && !isTouch) race.joinQueue();
+    if (mode !== "multiplayer") {
+      return;
+    }
+    if (!(location.state as { fromApp?: boolean } | null)?.fromApp) {
+      navigate("/");
+      return;
+    }
+    navigate(location.pathname, { replace: true });
+    if (!isTouch) {
+      race.joinQueue();
+    }
   }, [mode, race.joinQueue, isTouch]);
 
   useEffect(() => {
