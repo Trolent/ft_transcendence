@@ -68,7 +68,6 @@ function UserMenu({ username, onLogout }: { username: string; onLogout: () => vo
 
       {isOpen && (
         <ul className="absolute right-0 top-full mt-1 min-w-[10rem] bg-black border border-muted z-50">
-          <li><Link to="/profile"          onClick={() => setIsOpen(false)} className={itemClass}>{t('profile')}</Link></li>
           <li><Link to="/chat"             onClick={() => setIsOpen(false)} className={itemClass}>{t('chat')}</Link></li>
           <li><Link to="/friends"          onClick={() => setIsOpen(false)} className={itemClass}>{t('friends')}</Link></li>
           <li><Link to="/friends/requests" onClick={() => setIsOpen(false)} className={itemClass}>{t('requests')}</Link></li>
