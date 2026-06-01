@@ -28,7 +28,8 @@ export class UsersService {
     const exists = await this.prisma.user.findFirst({
       where: { OR: [{ email }, { username }] },
     });
-    if (exists) throw new ConflictException('USER_ALREADY_EXISTS');
+    if (exists)
+      throw new ConflictException('USER_ALREADY_EXISTS');
 
     const passwordHash = await this.HashThePass(password);
     return this.prisma.user.create({
@@ -84,7 +85,6 @@ export class UsersService {
     });
   }
 
-  // used for login with email only
   async findByEmailForLogin(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
@@ -96,7 +96,6 @@ export class UsersService {
     });
   }
 
-  // used for login with username only
   async findByUsernameForLogin(username: string) {
     return this.prisma.user.findUnique({
       where: { username },
@@ -110,7 +109,8 @@ export class UsersService {
 
   async calculateStats(username: string) {
     const user = await this.prisma.user.findUnique({ where: { username }, select: { id: true } });
-    if (!user) throw new NotFoundException('USER_NOT_FOUND');
+    if (!user)
+      throw new NotFoundException('USER_NOT_FOUND');
 
     const results = await this.prisma.matchResult.findMany({
       where: { userId: user.id, wpm: { not: null } },
@@ -142,7 +142,8 @@ export class UsersService {
         email : isOwner, language : true
       },
     });
-    if (!user) throw new NotFoundException('USER_NOT_FOUND');
+    if (!user)
+      throw new NotFoundException('USER_NOT_FOUND');
 
     const stats = await this.calculateStats(username);
     const achievements = await this.achievementService.getUserAchievements(username);
