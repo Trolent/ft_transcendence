@@ -2,6 +2,10 @@ import { type HTMLAttributes } from "react";
 
 /*
 
+default : black, green border, no shadow
+panel : green with shadow
+terminal : black with shadow
+
 Examples:
 
 <Container variant="default" label="default">
@@ -25,13 +29,14 @@ interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
 
 const variantClasses: Record<ContainerVariant, string> = {
   default:
-    "bg-black border border-dim",
+    "bg-black/80 border border-dim",
 
   panel:
-    "bg-muted border border-default",
+    "bg-dim/40 " +
+    "shadow-[0_0_12px_0_rgba(0,255,65,0.15)]",
 
   terminal:
-    "bg-black border border-default " +
+    "bg-black/40 " +
     "shadow-[0_0_12px_0_rgba(0,255,65,0.15)]",
 };
 
@@ -52,7 +57,7 @@ export default function Container({
       {...props}
     >
       {label && (
-        <span className="absolute -top-px left-3 -translate-y-1/2 bg-black px-1 text-xs text-dim uppercase tracking-widest">
+        <span className="absolute -top-px left-3 -translate-y-1/2 bg-black/90 px-1 text-xs text-default uppercase tracking-widest">
           {label}
         </span>
       )}

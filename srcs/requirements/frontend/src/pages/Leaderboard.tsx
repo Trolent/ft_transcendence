@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tError } from "@/features/i18n";
-import { Avatar, Btn, Heading, Input, Text, Pagination, PageLayout } from "@/components";
+import { Avatar, Btn, Heading, Input, Text, Pagination, PageLayout, Container } from "@/components";
 import { getLeaderboard, type LeaderboardEntry } from "@/api/leaderboard.api";
 
 type LeaderboardListItem = LeaderboardEntry & { id: string; [key: string]: unknown };
@@ -67,10 +67,14 @@ export default function Leaderboard() {
 
   return (
     <PageLayout maxWidth="max-w-2xl">
-
+      <Heading level={2} className="mb-8">{t('leaderboard.title')}</Heading>
+      <Container variant="default" className="mb-8">
+        
       <div className="flex flex-wrap items-end gap-3 mb-6">
+
+        
         <div className="flex-1 min-w-[160px] flex flex-col gap-1">
-          <Text size="xs" variant="muted" className="uppercase tracking-widest">&nbsp;</Text>
+          <Text size="xs" variant="default" className="uppercase tracking-widest">&nbsp;</Text>
           <Input
             placeholder={t('leaderboard.search_placeholder')}
             value={query}
@@ -79,7 +83,7 @@ export default function Leaderboard() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <Text size="xs" variant="muted" className="uppercase tracking-widest">
+          <Text size="xs" variant="default" className="uppercase tracking-widest">
             {t('leaderboard.sort_label')}
           </Text>
           <div className="flex">
@@ -100,8 +104,10 @@ export default function Leaderboard() {
           </div>
         </div>
 
+       
+
         <div className="flex flex-col gap-1">
-          <Text size="xs" variant="muted" className="uppercase tracking-widest">
+          <Text size="xs" variant="default" className="uppercase tracking-widest">
             {t('leaderboard.min_level')}
           </Text>
           <div className="flex items-center border border-dim bg-black">
@@ -124,14 +130,19 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      {tooShort && <Text className="mt-2" variant="muted">{t('common:search.min_chars')}</Text>}
-      {!tooShort && loading && <Text className="mt-6" variant="muted">{t('leaderboard.loading')}</Text>}
+      {tooShort && <Text className="mt-2" variant="error">{t('common:search.min_chars')}</Text>}
+      </Container>
+
+      <div>
+      
+      {!tooShort && loading && <Text className="mt-6" variant="dim">{t('leaderboard.loading')}</Text>}
       {!tooShort && error && !loading && <Text className="mt-6" variant="error">{error}</Text>}
       {!tooShort && !loading && !error && players.length === 0 && (
-        <Text className="mt-6" variant="muted">
+        <Text className="mt-6" variant="error">
           {debouncedQuery.trim() ? t('leaderboard.search_empty') : t('leaderboard.empty')}
         </Text>
       )}
+      </div>
 
       {!loading && !error && players.length > 0 && (
         <div className="flex flex-col gap-6">
@@ -139,11 +150,11 @@ export default function Leaderboard() {
           <div className="hidden sm:grid grid-cols-[3rem_3.5rem_1fr_6rem_5rem_5rem_5rem] items-center gap-3 px-4 border-b border-dim pb-2">
             <span />
             <span />
-            <Text size="xs" variant="muted" className="uppercase tracking-widest">{t('leaderboard.player_col')}</Text>
-            <Text size="xs" variant="muted" className="uppercase tracking-widest text-right">{t('profile.stat_avg_wpm')}</Text>
-            <Text size="xs" variant="muted" className="uppercase tracking-widest text-right">{t('profile.accuracy_short')}</Text>
-            <Text size="xs" variant="muted" className="uppercase tracking-widest text-center">{t('profile.stat_level')}</Text>
-            <Text size="xs" variant="muted" className="uppercase tracking-widest text-center">{t('profile.stat_played')}</Text>
+            <Text size="xs" className="uppercase tracking-widest">{t('leaderboard.player_col')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-right">{t('profile.stat_avg_wpm')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-right">{t('profile.accuracy_short')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-center">{t('profile.stat_level')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-center">{t('profile.stat_played')}</Text>
           </div>
 
           {players.map((item, idx) => (
