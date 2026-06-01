@@ -71,6 +71,7 @@ type Props =
   multiplayer?: boolean;
   racers?: Racer[];
   youPid?: string | null;
+  finishOrder?: string[];
   results?: RaceResult[] | null;
   playerProgress: number;
   playerWpm: number;
@@ -86,7 +87,7 @@ export default function RaceTrack(props: Props) {
   return <CosmeticTrack {...props} />;
 }
 
-function MultiplayerTrack({ racers = [], youPid, results, passageLength, elapsed, playerWpm, playerProgress }: Props) {
+function MultiplayerTrack({ racers = [], youPid, finishOrder = [], results, passageLength, elapsed, playerWpm, playerProgress }: Props) {
   const { t } = useTranslation('pages');
   const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
   const [variants] = useState<number[]>(() => randomUniqueVariants(CAR_COUNT));
@@ -105,16 +106,13 @@ function MultiplayerTrack({ racers = [], youPid, results, passageLength, elapsed
     return minutes > 0 ? Math.round((r.progress * passageLength) / 5 / minutes) : 0;
   };
 
-  const finished = [...racers]
-    .filter(r => r.progress >= 1)
-    .sort((a, b) => b.progress - a.progress);
   const finalPlace = results ? new Map(results.map(r => [r.pid, r.position])) : null;
   const placeFor = (pid: string): string | null => {
     if (finalPlace) {
       const pos = finalPlace.get(pid);
       return pos != null ? ordinal(pos) : null;
     }
-    const i = finished.findIndex(r => r.pid === pid);
+    const i = finishOrder.indexOf(pid);
     return i >= 0 ? ordinal(i + 1) : null;
   };
 

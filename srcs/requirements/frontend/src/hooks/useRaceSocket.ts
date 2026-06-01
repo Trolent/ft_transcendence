@@ -43,6 +43,7 @@ export function useRaceSocket() {
 	const [startedAt, setStartedAt]       = useState<number | null>(null);
 	const [playerCount, setPlayerCount]   = useState<number>(0);
 	const [racers, setRacers]             = useState<Record<string, Racer>>({});
+	const [finishOrder, setFinishOrder]   = useState<string[]>([]);
 	const [results, setResults]           = useState<RaceResult[] | null>(null);
 	const [myPosition, setMyPosition]     = useState<number | null>(null);
 	const [rejected, setRejected]         = useState<string | null>(null);
@@ -65,6 +66,7 @@ export function useRaceSocket() {
 		setStartedAt(null);
 		setPlayerCount(0);
 		setRacers({});
+		setFinishOrder([]);
 		setResults(null);
 		setMyPosition(null);
 		setRejected(null);
@@ -151,6 +153,9 @@ export function useRaceSocket() {
 					wpm: payload.wpm,
 				},
 			}));
+			if (payload.progress >= 1) {
+				setFinishOrder((prev) => prev.includes(payload.pid) ? prev : [...prev, payload.pid]);
+			}
 		});
 
 		socket.on("race_finished", (payload: RaceFinishedPayload) => {
@@ -186,6 +191,7 @@ export function useRaceSocket() {
 		startedAt,
 		playerCount,
 		racers,
+		finishOrder,
 		results,
 		myPosition,
 		rejected,

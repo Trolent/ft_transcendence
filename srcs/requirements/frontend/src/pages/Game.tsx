@@ -158,6 +158,7 @@ export default function Game() {
         serverText={race.matchText}
         racers={racerList}
         youPid={race.you}
+        liveFinishOrder={race.finishOrder}
         results={race.results}
         playerCount={race.playerCount}
         myPosition={race.myPosition}
