@@ -15,7 +15,7 @@ import { FriendUserDto, FriendRequestDto, RelationshipResponseDto, FriendMessage
 
 //API LIMIT
 import { Throttle } from '@nestjs/throttler';
-import { THROTTLE_LIMIT_API } from '../common/throttle.constants';
+import { THROTTLE_LIMIT_AUTH_GLOBAL } from '../common/throttle.constants';
 
 //AUTH
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -36,7 +36,7 @@ export class FriendsController {
 
     @ApiOperation({ summary: 'Get my friends list' })
     @ApiResponse({ status: 200, type: [FriendUserDto] })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get('/')
     getMyFriends(@CurrentUser() user:SafeUser) {
@@ -45,7 +45,7 @@ export class FriendsController {
 
     @ApiOperation({ summary: 'Get received friend requests' })
     @ApiResponse({ status: 200, type: [FriendRequestDto] })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get('/requests')
     getFriendRequests(@CurrentUser() user:SafeUser) {
@@ -54,7 +54,7 @@ export class FriendsController {
 
     @ApiOperation({ summary: 'Get sent friend requests' })
     @ApiResponse({ status: 200, type: [FriendRequestDto] })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get('/requests/sent')
     getFriendRequestsSent(@CurrentUser() user:SafeUser) {
@@ -62,7 +62,7 @@ export class FriendsController {
     }
 
     @ApiExcludeEndpoint()
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get('/blocked')
     getBlocked(@CurrentUser() user:SafeUser) {
@@ -71,7 +71,7 @@ export class FriendsController {
 
     @ApiOperation({ summary: 'Get relationship with a user' })
     @ApiResponse({ status: 200, type: RelationshipResponseDto })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get(':username/relationship')
     getFriendRelationship(@Param('username') username: string, @CurrentUser() user:SafeUser) {
@@ -81,7 +81,7 @@ export class FriendsController {
     @ApiOperation({ summary: "Get friends list by username" })
     @ApiResponse({ status: 200, type: [FriendUserDto] })
     @ApiResponse({ status: 404, description: 'USER_NOT_FOUND' })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get(':username')
     getFriendsByUsername(@Param('username') username: string) {
         return this.FriendsService.getFriendsByUsername(username);
@@ -90,7 +90,7 @@ export class FriendsController {
     @ApiOperation({ summary: 'Send a friend request' })
     @ApiResponse({ status: 200, schema: { example: { initiatorId: 1, receiverId: 2, status: 'PENDING' } } })
     @ApiResponse({ status: 409, description: 'REQUEST_ALREADY_SENT | ALREADY_FRIENDS | BLOCKED' })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Post('request')
     @HttpCode(200)
@@ -102,7 +102,7 @@ export class FriendsController {
     @ApiResponse({ status: 200, type: FriendMessageResponseDto })
     @ApiResponse({ status: 403, description: 'NOT_YOUR_REQUEST' })
     @ApiResponse({ status: 404, description: 'REQUEST_NOT_FOUND' })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Patch('request/:username/accept')
     friendAccept(@Param('username') username: string, @CurrentUser() user:SafeUser) {
@@ -113,7 +113,7 @@ export class FriendsController {
     @ApiResponse({ status: 200, type: FriendMessageResponseDto })
     @ApiResponse({ status: 403, description: 'NOT_YOUR_REQUEST' })
     @ApiResponse({ status: 404, description: 'REQUEST_NOT_FOUND' })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Patch('request/:username/decline')
     friendDecline(@Param('username') username: string, @CurrentUser() user:SafeUser) {
@@ -123,7 +123,7 @@ export class FriendsController {
     @ApiOperation({ summary: 'Remove a friend' })
     @ApiResponse({ status: 200, type: FriendMessageResponseDto })
     @ApiResponse({ status: 404, description: 'REQUEST_NOT_FOUND' })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Delete(':username')
     deleteFriend(@Param('username') username: string, @CurrentUser() user:SafeUser) {
@@ -131,7 +131,7 @@ export class FriendsController {
     }
 
     @ApiExcludeEndpoint()
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @Post(':username/block')
@@ -140,7 +140,7 @@ export class FriendsController {
     }
 
     @ApiExcludeEndpoint()
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Delete(':username/unblock')
     friendUnblock(@Param('username') username: string, @CurrentUser() user:SafeUser) {

@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { THROTTLE_LIMIT_API } from '../common/throttle.constants';
+import { THROTTLE_LIMIT_AUTH_GLOBAL } from '../common/throttle.constants';
 import { LeaderBoardService, LEADERBOARD_DEFAULT_LIMIT, LEADERBOARD_MAX_LIMIT } from './leaderboard.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { LeaderboardEntryDto } from '../common/dto/leaderboard-response.dto';
@@ -18,7 +18,7 @@ export class LeaderBoardController {
     @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'], example: 'desc' })
     @ApiQuery({ name: 'minLevel', required: false, example: 1 })
     @ApiResponse({ status: 200, type: PaginatedResponse })
-    @Throttle({ auth: THROTTLE_LIMIT_API })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get()
     getLeaderboard(
         @Query('page')  page:  string,

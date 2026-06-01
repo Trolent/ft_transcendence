@@ -10,8 +10,8 @@ import { SafeUser } from '../common/types';
 //API LIMIT
 import { Throttle } from '@nestjs/throttler';
 import {
-    THROTTLE_LIMIT_CHAT,
 } from '../common/throttle.constants';
+import { THROTTLE_LIMIT_AUTH_GLOBAL } from '../common/throttle.constants';
 
 @ApiTags('chat')
 @ApiBearerAuth()
@@ -21,7 +21,7 @@ export class ChatController {
 
     @ApiOperation({ summary: 'Get all conversations (last message per user)' })
     @ApiResponse({ status: 200, type: [ConversationDto] })
-    @Throttle({ chat: THROTTLE_LIMIT_CHAT })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get('/')
     getHistoryChat(@CurrentUser() user: SafeUser) {
@@ -31,7 +31,7 @@ export class ChatController {
     @ApiOperation({ summary: 'Get message history with a user (paginated)' })
     @ApiQuery({ name: 'before', required: false, description: 'ID du dernier message connu pour paginer', example: 120 })
     @ApiResponse({ status: 200, type: [MessageDto] })
-    @Throttle({ chat: THROTTLE_LIMIT_CHAT })
+    @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @UseGuards(JwtAuthGuard)
     @Get(':username')
     getUserChatHistory(

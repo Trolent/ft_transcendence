@@ -19,9 +19,5 @@ createRoot(document.getElementById('root')!).render(
         </StatusProvider>
       </AuthProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )
-
-
-// ajouter bg à navbar et peut-être footer, peut-être faire circle du bas ?
-// mettre une transparence

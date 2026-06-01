@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tError } from "@/features/i18n";
-import { Avatar, Heading, Input, List, Text, Pagination, PageLayout } from "@/components";
+import { Avatar, Btn, Heading, Input, Text, Pagination, PageLayout, Container } from "@/components";
 import { getLeaderboard, type LeaderboardEntry } from "@/api/leaderboard.api";
 
 type LeaderboardListItem = LeaderboardEntry & { id: string; [key: string]: unknown };
@@ -25,7 +25,6 @@ export default function Leaderboard() {
 
   const tooShort = query.trim().length > 0 && query.trim().length < 3;
 
-  // Debounce query and reset to page 1
   useEffect(() => {
     if (tooShort) {
       setDebouncedQuery('');
@@ -67,73 +66,136 @@ export default function Leaderboard() {
   };
 
   return (
-    <PageLayout maxWidth="max-w-lg">
-      <Heading level={3} className="mt-10 sm:text-2xl sm:tracking-[0.2em]">{t('leaderboard.title')}</Heading>
+    <PageLayout maxWidth="max-w-2xl">
+      <Heading level={2} className="mb-8">{t('leaderboard.title')}</Heading>
+      <Container variant="default" className="mb-8">
+        
+      <div className="flex flex-wrap items-end gap-3 mb-6">
 
-      <Input
-        className="mt-6"
-        placeholder={t('leaderboard.search_placeholder')}
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <div className="flex gap-2 mt-2 items-end">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs uppercase tracking-widest text-dim">{t('leaderboard.sort_label')}</span>
-          <select
-            value={sortOrder}
-            onChange={(e) => { setSortOrder(e.target.value as 'asc' | 'desc'); setCurrentPage(1); }}
-          >
-            <option value="desc">{t('leaderboard.sort_desc')}</option>
-            <option value="asc">{t('leaderboard.sort_asc')}</option>
-          </select>
+        
+        <div className="flex-1 min-w-[160px] flex flex-col gap-1">
+          <Text size="xs" variant="default" className="uppercase tracking-widest">&nbsp;</Text>
+          <Input
+            placeholder={t('leaderboard.search_placeholder')}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </div>
-        <Input
-          label={t('leaderboard.min_level')}
-          type="number"
-          min={1}
-          value={minLevel}
-          onChange={(e) => { setMinLevel(Math.max(1, parseInt(e.target.value) || 1)); setCurrentPage(1); }}
-        />
+
+        <div className="flex flex-col gap-1">
+          <Text size="xs" variant="default" className="uppercase tracking-widest">
+            {t('leaderboard.sort_label')}
+          </Text>
+          <div className="flex">
+            <Btn
+              size="sm"
+              variant={sortOrder === 'desc' ? 'primary' : 'secondary'}
+              onClick={() => { setSortOrder('desc'); setCurrentPage(1); }}
+            >
+              ↓ WPM
+            </Btn>
+            <Btn
+              size="sm"
+              variant={sortOrder === 'asc' ? 'primary' : 'secondary'}
+              onClick={() => { setSortOrder('asc'); setCurrentPage(1); }}
+            >
+              ↑ WPM
+            </Btn>
+          </div>
+        </div>
+
+       
+
+        <div className="flex flex-col gap-1">
+          <Text size="xs" variant="default" className="uppercase tracking-widest">
+            {t('leaderboard.min_level')}
+          </Text>
+          <div className="flex items-center border border-dim bg-black">
+            <Btn
+              size="sm"
+              variant="ghost"
+              onClick={() => { setMinLevel((l) => Math.max(1, l - 1)); setCurrentPage(1); }}
+            >
+              −
+            </Btn>
+            <Text className="px-3 min-w-[2rem] text-center">{minLevel}</Text>
+            <Btn
+              size="sm"
+              variant="ghost"
+              onClick={() => { setMinLevel((l) => l + 1); setCurrentPage(1); }}
+            >
+              +
+            </Btn>
+          </div>
+        </div>
       </div>
 
-      {tooShort && (
-        <Text className="mt-6" variant="muted">{t('common:search.min_chars')}</Text>
-      )}
-      {!tooShort && loading && (
-        <Text className="mt-6" variant="muted">{t('leaderboard.loading')}</Text>
-      )}
-      {!tooShort && error && !loading && (
-        <Text className="mt-6" variant="error">{error}</Text>
-      )}
+      {tooShort && <Text className="mt-2" variant="error">{t('common:search.min_chars')}</Text>}
+      </Container>
+
+      <div>
+      
+      {!tooShort && loading && <Text className="mt-6" variant="dim">{t('leaderboard.loading')}</Text>}
+      {!tooShort && error && !loading && <Text className="mt-6" variant="error">{error}</Text>}
       {!tooShort && !loading && !error && players.length === 0 && (
-        <Text className="mt-6" variant="muted">
+        <Text className="mt-6" variant="error">
           {debouncedQuery.trim() ? t('leaderboard.search_empty') : t('leaderboard.empty')}
         </Text>
       )}
+      </div>
+
       {!loading && !error && players.length > 0 && (
         <div className="flex flex-col gap-6">
-          <List
-            className="mt-6"
-            items={players}
-            renderItem={(item: LeaderboardListItem) => (
-              <Link
-                to={`/profile/${item.username}`}
-                className="flex items-center gap-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-default"
-              >
-                {!debouncedQuery.trim()
-                  ? <Heading level={4} className="w-10 shrink-0 text-right">#{item.rank}</Heading>
-                  : <Heading level={4} className="w-10 shrink-0 text-right">-</Heading>
-                }
-                <Avatar username={item.username} src={item.avatarUrl ?? undefined} size="sm" />
-                <div className="min-w-0 flex-1">
-                  <Text className="truncate">{item.username}</Text>
-                  <Text size="xs" variant="muted">
-                    {t('leaderboard.wpm', { wpm: item.avgWpm })} — {t('leaderboard.level', { level: item.level })} — {t('leaderboard.games', { count: item.gamesPlayed })}
-                  </Text>
-                </div>
-              </Link>
-            )}
-          />
+
+          <div className="hidden sm:grid grid-cols-[3rem_3.5rem_1fr_6rem_5rem_5rem_5rem] items-center gap-3 px-4 border-b border-dim pb-2">
+            <span />
+            <span />
+            <Text size="xs" className="uppercase tracking-widest">{t('leaderboard.player_col')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-right">{t('profile.stat_avg_wpm')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-right">{t('profile.accuracy_short')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-center">{t('profile.stat_level')}</Text>
+            <Text size="xs" className="uppercase tracking-widest text-center">{t('profile.stat_played')}</Text>
+          </div>
+
+          {players.map((item, idx) => (
+            <Link
+              key={item.username}
+              to={`/profile/${item.username}`}
+              className="flex sm:grid sm:grid-cols-[3rem_3.5rem_1fr_6rem_5rem_5rem_5rem] items-center gap-3 px-4 py-3 border border-dim hover:border-default transition-colors duration-150 font-mono"
+            >
+              <Heading level={4} className="text-dim shrink-0 w-10">
+                {!debouncedQuery.trim() ? `#${item.rank}` : `${(currentPage - 1) * LIMIT + idx + 1}`}
+              </Heading>
+
+              <Avatar username={item.username} src={item.avatarUrl ?? undefined} size="md" />
+              <div className="flex flex-col min-w-0 flex-1 sm:hidden">
+                <Text className="truncate font-bold">{item.username}</Text>
+                <Text size="xs" variant="muted">
+                  {item.avgWpm} {t('profile.history_wpm')} · {item.avgAccuracy}% · {t('profile.stat_level')} {item.level}
+                </Text>
+              </div>
+              <Text className="truncate font-bold hidden sm:block">{item.username}</Text>
+
+              <Text className="text-right hidden sm:block">
+                <span className="font-bold">{item.avgWpm}</span>
+                <span className="text-dim text-xs"> {t('profile.history_wpm')}</span>
+              </Text>
+
+              <Text className="text-right hidden sm:block">
+                <span className="font-bold">{item.avgAccuracy}</span>
+                <span className="text-dim text-xs">%</span>
+              </Text>
+
+              <Text className="text-center hidden sm:block">
+                <span className="font-bold">{item.level}</span>
+              </Text>
+
+              <Text size="xs" variant="muted" className="text-center hidden sm:block">
+                {item.gamesPlayed}
+              </Text>
+            </Link>
+          ))}
+
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
       )}

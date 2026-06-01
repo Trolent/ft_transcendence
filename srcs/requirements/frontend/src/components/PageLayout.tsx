@@ -19,11 +19,9 @@ export default function PageLayout({ children, maxWidth, centerY = false }: Page
 
   return (
     <div className={layoutClassName}>
-      {maxWidth ? (
-        <div className={`mx-auto w-full ${maxWidth}`}>
-          {children}
-        </div>
-      ) : children}
+      <div className={`mx-auto w-full ${maxWidth ?? ""}`}>
+        {children}
+      </div>
     </div>
   );
 }

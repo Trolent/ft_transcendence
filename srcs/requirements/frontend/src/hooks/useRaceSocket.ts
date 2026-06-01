@@ -83,6 +83,9 @@ export function useRaceSocket() {
 		const socket: Socket = io("/game", {
 			auth: token ? { token } : { guest: true },
 			autoConnect: true,
+			reconnection: true,
+			reconnectionDelay: 1000,
+			reconnectionAttempts: 5,
 		});
 		socketRef.current = socket;
 

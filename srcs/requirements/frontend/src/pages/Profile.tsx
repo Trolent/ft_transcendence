@@ -65,7 +65,7 @@ export default function Profile() {
     <PageWithSidebar
       centerContent
       sidebar={
-        <Sidebar>
+        <Sidebar variant={"terminal"}>
           <FriendsList username={targetUsername} className="h-full" refreshKey={friendsRefreshKey} showRequestsBtn />
         </Sidebar>
       }
@@ -86,13 +86,14 @@ export default function Profile() {
           bio={profile.bio ?? null}
           isOwnProfile={isOwnProfile}
           onBioChange={(bio) => setProfile((prev) => prev ? { ...prev, bio } : prev)}
+          containerVariant={"panel"}
         />
 
-        <Stats stats={profile.stats} />
+        <Stats stats={profile.stats} containerVariant={"terminal"}/>
 
-        <Achievements achievements={profile.achievements} />
+        <Achievements achievements={profile.achievements} containerVariant={"terminal"}/>
 
-        <History username={targetUsername} />
+        <History username={targetUsername} containerVariant={"terminal"}/>
 
       </div>
     </PageWithSidebar>

@@ -32,16 +32,28 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     const socket: Socket = io('/chat', {
       auth: { token },
       transports: ['websocket'],
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 10,
     });
 
     socket.on('receive_message', () => {
       setUnreadMessages((prev) => prev + 1);
     });
 
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && !socket.connected) {
+        socket.auth = { token: getToken() };
+        socket.connect();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     setChatSocket(socket);
 
     return () => {
       socket.off('receive_message');
+      document.removeEventListener('visibilitychange', handleVisibility);
       socket.disconnect();
       setChatSocket(null);
     };
