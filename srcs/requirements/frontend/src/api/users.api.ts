@@ -1,6 +1,6 @@
 import { API_USERS, authHeaders, handleResponse } from '@/api/config.api'
-import type { UserAchievementDto } from '@backend/common/dto/achievement-response.dto';
-import type { UserProfileDto, UserStatsDto } from '@backend/common/dto/users-response.dto';
+import type { UserAchievementDto } from '@/types/api';
+import type { UserProfileDto, UserStatsDto } from '@/types/api';
 
 export type UserStats = UserStatsDto;
 export type UserAchievement = UserAchievementDto;
