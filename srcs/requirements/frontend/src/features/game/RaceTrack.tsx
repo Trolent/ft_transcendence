@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Car, { CAR_COUNT } from "./Car";
-import type { Racer } from "@/hooks/useRaceSocket";
+import type { Racer, RaceResult } from "@/hooks/useRaceSocket";
 
 const LANES = [0, 1, 2];
 const SEGMENT_DURATION = 2;
@@ -68,11 +68,10 @@ function finishedWpm(curve: Waypoint[], passageLength: number): number
 
 type Props =
 {
-  // --- multiplayer (server-driven) ---
   multiplayer?: boolean;
-  racers?: Racer[];        // ordered list of participants from the server
-  youPid?: string | null;  // local player's pid, to label "You"
-  // --- practice / cosmetic (client-driven fake bots) ---
+  racers?: Racer[];
+  youPid?: string | null;
+  results?: RaceResult[] | null;
   playerProgress: number;
   playerWpm: number;
   elapsed: number;
@@ -87,21 +86,36 @@ export default function RaceTrack(props: Props) {
   return <CosmeticTrack {...props} />;
 }
 
-// ---------------------------------------------------------------------------
-//  Multiplayer: one lane per server participant, all data from the server.
-// ---------------------------------------------------------------------------
-function MultiplayerTrack({ racers = [], youPid }: Props) {
+function MultiplayerTrack({ racers = [], youPid, results, passageLength, elapsed, playerWpm, playerProgress }: Props) {
   const { t } = useTranslation('pages');
   const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
   const [variants] = useState<number[]>(() => randomUniqueVariants(CAR_COUNT));
+  const ordinal = (place: number): string => ordinals[place - 1] ?? `${place}th`;
 
-  // Standings among finished racers (progress >= 1), ordered by who is ahead.
+  // Three sources, in priority order: server results (authoritative once race ends),
+  // local engine for own car (matches HUD exactly), derived from progress+clock for
+  // live opponents (decays when they stall, unlike the frozen race_update snapshot).
+  const finalWpm = results ? new Map(results.map(r => [r.pid, r.wpm])) : null;
+  const wpmFor = (r: Racer): number => {
+    const settled = finalWpm?.get(r.pid);
+    if (settled != null) return Math.round(settled);
+    if (r.pid === youPid) return Math.round(playerWpm);
+    if (r.progress >= 1) return Math.round(r.wpm);
+    const minutes = elapsed / 60;
+    return minutes > 0 ? Math.round((r.progress * passageLength) / 5 / minutes) : 0;
+  };
+
   const finished = [...racers]
     .filter(r => r.progress >= 1)
     .sort((a, b) => b.progress - a.progress);
+  const finalPlace = results ? new Map(results.map(r => [r.pid, r.position])) : null;
   const placeFor = (pid: string): string | null => {
+    if (finalPlace) {
+      const pos = finalPlace.get(pid);
+      return pos != null ? ordinal(pos) : null;
+    }
     const i = finished.findIndex(r => r.pid === pid);
-    return i >= 0 ? (ordinals[i] ?? `${i + 1}th`) : null;
+    return i >= 0 ? ordinal(i + 1) : null;
   };
 
   return (
@@ -122,7 +136,7 @@ function MultiplayerTrack({ racers = [], youPid }: Props) {
 
             <div className="flex-1 relative">
               <div className="bg-black/30 h-10 rounded-md relative overflow-hidden">
-                <Car progress={r.progress} variant={variants[idx % variants.length]} />
+                <Car progress={isYou ? playerProgress : r.progress} variant={variants[idx % variants.length]} />
               </div>
             </div>
 
@@ -130,7 +144,7 @@ function MultiplayerTrack({ racers = [], youPid }: Props) {
               {place && (
                 <span className="text-xs text-dim uppercase tracking-widest">{place}</span>
               )}
-              <span className="text-xs sm:text-sm text-default">{Math.round(r.wpm)} WPM</span>
+              <span className="text-xs sm:text-sm text-default">{wpmFor(r)} WPM</span>
             </div>
           </div>
         );
@@ -139,9 +153,6 @@ function MultiplayerTrack({ racers = [], youPid }: Props) {
   );
 }
 
-// ---------------------------------------------------------------------------
-//  Cosmetic: practice (single lane) or legacy fake-bot view (3 lanes).
-// ---------------------------------------------------------------------------
 function CosmeticTrack({
   playerProgress, playerWpm,
   elapsed, active, passageLength, practice = false, onFinishOrderChange,
@@ -166,7 +177,6 @@ function CosmeticTrack({
     return segmentWpm(botCurves[idx - 1], elapsed, passageLength);
   };
 
-  // Track finish order
   useEffect(() => {
     if (!active) return;
     setFinishOrder((prev: number[]) => {

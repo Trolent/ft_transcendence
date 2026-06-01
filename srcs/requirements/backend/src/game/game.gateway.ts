@@ -11,7 +11,7 @@ import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { WsJwtGuard } from '../auth/ws-jwt.guard'
 import { AuthService } from '../auth/auth.service'
 import { Socket, Namespace } from 'socket.io';
-import { MAX_WPM, PROGRESS_MIN_INTERVAL_MS } from '../common/game.constant';
+import { MAX_WPM } from '../common/game.constant';
 import { WS_CORS } from '../common/ws.config'
 import { PlayerProgressDto } from './dto/player-progress.dto'
 
@@ -27,8 +27,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @WebSocketServer()
   server: Namespace;
 
-  private readonly lastProgress = new Map<string, number>();
-
   constructor(
 	  private gameService: GameService,
 	  private authService: AuthService,
@@ -40,15 +38,12 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   async handleConnection(client: Socket) {
     const auth = client.handshake.auth ?? {};
-    // Logged-in players authenticate by JWT (sets client.data.user).
     if (auth.token) {
         const ok = await this.authService.validateWsClient(client);
         if (!ok)
             return client.disconnect();
         return;
     }
-    // Guests opt in explicitly; they race + count toward placement but are
-    // never persisted. Any other tokenless connection is rejected.
     if (auth.guest === true) {
         client.data.guest = { username: sanitizeGuestName(auth.nickname) };
         return;
@@ -57,13 +52,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   async handleDisconnect(client: Socket) {
-	this.lastProgress.delete(client.id);
 	await this.gameService.handleDisconnect(client.id);
   }
 
-  // Identity comes from the JWT (client.data.user) or the guest handshake
-  // (client.data.guest). Guests race and count toward placement but are never
-  // persisted; the guest path is enabled in the ws guard.
   private resolveJoin(client: Socket): JoinInput | null {
 	const user = client.data.user;
 	if (user)
@@ -100,12 +91,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @SubscribeMessage('player_progress')
   async handleProgress(client: Socket, payload: PlayerProgressDto) {
-	const now = Date.now();
-	const last = this.lastProgress.get(client.id) ?? 0;
-	if (now - last < PROGRESS_MIN_INTERVAL_MS) return;
-	this.lastProgress.set(client.id, now);
-
-	const delta = this.gameService.updateProgress(client.id, payload.chars);
+	const delta = this.gameService.updateProgress(client.id, payload.chars, payload.durationMs, payload.accuracy);
 	if (!delta)
 		return;
 

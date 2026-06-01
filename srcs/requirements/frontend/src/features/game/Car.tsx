@@ -1,19 +1,17 @@
-//import React from "react";
-
 const PALETTES: [string, string][] = [
-  ["#10b981", "#065f46"], // emerald
-  ["#3b82f6", "#1e3a8a"], // blue
-  ["#f97316", "#9a3412"], // orange
-  ["#facc15", "#78350f"], // yellow
-  ["#a78bfa", "#4c1d95"], // violet
-  ["#f87171", "#7f1d1d"], // red
+  ["#10b981", "#065f46"],
+  ["#3b82f6", "#1e3a8a"],
+  ["#f97316", "#9a3412"],
+  ["#facc15", "#78350f"],
+  ["#a78bfa", "#4c1d95"],
+  ["#f87171", "#7f1d1d"],
 ];
 
 export const CAR_COUNT = PALETTES.length;
 
 function CarShape({ variant, p, d }: { variant: number; p: string; d: string }) {
   switch (variant % CAR_COUNT) {
-    case 0: return (  // sporty hatchback
+    case 0: return (
       <>
         <rect x="2" y="9" width="44" height="11" rx="3" fill={p} />
         <rect x="10" y="3" width="22" height="8" rx="2" fill={d} />
@@ -21,7 +19,7 @@ function CarShape({ variant, p, d }: { variant: number; p: string; d: string }) 
         <circle cx="38" cy="23" r="4" fill="#111827" />
       </>
     );
-    case 1: return (  // classic sedan
+    case 1: return (
       <>
         <rect x="2" y="8" width="46" height="12" rx="2" fill={p} />
         <rect x="8" y="2" width="28" height="8" rx="1" fill={d} />
@@ -29,7 +27,7 @@ function CarShape({ variant, p, d }: { variant: number; p: string; d: string }) 
         <circle cx="40" cy="23" r="4" fill="#111827" />
       </>
     );
-    case 2: return (  // pickup truck
+    case 2: return (
       <>
         <rect x="2" y="6" width="22" height="14" rx="2" fill={p} />
         <rect x="24" y="13" width="26" height="7" rx="1" fill={d} />
@@ -37,7 +35,7 @@ function CarShape({ variant, p, d }: { variant: number; p: string; d: string }) 
         <circle cx="40" cy="23" r="4" fill="#111827" />
       </>
     );
-    case 3: return (  // formula / race car
+    case 3: return (
       <>
         <rect x="4" y="13" width="44" height="7" rx="4" fill={p} />
         <rect x="18" y="7" width="14" height="8" rx="3" fill={d} />
@@ -47,7 +45,7 @@ function CarShape({ variant, p, d }: { variant: number; p: string; d: string }) 
         <circle cx="39" cy="23" r="4" fill="#111827" />
       </>
     );
-    case 4: return (  // van
+    case 4: return (
       <>
         <rect x="2" y="5" width="44" height="15" rx="2" fill={p} />
         <rect x="12" y="8" width="8" height="6" rx="1" fill={d} />
@@ -56,7 +54,7 @@ function CarShape({ variant, p, d }: { variant: number; p: string; d: string }) 
         <circle cx="39" cy="23" r="4" fill="#111827" />
       </>
     );
-    default: return (  // muscle car
+    default: return (
       <>
         <rect x="2" y="9" width="46" height="11" rx="3" fill={p} />
         <rect x="14" y="3" width="18" height="8" rx="2" fill={d} />

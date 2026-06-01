@@ -17,18 +17,15 @@ export default function Game() {
   const [gameKey, setGameKey] = useState(0);
   const isTouch = useTouchDevice();
 
-  // --- practice (offline, single-player) ---
   const [pPhase, setPPhase] = useState<PracticePhase>("racing");
   const [pCountdown, setPCountdown] = useState(5);
 
-  // --- multiplayer (socket-driven) ---
   const race = useRaceSocket();
 
   useEffect(() => {
     if (mode === "multiplayer" && !isTouch) race.joinQueue();
   }, [mode, race.joinQueue, isTouch]);
 
-  // ---- practice countdown clock ----
   useEffect(() => {
     if (mode !== "practice") return;
     if (pPhase === "countdown") {
@@ -45,7 +42,6 @@ export default function Game() {
     }
   }, [mode, pPhase, pCountdown]);
 
-  // ---- multiplayer countdown ticker (epoch ms -> seconds remaining) ----
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (race.phase !== "countdown" || race.countdownEndsAt == null) return;
@@ -66,13 +62,11 @@ export default function Game() {
     );
   }
 
-  // ===== Back to menu =====
   const backToMenu = () => {
     if (mode === "multiplayer") race.leaveQueue();
     navigate('/');
   };
 
-  // ===== Practice =====
   if (mode === "practice") {
     const overlay =
       pPhase === "countdown" ? String(pCountdown) :
@@ -94,15 +88,12 @@ export default function Game() {
     );
   }
 
-  // ===== Multiplayer =====
   const topBar = (label: string, onClick: () => void) => (
     <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start">
       <Btn size="sm" variant="ghost" onClick={onClick}>{label}</Btn>
     </div>
   );
 
-  // Server refused the join (e.g. this account is already racing in another
-  // tab). Show why and offer a way back; don't sit on the joining screen.
   if (race.rejected) {
     return (
       <div className="w-full flex flex-col items-center gap-3">
@@ -118,7 +109,6 @@ export default function Game() {
     );
   }
 
-  // Still connecting / no lobby snapshot yet: brief joining screen.
   if (race.phase === "idle" || race.matchText == null) {
     return (
       <div className="w-full flex flex-col items-center gap-3">
@@ -130,9 +120,6 @@ export default function Game() {
     );
   }
 
-  // One play area for waiting -> countdown -> racing -> finished. The passage
-  // and tracks show immediately; players/bots populate as they join; typing
-  // stays disabled until the server starts the race.
   const secondsLeft =
     race.phase === "countdown" && race.countdownEndsAt != null
       ? Math.max(0, Math.ceil((race.countdownEndsAt - now) / 1000))

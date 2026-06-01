@@ -11,8 +11,10 @@ import {
 	LOBBY_WAIT_MS,
 	LOBBY_COUNTDOWN_MS,
 	LOBBY_JOIN_LOCK_MS,
-	BOTS_ON_SOLO,
+	MIN_BOTS_PAD,
+	BOT_FILL_INTERVAL_MS,
 	BOT_TICK_MS,
+	PROGRESS_MIN_INTERVAL_MS,
 } from '../common/game.constant';
 import { AchievementService } from '../achievement/achievement.service';
 import { BotService } from './bot.service';
@@ -24,7 +26,6 @@ import {
 	RaceResult,
 } from './game.types';
 
-// What the gateway hands us when a socket asks to play.
 export type JoinInput = {
 	socketId: string;
 	kind: 'user' | 'guest';
@@ -33,9 +34,6 @@ export type JoinInput = {
 	avatarUrl: string | null;
 };
 
-// Outcome of a matchmaking request. 'busy' = this socket is already in a room;
-// 'duplicate_session' = this logged-in user is already live in a room (e.g. a
-// second browser tab), so the new socket is refused.
 export type AssignResult =
 	| { status: 'joined'; room: RoomState }
 	| { status: 'busy' }
@@ -63,12 +61,10 @@ export class GameService {
 	private finalizing = new Set<string>();
 	private botSeq = 0;
 
-	// The gateway injects the namespace once, so per-room timers can emit directly.
 	setServer(server: Namespace): void {
 		this.server = server;
 	}
 
-	// ----------------------------------------------------------------- helpers
 	getRoom(roomId: string): RoomState | undefined {
 		return this.rooms.get(roomId);
 	}
@@ -94,7 +90,12 @@ export class GameService {
 		return n;
 	}
 
-	// Humans still connected (a mid-race leaver keeps its slot but socketId is nulled).
+	private botCount(room: RoomState): number {
+		let n = 0;
+		for (const p of room.players.values()) if (p.kind === 'bot') n++;
+		return n;
+	}
+
 	private connectedHumanCount(room: RoomState): number {
 		let n = 0;
 		for (const p of room.players.values())
@@ -102,9 +103,6 @@ export class GameService {
 		return n;
 	}
 
-	// A logged-in user may only occupy one live slot at a time (prevents the
-	// same account joining a room from two tabs). Mid-race leavers have a null
-	// socketId and so don't block a fresh join.
 	private userInRoom(userId: number): boolean {
 		for (const room of this.rooms.values())
 			for (const p of room.players.values())
@@ -119,10 +117,6 @@ export class GameService {
 		return `b${++this.botSeq}`;
 	}
 
-	// --------------------------------------------------------------- matchmaking
-	// Returns the room the socket should join (the gateway does socket.join), or
-	// a rejection status if the socket is already busy or the user is already
-	// live in another room (e.g. a second browser tab).
 	assign(input: JoinInput): AssignResult {
 		if (this.isInRoom(input.socketId)) return { status: 'busy' };
 		if (input.kind === 'user' && input.userId != null && this.userInRoom(input.userId))
@@ -138,6 +132,7 @@ export class GameService {
 			chars: 0,
 			progress: 0,
 			wpm: 0,
+			accuracy: 0,
 			finished: false,
 			finishedAt: null,
 		};
@@ -150,7 +145,6 @@ export class GameService {
 		}
 
 		this.addParticipant(existing, participant);
-		// startCountdown emits a lobby update itself; otherwise emit here.
 		if (existing.phase === 'waiting' && this.humanCount(existing) >= 2)
 			this.startCountdown(existing);
 		else
@@ -168,8 +162,6 @@ export class GameService {
 					r.countdownEndsAt - now > LOBBY_JOIN_LOCK_MS);
 			return openPhase && this.humanCount(r) < MAX_PLAYERS;
 		});
-		// Prefer lobbies with the most humans (match real players together),
-		// then the fullest, to consolidate into near-starting games.
 		eligible.sort((a, b) => {
 			const byHumans = this.humanCount(b) - this.humanCount(a);
 			if (byHumans !== 0) return byHumans;
@@ -187,7 +179,9 @@ export class GameService {
 			players: new Map([[host.pid, host]]),
 			hostPid: host.pid,
 			playerCount: 0,
+			botTarget: 0,
 			waitTimer: null,
+			botFillTimer: null,
 			countdownTimer: null,
 			countdownEndsAt: null,
 			startedAt: null,
@@ -197,7 +191,9 @@ export class GameService {
 		this.rooms.set(room.id, room);
 		if (host.socketId) this.socketToRoom.set(host.socketId, room.id);
 
+		room.botTarget = this.rollBotTarget(this.humanCount(room));
 		room.waitTimer = setTimeout(() => this.onWaitTimeout(room.id), LOBBY_WAIT_MS);
+		this.scheduleBotFill(room);
 		console.log(`[Lobby][${room.id}] created by ${host.username}`);
 		return room;
 	}
@@ -206,42 +202,81 @@ export class GameService {
 		if (room.players.size >= MAX_PLAYERS) this.evictBot(room);
 		room.players.set(p.pid, p);
 		if (p.socketId) this.socketToRoom.set(p.socketId, room.id);
+		this.repadBots(room);
 	}
 
-	private evictBot(room: RoomState): void {
+	private evictBot(room: RoomState): boolean {
 		for (const p of room.players.values()) {
 			if (p.kind === 'bot') {
 				room.players.delete(p.pid);
-				console.log(`[Lobby][${room.id}] evicted bot ${p.pid} for a human`);
-				return;
+				console.log(`[Lobby][${room.id}] evicted bot ${p.pid}`);
+				return true;
 			}
+		}
+		return false;
+	}
+
+	private rollBotTarget(humanCount: number): number {
+		const slots = MAX_PLAYERS - humanCount;
+		if (slots <= 0) return 0;
+		return MIN_BOTS_PAD + Math.floor(Math.random() * (slots - MIN_BOTS_PAD + 1));
+	}
+
+	private repadBots(room: RoomState): void {
+		room.botTarget = this.rollBotTarget(this.humanCount(room));
+		while (
+			(this.botCount(room) > room.botTarget || room.players.size > MAX_PLAYERS) &&
+			this.evictBot(room)
+		);
+	}
+
+	private addBot(room: RoomState): void {
+		const pid = this.makePid('bot', null);
+		room.players.set(pid, {
+			pid,
+			kind: 'bot',
+			socketId: null,
+			userId: null,
+			username: `Bot ${pid.slice(1)}`,
+			avatarUrl: null,
+			chars: 0,
+			progress: 0,
+			wpm: 0,
+			accuracy: 0,
+			finished: false,
+			finishedAt: null,
+		});
+	}
+
+	private scheduleBotFill(room: RoomState): void {
+		if (room.botFillTimer)
+			return;
+		room.botFillTimer = setInterval(() => this.botFillTick(room.id), BOT_FILL_INTERVAL_MS);
+	}
+
+	private stopBotFill(room: RoomState): void {
+		if (room.botFillTimer) {
+			clearInterval(room.botFillTimer);
+			room.botFillTimer = null;
 		}
 	}
 
-	private addBots(room: RoomState, count: number): void {
-		for (let i = 0; i < count && room.players.size < MAX_PLAYERS; i++) {
-			const pid = this.makePid('bot', null);
-			room.players.set(pid, {
-				pid,
-				kind: 'bot',
-				socketId: null,
-				userId: null,
-				username: `Bot ${pid.slice(1)}`,
-				avatarUrl: null,
-				chars: 0,
-				progress: 0,
-				wpm: 0,
-				finished: false,
-				finishedAt: null,
-			});
+	private botFillTick(roomId: string): void {
+		const room = this.rooms.get(roomId);
+		if (!room) return;
+		if (room.phase !== 'waiting' && room.phase !== 'countdown') {
+			this.stopBotFill(room);
+			return;
 		}
+		if (this.botCount(room) >= room.botTarget || room.players.size >= MAX_PLAYERS) return;
+		this.addBot(room);
+		this.emitLobbyUpdate(room);
 	}
 
 	private onWaitTimeout(roomId: string): void {
 		const room = this.rooms.get(roomId);
 		if (!room || room.phase !== 'waiting') return;
 		room.waitTimer = null;
-		if (this.humanCount(room) <= 1) this.addBots(room, BOTS_ON_SOLO);
 		this.startCountdown(room);
 	}
 
@@ -265,35 +300,47 @@ export class GameService {
 		void this.startRace(room);
 	}
 
-	// ------------------------------------------------------------------ racing
 	private async startRace(room: RoomState): Promise<void> {
 		if (room.countdownTimer) {
 			clearTimeout(room.countdownTimer);
 			room.countdownTimer = null;
 		}
+		this.stopBotFill(room);
 		room.countdownEndsAt = null;
 		room.phase = 'racing';
 		room.startedAt = Date.now();
 		room.playerCount = room.players.size;
 
 		const userIds = this.userIdsOf(room);
-		const match = await this.prisma.match.create({
-			data: {
-				textSnippet: room.text,
-				startedAt: new Date(),
-				status: MatchStatus.IN_PROGRESS,
-			},
-		});
-		room.matchId = match.id;
-
-		if (userIds.length > 0) {
-			await this.prisma.user.updateMany({
-				where: { id: { in: userIds } },
-				data: { status: UserStatus.IN_GAME },
+		// DB failure must not strand the room: race runs unranked (matchId stays 0) rather
+		// than leaving clients on a frozen countdown with no timers armed.
+		try {
+			const match = await this.prisma.match.create({
+				data: {
+					textSnippet: room.text,
+					startedAt: new Date(),
+					status: MatchStatus.IN_PROGRESS,
+				},
 			});
+			room.matchId = match.id;
+
+			if (userIds.length > 0) {
+				await this.prisma.user.updateMany({
+					where: { id: { in: userIds } },
+					data: { status: UserStatus.IN_GAME },
+				});
+			}
+		} catch (err) {
+			console.error(`[Race][${room.id}] start persistence failed; running unranked`, err);
 		}
 
-		const anchor = await this.botService.anchorWpm(userIds);
+		let anchor: number;
+		try {
+			anchor = await this.botService.anchorWpm(userIds);
+		} catch (err) {
+			console.error(`[Race][${room.id}] anchorWpm failed; using fallback`, err);
+			anchor = await this.botService.anchorWpm([]);
+		}
 		this.botService.initBots(room, anchor);
 
 		this.server.to(room.id).emit('race_start', {
@@ -317,6 +364,7 @@ export class GameService {
 		if (!room || room.phase !== 'racing') return;
 
 		for (const bot of this.botService.step(room)) {
+			if (bot.finished) bot.wpm = this.calcWpm(bot.chars, room.startedAt!);
 			this.server.to(room.id).emit('race_update', {
 				pid: bot.pid,
 				username: bot.username,
@@ -328,10 +376,11 @@ export class GameService {
 		if (this.allFinished(room)) void this.finalizeRace(room.id);
 	}
 
-	// chars = correct characters typed so far this race
 	updateProgress(
 		socketId: string,
 		chars: number,
+		durationMs?: number,
+		accuracy?: number,
 	): { roomId: string; pid: string; username: string; kind: ParticipantKind; progress: number; wpm: number } | null {
 		const room = this.roomOf(socketId);
 		if (!room || room.phase !== 'racing' || !room.startedAt) return null;
@@ -341,12 +390,31 @@ export class GameService {
 
 		if (chars < p.chars) return null;
 
-		const elapsedSec = (Date.now() - room.startedAt!) / 1000;
-		const maxReachable = Math.ceil(elapsedSec * (MAX_WPM * 5 / 60));
-		const safe = Math.min(chars, room.text.length, maxReachable);
+		const now = Date.now();
+		const len = room.text.length;
+		// Anti-cheat: chars can't exceed what MAX_WPM allows for the elapsed time.
+		const maxReachable = Math.ceil(((now - room.startedAt) / 1000) * (MAX_WPM * 5 / 60));
+		const safe = Math.min(chars, len, maxReachable);
+		const isFinish = len > 0 && safe >= len;
+
+		if (!isFinish && p.lastProgressAt != null && now - p.lastProgressAt < PROGRESS_MIN_INTERVAL_MS)
+			return null;
+		p.lastProgressAt = now;
+
 		p.chars = safe;
-		p.progress = room.text.length > 0 ? safe / room.text.length : 1;
-		p.wpm = this.calcWpm(safe, room.startedAt);
+		p.progress = len > 0 ? safe / len : 1;
+		if (accuracy != null) p.accuracy = Math.max(0, Math.min(100, accuracy));
+
+		if (isFinish) {
+			// Use the client's own elapsed time (latency-free finish), clamped between
+			// the server's observed duration and the minimum a MAX_WPM typist could achieve.
+			const minDurationMs = (len / 5) / MAX_WPM * 60000;
+			const serverElapsedMs = now - room.startedAt;
+			let dur = durationMs && durationMs > 0 ? durationMs : serverElapsedMs;
+			dur = Math.min(dur, serverElapsedMs);
+			dur = Math.max(dur, minDurationMs);
+			p.wpm = Math.round((len / 5) / (dur / 60000));
+		}
 
 		return {
 			roomId: room.id,
@@ -358,8 +426,6 @@ export class GameService {
 		};
 	}
 
-	// Called when a socket reports 100%. The finisher's `position` is final the
-	// moment they finish (later finishers can only place behind them).
 	handleFinish(socketId: string): { roomId: string; allDone: boolean; position: number; playerCount: number } | null {
 		const room = this.roomOf(socketId);
 		if (!room || room.phase !== 'racing') return null;
@@ -371,7 +437,7 @@ export class GameService {
 		p.finishedAt = Date.now();
 		p.progress = 1;
 
-		const position = [...room.players.values()].filter(x => x.finished).length;
+		const position = [...room.players.values()].filter(x => x.finishedAt != null).length;
 		const allDone = this.allFinished(room);
 		if (allDone) room.phase = 'finished';
 		return { roomId: room.id, allDone, position, playerCount: room.playerCount };
@@ -385,22 +451,17 @@ export class GameService {
 	async forceFinish(roomId: string): Promise<void> {
 		const room = this.rooms.get(roomId);
 		if (!room || room.phase === 'finished') return;
-		for (const p of room.players.values()) {
-			if (!p.finished) {
-				p.finished = true;
-				p.finishedAt = Date.now();
-			}
-		}
+		for (const p of room.players.values()) p.finished = true;
 		room.phase = 'finished';
 		await this.finalizeRace(roomId);
 	}
 
 	async finalizeRace(roomId: string): Promise<void> {
 		const room = this.rooms.get(roomId);
-		if (!room) return;
-		// Guard against the several paths that can race to finish a room
-		// (last human, last bot, race timeout, disconnect).
-		if (this.finalizing.has(roomId)) return;
+		if (!room)
+			return;
+		if (this.finalizing.has(roomId))
+			return;
 		this.finalizing.add(roomId);
 		room.phase = 'finished';
 		if (room.botTicker) {
@@ -411,11 +472,17 @@ export class GameService {
 		const sorted = [...room.players.values()].sort((a, b) => {
 			const fa = a.finishedAt ?? Infinity;
 			const fb = b.finishedAt ?? Infinity;
-			if (fa !== fb) return fa - fb;
-			// Ties (leavers with null finishedAt, or timeout-finished racers
-			// stamped the same ms): rank the further-along racer higher.
+			if (fa !== fb)
+				return fa - fb;
 			return b.progress - a.progress;
 		});
+
+		// Non-finishers (timed out or left) are scored on their true average over the
+		// full race so idle time drags the number down, not the last live snapshot.
+		if (room.startedAt) {
+			for (const p of room.players.values())
+				if (p.finishedAt == null) p.wpm = this.calcWpm(p.chars, room.startedAt);
+		}
 
 		const results: RaceResult[] = sorted.map((p, i) => ({
 			pid: p.pid,
@@ -425,55 +492,58 @@ export class GameService {
 			wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 		}));
 
-		// Persist only real users; bots & guests are deliberately never stored,
-		// which also keeps them off the leaderboard (it groups by userId).
-		const userRows = sorted
-			.map((p, i) => ({ p, position: i + 1 }))
-			.filter(({ p }) => p.kind === 'user' && p.userId != null);
+		try {
+			const userRows = sorted
+				.map((p, i) => ({ p, position: i + 1 }))
+				.filter(({ p }) => p.kind === 'user' && p.userId != null && !p.left); // leavers not persisted
 
-		const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
-		const nbPlayers = room.players.size - nbBots;
+			const nbBots = [...room.players.values()].filter((p) => p.kind === 'bot').length;
+			const nbPlayers = room.players.size - nbBots;
 
-		await this.prisma.match.update({
-			where: { id: room.matchId },
-			data: { endedAt: new Date(), status: MatchStatus.FINISHED },
-		});
-
-		if (userRows.length > 0) {
-			await this.prisma.matchResult.createMany({
-				data: userRows.map(({ p, position }) => ({
-					matchId: room.matchId,
-					userId: p.userId as number,
-					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
-					position,
-					finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
-					nbPlayers,
-					nbBots,
-				})),
+			await this.prisma.match.update({
+				where: { id: room.matchId },
+				data: { endedAt: new Date(), status: MatchStatus.FINISHED },
 			});
 
-			await this.prisma.user.updateMany({
-				where: { id: { in: userRows.map(({ p }) => p.userId as number) } },
-				data: { status: UserStatus.ONLINE },
-			});
+			if (userRows.length > 0) {
+				await this.prisma.matchResult.createMany({
+					data: userRows.map(({ p, position }) => ({
+						matchId: room.matchId,
+						userId: p.userId as number,
+						wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+						accuracy: p.accuracy,
+						position,
+						finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+						nbPlayers,
+						nbBots,
+					})),
+				});
 
-			const saved = await this.prisma.matchResult.findMany({
-				where: { matchId: room.matchId },
+				await this.prisma.user.updateMany({
+					where: { id: { in: userRows.map(({ p }) => p.userId as number) } },
+					data: { status: UserStatus.ONLINE },
+				});
+
+				const saved = await this.prisma.matchResult.findMany({
+					where: { matchId: room.matchId },
+				});
+				for (const r of saved)
+					await this.achievementService.checkAndUnlockAchievements(r.userId, r);
+			}
+		} catch (err) {
+			console.error(`[Race][${room.id}] finalize persistence failed`, err);
+			await this.releaseUsers(room); // best effort: don't leave users stuck IN_GAME
+		} finally {
+			// Guaranteed: clients always receive standings and the room is always torn down.
+			this.server.to(room.id).emit('race_finished', {
+				results,
+				playerCount: room.playerCount,
 			});
-			for (const r of saved)
-				await this.achievementService.checkAndUnlockAchievements(r.userId, r);
+			console.log(`[Race][${room.id}] finished / ${room.playerCount} racers`);
+			this.cleanRoom(roomId);
 		}
-
-		this.server.to(room.id).emit('race_finished', {
-			results,
-			playerCount: room.playerCount,
-		});
-
-		console.log(`[Race][${room.id}] finished / ${room.playerCount} racers`);
-		this.cleanRoom(roomId);
 	}
 
-	// --------------------------------------------------------------- disconnect
 	async handleDisconnect(socketId: string): Promise<{ roomId: string } | null> {
 		const room = this.roomOf(socketId);
 		if (!room) return null;
@@ -489,6 +559,7 @@ export class GameService {
 				this.cleanRoom(room.id);
 				return { roomId: room.id };
 			}
+			this.repadBots(room);
 			this.emitLobbyUpdate(room);
 			return { roomId: room.id };
 		}
@@ -497,11 +568,9 @@ export class GameService {
 			return { roomId: room.id };
 		}
 
-		// Racing: keep the leaver in place so their car freezes where it stopped
-		// and they still count toward placement. Mark finished (finishedAt stays
-		// null) so the race can resolve and they sort last.
 		p.socketId = null;
 		p.finished = true;
+		p.left = true;
 		if (p.userId != null) {
 			await this.prisma.user.update({
 				where: { id: p.userId },
@@ -530,7 +599,6 @@ export class GameService {
 		return { roomId: room.id };
 	}
 
-	// -------------------------------------------------------------------- utils
 	private userIdsOf(room: RoomState): number[] {
 		const ids: number[] = [];
 		for (const p of room.players.values())
@@ -556,6 +624,7 @@ export class GameService {
 		const room = this.rooms.get(roomId);
 		if (!room) return;
 		if (room.waitTimer) clearTimeout(room.waitTimer);
+		if (room.botFillTimer) clearInterval(room.botFillTimer);
 		if (room.countdownTimer) clearTimeout(room.countdownTimer);
 		if (room.raceTimeout) clearTimeout(room.raceTimeout);
 		if (room.botTicker) clearInterval(room.botTicker);
@@ -566,7 +635,6 @@ export class GameService {
 		console.log(`[Room][${roomId}] deleted`);
 	}
 
-	// ------------------------------------------------------------------- emits
 	private emitLobbyUpdate(room: RoomState): void {
 		const players: LobbyParticipant[] = [...room.players.values()].map((p) => ({
 			pid: p.pid,

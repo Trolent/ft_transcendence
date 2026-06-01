@@ -7,7 +7,6 @@ function correctPrefixLength(typed: string, word: string): number {
   return i;
 }
 
-// Allow ~30 WPM (2.5 chars/sec) to finish, minimum 20 s
 function calcMaxTime(passageLength: number): number {
   return Math.max(20, Math.ceil(passageLength / 2.5));
 }
@@ -31,12 +30,13 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   const totalCorrect = completedChars + correctInCurrent;
   const progress = passage.length > 0 ? totalCorrect / passage.length : 0;
   const finished = wordIndex >= words.length;
-  const timedOut = !practice && active && elapsed >= maxTime && !finished;
-  const playerDone = finished || forcedEnd || timedOut;
-  const raceOver = forcedEnd || timedOut;
-  const timeLeft = Math.max(0, maxTime - elapsed);
-  const minutes = elapsed / 60;
-  const wpm = lockedWpm ?? (minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
+  const localTimeout = !practice && active && elapsed >= maxTime && !finished;
+  const playerDone = finished || forcedEnd || localTimeout;
+  const timedOut = !practice && !finished && (localTimeout || forcedEnd);
+  const raceOver = forcedEnd || localTimeout;
+  const timeLeft = timedOut ? 0 : Math.max(0, maxTime - elapsed);
+  const liveMinutes = startedAt.current != null ? (Date.now() - startedAt.current) / 60000 : 0;
+  const wpm = lockedWpm ?? (liveMinutes > 0 ? Math.round(totalCorrect / 5 / liveMinutes) : 0);
   const accuracy = totalTyped > 0
     ? Math.min(100, Math.round((completedChars / totalTyped) * 100))
     : 0;
@@ -56,13 +56,13 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
     if (!isLast) setTotalTyped((t: number) => t + 1);
   };
 
-  // Lock WPM and elapsed when the race is over
   useEffect(() => {
     if (playerDone && lockedWpm === null) {
-      setLockedWpm(minutes > 0 ? Math.round(totalCorrect / 5 / minutes) : 0);
-      setLockedElapsed(elapsed);
+      const mins = startedAt.current != null ? (Date.now() - startedAt.current) / 60000 : 0;
+      setLockedWpm(mins > 0 ? Math.round(totalCorrect / 5 / mins) : 0);
+      setLockedElapsed(Math.round(mins * 60));
     }
-  }, [playerDone, lockedWpm, totalCorrect, minutes, elapsed]);
+  }, [playerDone, lockedWpm, totalCorrect]);
 
   useEffect(() => {
     if (active && startedAt.current === null) {
@@ -83,7 +83,7 @@ export function useGameState(active: boolean, forcedEnd = false, practice = fals
   return {
     passage, words, wordIndex, typed,
     handleType, completeWord,
-    elapsed, timeLeft, wpm, progress, finished, playerDone,
+    elapsed, timeLeft, wpm, progress, finished, playerDone, timedOut,
     finishTime: lockedElapsed,
     accuracy,
     totalCorrect,
