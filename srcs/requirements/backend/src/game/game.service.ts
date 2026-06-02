@@ -561,6 +561,23 @@ export class GameService {
 					where: { id: room.matchId },
 					data: { endedAt: new Date(), status: MatchStatus.FINISHED },
 				});
+
+				// Backstop for any finisher whose per-finish write was lost (swallowed DB error).
+				const finishers = sorted
+					.map((p, i) => ({ p, position: i + 1 }))
+					.filter(({ p }) => p.kind === 'user' && p.userId != null && !p.left);
+				if (finishers.length > 0) {
+					const saved = await this.prisma.matchResult.findMany({
+						where: { matchId: room.matchId },
+						select: { userId: true },
+					});
+					const savedIds = new Set(saved.map((r) => r.userId));
+					for (const { p, position } of finishers) {
+						if (!savedIds.has(p.userId as number)) {
+							await this.completePlayer(room, p, position);
+						}
+					}
+				}
 			}
 			await this.releaseUsers(room);
 		} catch (err) {
