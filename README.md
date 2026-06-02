@@ -92,12 +92,12 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 
 | Module | Type | Points | Implementation | Contributors |
 |--------|------|--------|----------------|--------------|
-| Frontend Framework (React) | Minor | 1 | SPA with React, Vite, TypeScript, reusable components, routing and state management | jbergero |
+| Frontend Framework (React) | Minor | 1 | SPA with React, Vite, TypeScript, Tailwind and react-router | jbergero |
 | Backend Framework (NestJS) | Minor | 1 | REST API, authentication, validation, WebSocket gateways | kpires |
 | Real-time Communication (WebSockets) | Major | 2 | Used for chat, matchmaking, game synchronization and status | akdovlet, jbergero, kpires |
 | User Interaction System | Major | 2 | Friends system, chat, profiles, status | jbergero, kpires |
 | ORM | Minor | 1 | Type-safe database schema and migrations using Prisma | kpires |
-| Design System | Minor | 1 | Reusable UI components (Alert, Avatar, Btn, Container, Heading, Label, Input, TextArea, Text, List, Modal, Pagination, AuthForm...) | jbergero |
+| Design System | Minor | 1 | Reusable UI components (Alert, Avatar, Btn, Container, Heading, Label, Input, TextArea, Text, List, Modal, Pagination, AuthForm...) built with Tailwind | jbergero |
 | Advanced Search | Minor | 1 | Paginated search with filters | trolland |
 
 **Web subtotal: 9 points**
@@ -137,10 +137,10 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 
 | Module | Type | Points | Implementation | Contributors |
 |--------|------|--------|----------------|--------------|
-| Anti-Cheat System | Minor ??| 1 | Server-side validation of game actions | akdovlet |
+| Anti-Cheat System | Major | 2 | Server-side validation of game actions | akdovlet |
 | Public Web Access via Cloudflare Tunnel | Minor | 1 | Securely exposes the application through a public domain with HTTPS without requiring port forwarding | trolland |
 
-**Custom subtotal: 2-3 points**
+**Custom subtotal: 3 points**
 
 ### Final Total
 
@@ -150,9 +150,9 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 | Accessibility & Internationalization | 2 |
 | User Management | 4 |
 | Gaming & Experience | 5 |
-| Modules of choice | 2 |
+| Modules of choice | 3 |
 
-**TOTAL: 22 points**
+**TOTAL: 23 points**
 
 ## Database Schema
 
@@ -248,12 +248,16 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 
 ### axbaudri
 
+**Frontend developer**
+
 * Settings page (form, api call): e-mail, password change, default language
 * Redact privacy and terms page content
 * Footer
 * UX testing
 
 ### akdovlet
+
+**Full-stack developer**
 
 * Game engine
 * Game component design
@@ -262,6 +266,8 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 * Server-side anti-cheat
 
 ### jbergero
+
+**Full-stack developer, Product Owner (PO)**
 
 * Bootstrap frontend (React, Vite, Tailwind), set up router
 * Design system: reusable components (Alert, Avatar, Btn, Container, Heading, Label, Input, TextArea, Text, List, Modal, Pagination, AuthForm...), color palette and layout components
@@ -277,6 +283,8 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 
 ### kpires
 
+**Full-stack developer, Technical Lead / Architect**
+
 * Backend bootstrap (NestJS), JWT authentication, throttle rate limit, and security (Helmet, CORS, npm patches)
 * DB creation, Prisma setup with migrations and schema edits
 * Core REST API endpoints: auth, users, friends, leaderboard, settings, and achievements (with auto-unlock)
@@ -291,6 +299,8 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 * GitHub: PR and issue reviews
 
 ### trolland
+
+**Full-stack developer, Project Manager (PM)**
 
 * Discord and GitHub automation setup
 * Initial project setup
