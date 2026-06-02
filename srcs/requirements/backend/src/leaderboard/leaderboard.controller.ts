@@ -15,6 +15,8 @@ export class LeaderBoardController {
     @ApiQuery({ name: 'page', required: false, example: 1 })
     @ApiQuery({ name: 'limit', required: false, example: 20 })
     @ApiQuery({ name: 'q', required: false, description: 'Filter by username' })
+    @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'], example: 'desc' })
+    @ApiQuery({ name: 'minLevel', required: false, example: 1 })
     @ApiResponse({ status: 200, type: PaginatedResponse })
     @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
     @Get()

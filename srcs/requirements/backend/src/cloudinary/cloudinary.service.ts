@@ -33,17 +33,13 @@ export class CloudinaryService {
                             crop: 'fill',
                             format: 'webp'
                         }]
-                    },
-                (error, uploadResult) => {
-                    if (error) {
+                },(error, uploadResult) => {
+                    if (error)
                         return reject(error);
-                    }
-                return resolve(uploadResult!);
+                    return resolve(uploadResult!);
                 }).end(file.buffer);
             });
-
             return (result as UploadApiResponse).secure_url;
-    
         }
         catch {
         throw new InternalServerErrorException('AVATAR_UPLOAD_FAILED');

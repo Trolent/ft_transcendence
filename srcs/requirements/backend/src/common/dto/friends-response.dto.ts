@@ -12,7 +12,7 @@ export class FriendRequestDto extends FriendUserDto {
 }
 
 export class RelationshipResponseDto {
-    @ApiProperty({ example: 'NONE', enum: ['NONE', 'PENDING_SENT', 'PENDING_RECEIVED', 'ACCEPTED', 'BLOCKED_BY_ME', 'BLOCKED_BY_THEM'] })
+    @ApiProperty({ example: 'NONE', enum: ['NONE', 'PENDING_SENT', 'PENDING_RECEIVED', 'ACCEPTED'] })
     relationship: string;
 }
 
