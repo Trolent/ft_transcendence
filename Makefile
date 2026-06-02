@@ -73,14 +73,6 @@ prisma:
 	@docker exec backend pkill -f "prisma studio" 2>/dev/null || true
 	@docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec -d backend npx prisma studio --port 5555
 
-trust-cert:
-	@if [ "$(DOMAIN)" = "localhost" ]; then exit 0; fi
-	@until docker exec nginx test -f /etc/nginx/ssl/cert.pem 2>/dev/null; do sleep 1; done
-	@docker cp nginx:/etc/nginx/ssl/cert.pem /tmp/$(DOMAIN).crt
-	@sudo cp /tmp/$(DOMAIN).crt /usr/local/share/ca-certificates/$(DOMAIN).crt
-	@sudo update-ca-certificates > /dev/null 2>&1
-	@which certutil > /dev/null 2>&1 && certutil -d sql:$$HOME/.pki/nssdb -A -n $(DOMAIN) -t "CT,C,C" -i /tmp/$(DOMAIN).crt 2>/dev/null || true
-
 seed:
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run seed
 
