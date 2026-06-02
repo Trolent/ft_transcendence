@@ -133,8 +133,6 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 
 ### Modules of choice
 
-> à revoir ? Le anti-cheat system peut être Major ? Mais on fait quoi de la doc API ?
-
 | Module | Type | Points | Implementation | Contributors |
 |--------|------|--------|----------------|--------------|
 | Anti-Cheat System | Major | 2 | Server-side validation of game actions | akdovlet |
@@ -153,6 +151,91 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 | Modules of choice | 3 |
 
 **TOTAL: 23 points**
+
+## Individual Contributions
+
+### axbaudri
+
+> **Frontend developer**
+
+* Settings page (form, api call): e-mail, password change, default language
+* Redact privacy and terms page content
+* Footer
+* UX testing
+
+### akdovlet
+
+> **Full-stack developer**
+
+* Game engine
+* Game component design
+* Bots with randomized WPM
+* Multiplayer matchmaking and game logic
+* Server-side anti-cheat
+
+### jbergero
+
+> **Full-stack developer, Product Owner (PO)**
+
+* Bootstrap frontend (React, Vite, Tailwind), set up router
+* Design system: reusable components (Alert, Avatar, Btn, Container, Heading, Label, Input, TextArea, Text, List, Modal, Pagination, AuthForm...), color palette and layout components
+* Auth: implement auth (context, forms, hook, api calls) on the frontend
+* Profile, friends system: implement both features on the frontend (api calls, buttons, pages, components...)
+* Achievements: full frontend implementation, backend fixes
+* Status system: WebSocket frontend, backend fixes, context and hook
+* Chat: WebSocket frontend implementation, UI/UX, basic notification system for new messages using WebSocket
+* GitHub: CI actions setup, PR reviews, merges, conflict resolution
+* Internationalization (i18n): create and edit some translation keys
+* Database: made 2 migrations and small schema edits
+* Miscellaneous backend fixes and small features
+
+### kpires
+
+> **Full-stack developer, Technical Lead / Architect**
+
+* Backend bootstrap (NestJS), JWT authentication, throttle rate limit, and security (Helmet, CORS, npm patches)
+* DB creation, Prisma setup with migrations and schema edits
+* Core REST API endpoints: auth, users, friends, leaderboard, settings, and achievements (with auto-unlock)
+* Complete OAuth 42 implementation with backup password support
+* WebSocket backend implementation for chat, status, and base game backend (with WS hardening and reconnection)
+* API documentation (Swagger UI and AsyncAPI viewer)
+* Avatar upload integration via Cloudinary
+* Docker environment setup (dev/prod) and shell deployment scripts
+* Internationalization (i18n) setup and complete frontend translations (EN/FR/ES)
+* Frontend UI/UX: responsive design fixes, navbar redesign, matrix rain home page, chat improvements, and blocking mobile devices on game pages
+* Frontend features: Leaderboard redesign, profile page (history table), and conditional settings UI (oauth password)
+* GitHub: PR and issue reviews
+
+### trolland
+
+> **Full-stack developer, Project Manager (PM)**
+
+* Discord and GitHub automation setup
+* Initial project setup
+* DevOps: Docker environment setup (dev/prod) and shell deployment scripts
+* Cloudflare Tunnel integration for public access
+* Database seed system
+* Reusable paginated search bar with filters
+* Miscellaneous fixes
+* GitHub: PR and issue reviews
+
+## Ressources
+
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- [React documentation](https://react.dev/)
+- [Vite documentation](https://vite.dev/)
+- [devhints.io cheatsheets](https://devhints.io/)
+- [quickref.ME cheatsheets](https://quickref.me/)
+- [w3schools](https://www.w3schools.com/)
+- [patterncraft](https://patterncraft.fun/) for CSS background
+- [tailwind CSS documentation](https://tailwindcss.com/docs/)
+
+**AI usage**
+
+- explain concepts
+- bug fixes
+- repetitive tasks
+- redact internal documentation (dev wiki)
 
 ## Database Schema
 
@@ -241,72 +324,3 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 | nbBots     | Int?                        |
 | position   | Int?                        |
 | finishedAt | DateTime?                   |
-
-## Individual Contributions
-
-> Detailed breakdown of what each member did, what challenges they faced
-
-### axbaudri
-
-**Frontend developer**
-
-* Settings page (form, api call): e-mail, password change, default language
-* Redact privacy and terms page content
-* Footer
-* UX testing
-
-### akdovlet
-
-**Full-stack developer**
-
-* Game engine
-* Game component design
-* Bots with randomized WPM
-* Multiplayer matchmaking and game logic
-* Server-side anti-cheat
-
-### jbergero
-
-**Full-stack developer, Product Owner (PO)**
-
-* Bootstrap frontend (React, Vite, Tailwind), set up router
-* Design system: reusable components (Alert, Avatar, Btn, Container, Heading, Label, Input, TextArea, Text, List, Modal, Pagination, AuthForm...), color palette and layout components
-* Auth: implement auth (context, forms, hook, api calls) on the frontend
-* Profile, friends system: implement both features on the frontend (api calls, buttons, pages, components...)
-* Achievements: full frontend implementation, backend fixes
-* Status system: WebSocket frontend, backend fixes, context and hook
-* Chat: WebSocket frontend implementation, UI/UX, basic notification system for new messages using WebSocket
-* GitHub: CI actions setup, PR reviews, merges, conflict resolution
-* Internationalization (i18n): create and edit some translation keys
-* Database: made 2 migrations and small schema edits
-* Miscellaneous backend fixes and small features
-
-### kpires
-
-**Full-stack developer, Technical Lead / Architect**
-
-* Backend bootstrap (NestJS), JWT authentication, throttle rate limit, and security (Helmet, CORS, npm patches)
-* DB creation, Prisma setup with migrations and schema edits
-* Core REST API endpoints: auth, users, friends, leaderboard, settings, and achievements (with auto-unlock)
-* Complete OAuth 42 implementation with backup password support
-* WebSocket backend implementation for chat, status, and base game backend (with WS hardening and reconnection)
-* API documentation (Swagger UI and AsyncAPI viewer)
-* Avatar upload integration via Cloudinary
-* Docker environment setup (dev/prod) and shell deployment scripts
-* Internationalization (i18n) setup and complete frontend translations (EN/FR/ES)
-* Frontend UI/UX: responsive design fixes, navbar redesign, matrix rain home page, chat improvements, and blocking mobile devices on game pages
-* Frontend features: Leaderboard redesign, profile page (history table), and conditional settings UI (oauth password)
-* GitHub: PR and issue reviews
-
-### trolland
-
-**Full-stack developer, Project Manager (PM)**
-
-* Discord and GitHub automation setup
-* Initial project setup
-* DevOps: Docker environment setup (dev/prod) and shell deployment scripts
-* Cloudflare Tunnel integration for public access
-* Database seed system
-* Reusable paginated search bar with filters
-* Miscellaneous fixes
-* GitHub: PR and issue reviews
