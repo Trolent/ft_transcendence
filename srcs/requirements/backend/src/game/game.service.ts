@@ -658,7 +658,15 @@ export class GameService {
 		}
 
 		if (this.connectedHumanCount(room) === 0) {
-			if (!this.finalizing.has(room.id)) {
+			// Last human left mid-race. If anyone already crossed the line, finalize so the
+			// bots' standings — ranked by progress for those that never finished — are saved
+			// alongside the finisher. Otherwise the race was abandoned with no result: cancel it.
+			const anyHumanFinished = [...room.players.values()].some(
+				(x) => x.kind === 'user' && x.finishedAt != null,
+			);
+			if (anyHumanFinished) {
+				await this.finalizeRace(room.id);
+			} else if (!this.finalizing.has(room.id)) {
 				this.finalizing.add(room.id);
 				if (room.botTicker) {
 					clearInterval(room.botTicker);
