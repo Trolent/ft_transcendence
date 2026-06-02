@@ -473,24 +473,24 @@ export class GameService {
 		await this.finalizeRace(roomId);
 	}
 
-	async recordFinish(socketId: string, position: number): Promise<void> {
+	async recordFinish(socketId: string, position: number): Promise<{ newAchievements: { key: string; label: string; description: string; icon: string }[]; newLevel: number | null } | null> {
 		const room = this.roomOf(socketId);
 		if (!room) {
-			return;
+			return null;
 		}
 		const p = this.participantOf(room, socketId);
 		if (!p) {
-			return;
+			return null;
 		}
-		await this.completePlayer(room, p, position);
+		return this.completePlayer(room, p, position);
 	}
 
-	private async completePlayer(room: RoomState, p: Participant, position: number): Promise<void> {
+	private async completePlayer(room: RoomState, p: Participant, position: number): Promise<{ newAchievements: { key: string; label: string; description: string; icon: string }[]; newLevel: number | null } | null> {
 		if (p.kind !== 'user' || p.userId == null || p.left) {
-			return;
+			return null;
 		}
 		if (room.matchId === 0) {
-			return;
+			return null;
 		}
 
 		const nbBots = [...room.players.values()].filter((x) => x.kind === 'bot').length;
@@ -514,9 +514,10 @@ export class GameService {
 					nbBots,
 				},
 			});
-			await this.achievementService.checkAndUnlockAchievements(p.userId, result);
+			return await this.achievementService.checkAndUnlockAchievements(p.userId, result);
 		} catch (err) {
 			console.error(`[Race][${room.id}] finish persistence for ${p.username} failed`, err);
+			return null;
 		}
 	}
 

@@ -146,7 +146,13 @@
     "starting_in": "Départ dans {{n}}…",
     "bot": "Robot",
     "mobile_title": "Desktop uniquement",
-    "mobile_message": "Typerun est conçu pour le jeu au clavier. Ouvre cette page sur un ordinateur pour participer."
+    "mobile_message": "Typerun est conçu pour le jeu au clavier. Ouvre cette page sur un ordinateur pour participer.",
+    "rewards_level_up": "Niveau supérieur !",
+    "rewards_level": "Niveau {{level}}",
+    "rewards_achievement": "Succès débloqué",
+    "rewards_achievements": "{{count}} succès débloqués",
+    "rewards_continue": "Continuer",
+    "rewards_go_profile": "Voir le profil"
   },
   "oauth_callback": {
     "connecting": "Connexion en cours…"

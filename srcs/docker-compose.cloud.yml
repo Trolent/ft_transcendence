@@ -1,0 +1,20 @@
+services:
+  nginx:
+    environment:
+      - DOMAIN=${CLOUDFLARE_DOMAIN}
+
+  backend:
+    environment:
+      - FORTYTWO_CLIENT_ID=${FORTYTWO_CLIENT_ID_CLOUDFLARE:-}
+      - FORTYTWO_CLIENT_SECRET=${FORTYTWO_CLIENT_SECRET_CLOUDFLARE:-}
+      - FORTYTWO_CALLBACK_URL=https://${CLOUDFLARE_DOMAIN}/api/auth/42/callback
+      - FRONTEND_URL=https://${CLOUDFLARE_DOMAIN}
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - transcendence
+    depends_on:
+      - nginx
+    restart: always

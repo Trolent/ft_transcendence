@@ -23,8 +23,10 @@ export class AchievementService implements OnModuleInit {
         }
     }
 
-    async checkAndUnlockAchievements(userId: number, matchResult: MatchResult) {
-        
+    async checkAndUnlockAchievements(userId: number, matchResult: MatchResult): Promise<{
+        newAchievements: { key: string; label: string; description: string; icon: string }[];
+        newLevel: number | null;
+    }> {
         const allResults = await this.prisma.matchResult.findMany({ where: { userId } });
         const wins = allResults.filter(r => r.position === 1);
         const toUnlock: string[] = [];
@@ -69,21 +71,35 @@ export class AchievementService implements OnModuleInit {
             toUnlock.push('social_1');
         }
 
-        await this.unlockAchievements(userId, toUnlock);
+        const newAchievements = await this.unlockAchievements(userId, toUnlock);
+
+        const prevLevel = Math.floor((allResults.length - 1) / 3) + 1;
+        const newLevel  = Math.floor(allResults.length / 3) + 1;
+
+        return {
+            newAchievements,
+            newLevel: newLevel > prevLevel ? newLevel : null,
+        };
     }
 
+    private async unlockAchievements(userId: number, keys: string[]): Promise<{ key: string; label: string; description: string; icon: string }[]> {
+        if (keys.length === 0) return [];
 
-    private async unlockAchievements(userId: number, keys: string[]) {
-        const achievements = await this.prisma.achievement.findMany({
-            where: { key: { in: keys } }
+        const achievements = await this.prisma.achievement.findMany({ where: { key: { in: keys } } });
+        const existing = await this.prisma.userAchievement.findMany({
+            where: { userId, achievementId: { in: achievements.map(a => a.id) } },
         });
-        for (const achievement of achievements) {
-            await this.prisma.userAchievement.upsert({
-                where: { userId_achievementId: { userId, achievementId: achievement.id } },
-                update: {},
-                create: { userId, achievementId: achievement.id },
+        const existingIds = new Set(existing.map(e => e.achievementId));
+        const toCreate = achievements.filter(a => !existingIds.has(a.id));
+
+        if (toCreate.length > 0) {
+            await this.prisma.userAchievement.createMany({
+                data: toCreate.map(a => ({ userId, achievementId: a.id })),
+                skipDuplicates: true,
             });
         }
+
+        return toCreate.map(a => ({ key: a.key, label: a.label, description: a.description, icon: a.icon ?? '' }));
     }
 
     async getUserAchievements(username: string) {

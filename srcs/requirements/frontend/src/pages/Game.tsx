@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Btn, PageLayout, Alert, Modal } from "@/components";
 import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { GameArena } from "@/features/game";
+import { RaceRewardsModal } from "@/features/game";
 import { useRaceSocket } from "@/hooks/useRaceSocket";
+import { useAuth } from "@/features/auth";
 
 type Mode = "practice" | "multiplayer";
 type PracticePhase = "countdown" | "go" | "racing";
@@ -21,7 +23,15 @@ export default function Game() {
   const [pPhase, setPPhase] = useState<PracticePhase>("racing");
   const [pCountdown, setPCountdown] = useState(5);
 
+  const { user } = useAuth();
   const race = useRaceSocket();
+
+  useEffect(() => {
+    if (mode !== "multiplayer" || user !== null)
+      return;
+    race.leaveQueue();
+    navigate("/");
+  }, [user, mode]);
 
   useEffect(() => {
     if (mode !== "multiplayer") {
@@ -165,6 +175,9 @@ export default function Game() {
 
   return (
     <div className="w-full flex flex-col items-center gap-3">
+      {race.rewards && (
+        <RaceRewardsModal rewards={race.rewards} onClose={race.clearRewards} />
+      )}
       {topBar(preRace ? t('play.cancel') : t('play.main_menu'), backToMenu)}
       <GameArena
         key={gameKey}

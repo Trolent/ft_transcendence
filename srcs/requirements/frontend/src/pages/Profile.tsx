@@ -6,7 +6,7 @@ import { tError } from "@/features/i18n";
 import { useAuth, useIsOwnProfile } from "@/features/auth";
 import { getUserProfile, type UserProfile } from "@/api/users.api";
 import { FriendsList } from "@/features/friends";
-import { Bio, Stats, History, Achievements, ProfileHeader } from "@/features/profile";
+import { Bio, Stats, NextLvl, History, Achievements, ProfileHeader } from "@/features/profile";
 import { useStatus } from "@/hooks/useStatus";
 
 export default function Profile() {
@@ -90,6 +90,8 @@ export default function Profile() {
         />
 
         <Stats stats={profile.stats} containerVariant={"terminal"}/>
+
+        <NextLvl stats={profile.stats} containerVariant={"terminal"} />
 
         <Achievements achievements={profile.achievements} containerVariant={"terminal"}/>
 

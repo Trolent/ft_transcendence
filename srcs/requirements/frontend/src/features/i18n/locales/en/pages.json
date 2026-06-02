@@ -146,7 +146,13 @@
     "starting_in": "Starting in {{n}}…",
     "bot": "Bot 🤖",
     "mobile_title": "Desktop only",
-    "mobile_message": "Typerun is designed for keyboard play. Please open this page on a desktop or laptop to race."
+    "mobile_message": "Typerun is designed for keyboard play. Please open this page on a desktop or laptop to race.",
+    "rewards_level_up": "Level up!",
+    "rewards_level": "Level {{level}}",
+    "rewards_achievement": "Achievement unlocked",
+    "rewards_achievements": "{{count}} achievements unlocked",
+    "rewards_continue": "Continue",
+    "rewards_go_profile": "View profile"
   },
   "oauth_callback": {
     "connecting": "Connecting…"

@@ -20,6 +20,7 @@ export const QUOTES = [
   "The sun during midday will light up the dark night. Night dreams of day. Light dreams of darkness. But the ignorant sun will chase away the darkness... and burn the shadows, eventually burning itself! The shade of the tree with the flowers that bloom at night is where the residents of darkness rest. The people of daytime are not allowed!",
 
 ];
+
 export const MIN_RACE_SECONDS = 20;
 export const MIN_CHARS_PER_SEC = 2.5;
 
