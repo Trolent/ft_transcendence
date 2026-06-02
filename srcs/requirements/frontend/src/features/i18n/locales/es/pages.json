@@ -139,6 +139,7 @@
     "race_voided": "Carrera cancelada — no hay suficientes jugadores.",
     "already_in_game": "Ya estás en una carrera en otra pestaña.",
     "join_failed": "No se pudo unir a la carrera. Inténtalo de nuevo.",
+    "disconnected": "Te has desconectado. Esta carrera no se guardará.",
     "guest": "Invitado",
     "starting_in": "Comienza en {{n}}…",
     "bot": "Robot",

@@ -120,6 +120,22 @@ export default function Game() {
     );
   }
 
+  if (race.disconnected) {
+    return (
+      <div className="w-full flex flex-col items-center gap-3">
+        {topBar(t('play.main_menu'), backToMenu)}
+        <div className="w-full max-w-3xl px-2 sm:px-4 flex flex-col gap-4">
+          <Alert variant="error">{t('play.disconnected')}</Alert>
+          <div className="flex justify-center">
+            <Btn onClick={() => { setGameKey((k) => k + 1); race.joinQueue(); }}>
+              {t('play.race_again')}
+            </Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (race.phase === "idle" || race.matchText == null) {
     return (
       <div className="w-full flex flex-col items-center gap-3">
