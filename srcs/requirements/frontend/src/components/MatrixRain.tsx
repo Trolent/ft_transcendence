@@ -6,7 +6,7 @@ function randomInt(min: number, max: number) {
 
 const WORDS = [
   'COMMON_CORE', 'TYPERUN', 'FT_TRANSCENDENCE',
-  'JEROME', 'AKHMED', 'TIMOTHEE', 'AXELLE', 'KEVIN', '42'
+  'JEROME', 'AKHMED', 'TIMOTHEE', 'AXEL', 'KEVIN', '42'
 ];
 
 const SPECIAL = '{}[]()<>;:=!|/\\&#@%*+-_~^$';
