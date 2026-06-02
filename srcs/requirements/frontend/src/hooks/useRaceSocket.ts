@@ -31,6 +31,11 @@ export type Racer = {
 
 export type RacePhase = "idle" | "waiting" | "countdown" | "racing" | "finished";
 
+export type RaceRewards = {
+	newAchievements: { key: string; label: string; description: string; icon: string }[];
+	newLevel: number | null;
+};
+
 export function useRaceSocket() {
 	const socketRef = useRef<Socket | null>(null);
 	const raceStartClientRef = useRef<number | null>(null); // client-side start time for latency-free finish timing
@@ -50,6 +55,7 @@ export function useRaceSocket() {
 	const [myPosition, setMyPosition]     = useState<number | null>(null);
 	const [rejected, setRejected]         = useState<string | null>(null);
 	const [disconnected, setDisconnected] = useState(false);
+	const [rewards, setRewards]           = useState<RaceRewards | null>(null);
 
 	const teardown = useCallback(() => {
 		const s = socketRef.current;
@@ -178,6 +184,10 @@ export function useRaceSocket() {
 			setPhase("finished");
 		});
 
+		socket.on("race_rewards", (payload: RaceRewards) => {
+			setRewards(payload);
+		});
+
 	}, [teardown, resetState]);
 
 	const leaveQueue = useCallback(() => {
@@ -214,6 +224,8 @@ export function useRaceSocket() {
 		myPosition,
 		rejected,
 		disconnected,
+		rewards,
+		clearRewards: () => setRewards(null),
 		joinQueue,
 		leaveQueue,
 		sendProgress,

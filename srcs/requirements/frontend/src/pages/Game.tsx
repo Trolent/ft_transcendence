@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Btn, PageLayout, Alert, Modal } from "@/components";
 import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { GameArena } from "@/features/game";
+import { RaceRewardsModal } from "@/features/game";
 import { useRaceSocket } from "@/hooks/useRaceSocket";
 import { useAuth } from "@/features/auth";
 
@@ -174,6 +175,9 @@ export default function Game() {
 
   return (
     <div className="w-full flex flex-col items-center gap-3">
+      {race.rewards && (
+        <RaceRewardsModal rewards={race.rewards} onClose={race.clearRewards} />
+      )}
       {topBar(preRace ? t('play.cancel') : t('play.main_menu'), backToMenu)}
       <GameArena
         key={gameKey}

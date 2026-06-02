@@ -4,90 +4,82 @@ info:
   title: Typerun WebSocket API
   version: '1.0.0'
   description: |
-    Documentation des WebSockets Socket.IO pour Typerun.
-    Authentification : passer le JWT dans handshake.auth.token (sauf guests sur /game).
-    Guests : handshake.auth.guest=true + handshake.auth.nickname (optionnel).
+    Socket.IO WebSocket API documentation for Typerun.
+    Authentication: pass the JWT in handshake.auth.token (except guests on /game).
+    Guests: handshake.auth.guest=true + handshake.auth.nickname (optional).
 
 servers:
   dev:
     url: 'http://localhost:3000'
     protocol: socketio
-    description: Serveur de développement
+    description: Development server
 
 channels:
 
-  # ─────────────────────────────────────────────────────────────────────────────
-  # /status  – présence en ligne
-  # ─────────────────────────────────────────────────────────────────────────────
-
   /status:
     description: |
-      Namespace de présence. Connexion = ONLINE, déconnexion = OFFLINE.
-      Requiert JWT dans handshake.auth.token.
-      Aucun événement client → serveur : ce namespace est passif.
+      Presence namespace. Connection = ONLINE, disconnection = OFFLINE.
+      Requires JWT in handshake.auth.token.
+      No client → server events: this namespace is passive.
 
-  /status#status:update:
-    description: Broadcast global émis à tous les clients connectés quand un utilisateur change de statut.
+  /status/status:update:
+    description: Global broadcast emitted to all connected clients when a user changes status.
     subscribe:
       operationId: statusUpdate
       message:
         name: status:update
         title: Status Update
-        summary: Émis à tous quand un utilisateur passe ONLINE, OFFLINE ou IN_GAME
+        summary: Emitted to all clients when a user switches to ONLINE, OFFLINE or IN_GAME
         payload:
           type: object
           required: [userId, status]
           properties:
             userId:
               type: integer
-              description: Identifiant de l'utilisateur dont le statut a changé
+              description: ID of the user whose status changed
               example: 1
             status:
               type: string
               enum: [ONLINE, OFFLINE, IN_GAME]
-              description: Nouveau statut
+              description: New status
               example: ONLINE
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # /game  – multijoueur temps réel
-  # ─────────────────────────────────────────────────────────────────────────────
 
   /game:
     description: |
-      Namespace de jeu. Flux : connexion → join_queue → lobby_update (waiting) →
+      Game namespace. Flow: connect → join_queue → lobby_update (waiting) →
       lobby_update (countdown) → race_start → [player_progress / race_update]* →
       you_finished → race_finished.
-      Authentification : JWT dans handshake.auth.token (utilisateurs connectés)
-      ou handshake.auth.guest=true + handshake.auth.nickname (invités).
+      Authentication: JWT in handshake.auth.token (authenticated users)
+      or handshake.auth.guest=true + handshake.auth.nickname (guests).
 
-  /game#join_queue:
-    description: Le client rejoindre la file de matchmaking.
+  /game/join_queue:
+    description: Client joins the matchmaking queue.
     publish:
       operationId: joinQueue
       message:
         name: join_queue
         title: Join Queue
-        summary: Aucun payload requis — l'identité vient du JWT ou du handshake guest.
+        summary: No payload required — identity comes from the JWT or guest handshake.
 
-  /game#leave_queue:
-    description: Le client quitte la file de matchmaking.
+  /game/leave_queue:
+    description: Client leaves the matchmaking queue.
     publish:
       operationId: leaveQueue
       message:
         name: leave_queue
         title: Leave Queue
-        summary: Aucun payload requis.
+        summary: No payload required.
 
-  /game#player_progress:
-    description: Mise à jour du nombre de caractères corrects tapés par le joueur.
+  /game/player_progress:
+    description: Update of the number of correct characters typed by the player.
     publish:
       operationId: playerProgress
       message:
         name: player_progress
         title: Player Progress
         summary: |
-          Rate limité à 1 message / 200 ms (PROGRESS_MIN_INTERVAL_MS).
-          Les messages trop fréquents sont silencieusement ignorés.
+          Rate limited to 1 message / 200 ms (PROGRESS_MIN_INTERVAL_MS).
+          Messages sent too frequently are silently ignored.
         payload:
           type: object
           required: [chars]
@@ -96,159 +88,159 @@ channels:
               type: integer
               minimum: 0
               maximum: 100000
-              description: Nombre total de caractères corrects tapés depuis le début de la course
+              description: Total correct characters typed since the start of the race
               example: 42
             durationMs:
               type: number
               minimum: 0
               maximum: 3600000
-              description: Durée écoulée côté client depuis le début de la course, en millisecondes (optionnel)
+              description: Elapsed time client-side since race start, in milliseconds (optional)
               example: 29500
             accuracy:
               type: integer
               minimum: 0
               maximum: 100
-              description: Précision de frappe en pourcentage (optionnel)
+              description: Typing accuracy as a percentage (optional)
               example: 97
 
-  /game#lobby_update:
+  /game/lobby_update:
     description: |
-      Mis à jour envoyé individuellement à chaque joueur de la room quand l'état du lobby change
-      (joueur rejoint, phase change, countdown démarre…).
+      Update sent individually to each player in the room when the lobby state changes
+      (player joins, phase changes, countdown starts…).
     subscribe:
       operationId: lobbyUpdate
       message:
         name: lobby_update
         title: Lobby Update
-        summary: État du lobby envoyé à chaque participant lors de tout changement
+        summary: Lobby state sent to each participant on any change
         payload:
           type: object
           required: [lobbyId, phase, players, you, hostPid, text]
           properties:
             lobbyId:
               type: string
-              description: Identifiant unique de la room
+              description: Unique room identifier
               example: XK3P2
             phase:
               type: string
               enum: [waiting, countdown]
-              description: Phase actuelle du lobby
+              description: Current lobby phase
               example: waiting
             players:
               type: array
-              description: Liste de tous les participants actuels
+              description: List of all current participants
               items:
                 type: object
                 required: [pid, kind, username]
                 properties:
                   pid:
                     type: string
-                    description: Identifiant interne du participant dans cette room
+                    description: Internal participant identifier within this room
                     example: u-1
                   kind:
                     type: string
                     enum: [user, guest, bot]
-                    description: Type de participant
+                    description: Participant type
                     example: user
                   username:
                     type: string
-                    description: Nom affiché
+                    description: Display name
                     example: johndoe
                   avatarUrl:
                     type: string
                     nullable: true
-                    description: URL de l'avatar
+                    description: Avatar URL
                     example: null
             you:
               type: string
-              description: pid du client qui reçoit ce message
+              description: pid of the client receiving this message
               example: u-1
             hostPid:
               type: string
-              description: pid du joueur hôte de la room
+              description: pid of the room host
               example: u-1
             text:
               type: string
-              description: Texte à taper pour cette course
+              description: Text to type for this race
               example: The quick brown fox jumps over the lazy dog
             countdownEndsAt:
               type: integer
               nullable: true
-              description: Timestamp Unix (ms) de fin du countdown, null si phase=waiting
+              description: Unix timestamp (ms) when the countdown ends, null if phase=waiting
               example: 1748700000000
 
-  /game#race_start:
-    description: La course commence — le texte a déjà été transmis via lobby_update.
+  /game/race_start:
+    description: The race begins — the text was already sent via lobby_update.
     subscribe:
       operationId: raceStart
       message:
         name: race_start
         title: Race Start
-        summary: Émis à tous les joueurs de la room quand la course démarre
+        summary: Emitted to all players in the room when the race starts
         payload:
           type: object
           required: [roomId, startedAt, playerCount]
           properties:
             roomId:
               type: string
-              description: Identifiant de la room
+              description: Room identifier
               example: XK3P2
             startedAt:
               type: integer
-              description: Timestamp Unix (ms) du départ de la course
+              description: Unix timestamp (ms) of race start
               example: 1748700010000
             playerCount:
               type: integer
-              description: Nombre total de participants (users + guests + bots)
+              description: Total number of participants (users + guests + bots)
               example: 3
 
-  /game#race_update:
-    description: Mise à jour de la progression d'un participant en cours de course.
+  /game/race_update:
+    description: Progress update for a participant during the race.
     subscribe:
       operationId: raceUpdate
       message:
         name: race_update
         title: Race Update
-        summary: Émis à tous les joueurs de la room à chaque avancée d'un participant (user, guest ou bot)
+        summary: Emitted to all players in the room on each participant advance (user, guest or bot)
         payload:
           type: object
           required: [pid, username, kind, progress, wpm]
           properties:
             pid:
               type: string
-              description: Identifiant interne du participant dans cette room
+              description: Internal participant identifier within this room
               example: u-1
             username:
               type: string
-              description: Nom affiché
+              description: Display name
               example: johndoe
             kind:
               type: string
               enum: [user, guest, bot]
-              description: Type de participant
+              description: Participant type
               example: user
             progress:
               type: number
               format: float
               minimum: 0
               maximum: 1
-              description: Progression entre 0 et 1
+              description: Progress between 0 and 1
               example: 0.42
             wpm:
               type: integer
               minimum: 0
               maximum: 250
-              description: Mots par minute (plafonné à MAX_WPM=250)
+              description: Words per minute (capped at MAX_WPM=250)
               example: 85
 
-  /game#you_finished:
-    description: Émis uniquement au joueur qui vient de terminer la course.
+  /game/you_finished:
+    description: Emitted only to the player who just finished the race.
     subscribe:
       operationId: youFinished
       message:
         name: you_finished
         title: You Finished
-        summary: Confirmation personnelle de fin de course avec la position obtenue
+        summary: Personal race completion confirmation with the achieved position
         payload:
           type: object
           required: [position, playerCount]
@@ -256,69 +248,110 @@ channels:
             position:
               type: integer
               minimum: 1
-              description: Position finale du joueur
+              description: Player's final position
               example: 1
             playerCount:
               type: integer
-              description: Nombre total de participants dans la course
+              description: Total number of participants in the race
               example: 3
 
-  /game#race_finished:
-    description: La course est terminée — tous les participants ont fini ou le temps est écoulé.
+  /game/race_finished:
+    description: The race is over — all participants finished or time ran out.
     subscribe:
       operationId: raceFinished
       message:
         name: race_finished
         title: Race Finished
-        summary: Classement final émis à tous les joueurs de la room
+        summary: Final standings emitted to all players in the room
         payload:
           type: object
           required: [results, playerCount]
           properties:
             results:
               type: array
-              description: Classement trié par ordre d'arrivée
+              description: Rankings sorted by finish order
               items:
                 type: object
                 required: [pid, username, kind, position, wpm]
                 properties:
                   pid:
                     type: string
-                    description: Identifiant interne du participant
+                    description: Internal participant identifier
                     example: u-1
                   username:
                     type: string
-                    description: Nom affiché
+                    description: Display name
                     example: johndoe
                   kind:
                     type: string
                     enum: [user, guest, bot]
-                    description: Type de participant
+                    description: Participant type
                     example: user
                   position:
                     type: integer
                     minimum: 1
-                    description: Position finale
+                    description: Final position
                     example: 1
                   wpm:
                     type: integer
                     minimum: 0
                     maximum: 250
-                    description: Mots par minute (0 si dépassement de MAX_WPM=250)
+                    description: Words per minute (0 if MAX_WPM=250 exceeded)
                     example: 85
             playerCount:
               type: integer
-              description: Nombre total de participants dans la course
+              description: Total number of participants in the race
               example: 3
 
-  /game#join_rejected:
-    description: Émis si la connexion est rejetée après join_queue.
+  /game/race_rewards:
+    description: Rewards unlocked at the end of a race — emitted only to the concerned player (authenticated user).
+    subscribe:
+      operationId: raceRewards
+      message:
+        name: race_rewards
+        title: Race Rewards
+        summary: Newly unlocked achievements and/or level up after the race
+        payload:
+          type: object
+          required: [newAchievements, newLevel]
+          properties:
+            newAchievements:
+              type: array
+              description: List of newly unlocked achievements (empty if none)
+              items:
+                type: object
+                required: [key, label, description, icon]
+                properties:
+                  key:
+                    type: string
+                    description: Unique achievement identifier
+                    example: first_win
+                  label:
+                    type: string
+                    description: Display name
+                    example: First Win
+                  description:
+                    type: string
+                    description: Description of the unlock condition
+                    example: Win your first race
+                  icon:
+                    type: string
+                    description: Emoji representing the achievement
+                    example: 🏆
+            newLevel:
+              type: integer
+              nullable: true
+              description: New level reached if leveled up, null otherwise
+              example: 4
+
+  /game/join_rejected:
+    description: Emitted if the connection is rejected after join_queue.
     subscribe:
       operationId: joinRejected
       message:
         name: join_rejected
         title: Join Rejected
-        summary: Émis si le joueur a déjà une session active dans une room (duplicate_session)
+        summary: Emitted if the player already has an active session in a room (duplicate_session)
         payload:
           type: object
           required: [reason]
@@ -326,67 +359,63 @@ channels:
             reason:
               type: string
               enum: [duplicate_session]
-              description: Raison du rejet
+              description: Rejection reason
               example: duplicate_session
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # /chat  – messagerie directe
-  # ─────────────────────────────────────────────────────────────────────────────
 
   /chat:
     description: |
-      Namespace de messagerie directe. Requiert JWT dans handshake.auth.token.
-      Les messages sont persistés en base même si le destinataire est hors ligne.
+      Direct messaging namespace. Requires JWT in handshake.auth.token.
+      Messages are persisted in the database even if the recipient is offline.
 
-  /chat#send_message:
-    description: Envoyer un message privé à un autre joueur.
+  /chat/send_message:
+    description: Send a private message to another player.
     publish:
       operationId: sendMessage
       message:
         name: send_message
         title: Send Message
         summary: |
-          Rate limité côté serveur. Le payload est validé (whitelist: true) —
-          content max 2000 caractères, trimé automatiquement.
+          Server-side rate limited. Payload is validated (whitelist: true) —
+          content max 2000 characters, automatically trimmed.
         payload:
           type: object
           required: [to, content]
           properties:
             to:
               type: string
-              description: Username du destinataire
+              description: Recipient's username
               example: janedoe
             content:
               type: string
               maxLength: 2000
-              description: Contenu du message (trimé automatiquement)
+              description: Message content (automatically trimmed)
               example: Hello!
 
-  /chat#receive_message:
-    description: Recevoir un message privé en temps réel.
+  /chat/receive_message:
+    description: Receive a private message in real time.
     subscribe:
       operationId: receiveMessage
       message:
         name: receive_message
         title: Receive Message
         summary: |
-          Émis en temps réel si le destinataire est connecté au namespace /chat.
-          Si hors ligne, le message est uniquement sauvegardé en base (récupérable via GET /chat/:username).
+          Emitted in real time if the recipient is connected to the /chat namespace.
+          If offline, the message is only saved in the database (retrievable via GET /chat/:username).
         payload:
           type: object
           required: [from, fromUsername, content, sentAt]
           properties:
             from:
               type: integer
-              description: ID de l'expéditeur
+              description: Sender's ID
               example: 1
             fromUsername:
               type: string
-              description: Username de l'expéditeur
+              description: Sender's username
               example: johndoe
             content:
               type: string
-              description: Contenu du message
+              description: Message content
               example: Hello!
             sentAt:
               type: string

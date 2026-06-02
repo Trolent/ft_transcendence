@@ -144,7 +144,13 @@
     "starting_in": "Comienza en {{n}}…",
     "bot": "Robot",
     "mobile_title": "Solo escritorio",
-    "mobile_message": "Typerun está diseñado para jugar con teclado. Abre esta página en un ordenador para participar."
+    "mobile_message": "Typerun está diseñado para jugar con teclado. Abre esta página en un ordenador para participar.",
+    "rewards_level_up": "¡Subiste de nivel!",
+    "rewards_level": "Nivel {{level}}",
+    "rewards_achievement": "Logro desbloqueado",
+    "rewards_achievements": "{{count}} logros desbloqueados",
+    "rewards_continue": "Continuar",
+    "rewards_go_profile": "Ver perfil"
   },
   "oauth_callback": {
     "connecting": "Conectando…"
