@@ -1,6 +1,7 @@
-import { Container, ProgressBar, Text } from "@/components";
+import { Container, ProgressBar } from "@/components";
 import type { UserStats } from "@/api/users.api";
 import type { ContainerVariant } from "@/components/Container";
+import { useTranslation } from "react-i18next";
 
 interface NextLvlProps {
   stats: UserStats;
@@ -10,6 +11,7 @@ interface NextLvlProps {
 const GAMES_PER_LEVEL = 3;
 
 export default function NextLvl({ stats, containerVariant }: NextLvlProps) {
+  const { t } = useTranslation('pages');
   const currentLevel = Math.max(1, stats.level);
   const nextLevel = currentLevel + 1;
 
@@ -24,14 +26,11 @@ export default function NextLvl({ stats, containerVariant }: NextLvlProps) {
   return (
     <Container variant={containerVariant ?? "default"} label="NEXT LEVEL">
       <div className="flex flex-col gap-2">
-        <Text size="xs" className="uppercase tracking-widest text-dim">
-        {currentLevel} ➜ {nextLevel}
-        </Text>
         <ProgressBar
           value={playedSinceCurrentLevel}
           max={GAMES_PER_LEVEL}
-          color="accent"
-          label={`${stats.gamesPlayed}/${nextLevelGames} games`}
+          color="dim"
+          label={`${stats.gamesPlayed}/${nextLevelGames} ${t('profile.stat_played')}`}
         />
       </div>
     </Container>

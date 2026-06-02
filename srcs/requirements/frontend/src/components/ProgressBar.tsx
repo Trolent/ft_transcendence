@@ -2,7 +2,7 @@ interface ProgressBarProps {
   value: number;
   label?: string;
   max?: number;
-  color?: "accent" | "dim" | "default" | "darkgreen" | "error";
+  color?: "accent" | "dim" | "default" | "darkgreen" | "error" | "muted";
 }
 
 export default function ProgressBar({
