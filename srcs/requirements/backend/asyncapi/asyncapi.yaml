@@ -95,8 +95,21 @@ channels:
             chars:
               type: integer
               minimum: 0
+              maximum: 100000
               description: Nombre total de caractères corrects tapés depuis le début de la course
               example: 42
+            durationMs:
+              type: number
+              minimum: 0
+              maximum: 3600000
+              description: Durée écoulée côté client depuis le début de la course, en millisecondes (optionnel)
+              example: 29500
+            accuracy:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Précision de frappe en pourcentage (optionnel)
+              example: 97
 
   /game#lobby_update:
     description: |

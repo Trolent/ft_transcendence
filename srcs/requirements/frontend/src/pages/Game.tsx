@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Btn, PageLayout, Alert, Modal } from "@/components";
 import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { GameArena } from "@/features/game";
 import { useRaceSocket } from "@/hooks/useRaceSocket";
+import { useAuth } from "@/features/auth";
 
 type Mode = "practice" | "multiplayer";
 type PracticePhase = "countdown" | "go" | "racing";
@@ -12,6 +13,7 @@ type PracticePhase = "countdown" | "go" | "racing";
 export default function Game() {
   const { t } = useTranslation('pages');
   const navigate = useNavigate();
+  const location = useLocation();
   const { mode: modeParam } = useParams<{ mode: string }>();
   const mode: Mode = modeParam === "practice" ? "practice" : "multiplayer";
   const [gameKey, setGameKey] = useState(0);
@@ -20,10 +22,28 @@ export default function Game() {
   const [pPhase, setPPhase] = useState<PracticePhase>("racing");
   const [pCountdown, setPCountdown] = useState(5);
 
+  const { user } = useAuth();
   const race = useRaceSocket();
 
   useEffect(() => {
-    if (mode === "multiplayer" && !isTouch) race.joinQueue();
+    if (mode !== "multiplayer" || user !== null)
+      return;
+    race.leaveQueue();
+    navigate("/");
+  }, [user, mode]);
+
+  useEffect(() => {
+    if (mode !== "multiplayer") {
+      return;
+    }
+    if (!(location.state as { fromApp?: boolean } | null)?.fromApp) {
+      navigate("/");
+      return;
+    }
+    navigate(location.pathname, { replace: true });
+    if (!isTouch) {
+      race.joinQueue();
+    }
   }, [mode, race.joinQueue, isTouch]);
 
   useEffect(() => {
@@ -109,6 +129,22 @@ export default function Game() {
     );
   }
 
+  if (race.disconnected) {
+    return (
+      <div className="w-full flex flex-col items-center gap-3">
+        {topBar(t('play.main_menu'), backToMenu)}
+        <div className="w-full max-w-3xl px-2 sm:px-4 flex flex-col gap-4">
+          <Alert variant="error">{t('play.disconnected')}</Alert>
+          <div className="flex justify-center">
+            <Btn onClick={() => { setGameKey((k) => k + 1); race.joinQueue(); }}>
+              {t('play.race_again')}
+            </Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (race.phase === "idle" || race.matchText == null) {
     return (
       <div className="w-full flex flex-col items-center gap-3">
@@ -147,6 +183,7 @@ export default function Game() {
         serverText={race.matchText}
         racers={racerList}
         youPid={race.you}
+        liveFinishOrder={race.finishOrder}
         results={race.results}
         playerCount={race.playerCount}
         myPosition={race.myPosition}

@@ -139,6 +139,7 @@
     "race_voided": "Course annulée — pas assez de joueurs.",
     "already_in_game": "Vous êtes déjà dans une course dans un autre onglet.",
     "join_failed": "Impossible de rejoindre la course. Veuillez réessayer.",
+    "disconnected": "Vous avez été déconnecté. Cette course ne sera pas enregistrée.",
     "guest": "Invité",
     "starting_in": "Départ dans {{n}}…",
     "bot": "Robot",

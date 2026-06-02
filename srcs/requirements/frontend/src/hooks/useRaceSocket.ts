@@ -34,6 +34,8 @@ export type RacePhase = "idle" | "waiting" | "countdown" | "racing" | "finished"
 export function useRaceSocket() {
 	const socketRef = useRef<Socket | null>(null);
 	const raceStartClientRef = useRef<number | null>(null); // client-side start time for latency-free finish timing
+	const phaseRef = useRef<RacePhase>("idle");
+	const finishedRef = useRef(false);
 
 	const [phase, setPhase]               = useState<RacePhase>("idle");
 	const [connected, setConnected]       = useState(false);
@@ -43,9 +45,11 @@ export function useRaceSocket() {
 	const [startedAt, setStartedAt]       = useState<number | null>(null);
 	const [playerCount, setPlayerCount]   = useState<number>(0);
 	const [racers, setRacers]             = useState<Record<string, Racer>>({});
+	const [finishOrder, setFinishOrder]   = useState<string[]>([]);
 	const [results, setResults]           = useState<RaceResult[] | null>(null);
 	const [myPosition, setMyPosition]     = useState<number | null>(null);
 	const [rejected, setRejected]         = useState<string | null>(null);
+	const [disconnected, setDisconnected] = useState(false);
 
 	const teardown = useCallback(() => {
 		const s = socketRef.current;
@@ -65,15 +69,18 @@ export function useRaceSocket() {
 		setStartedAt(null);
 		setPlayerCount(0);
 		setRacers({});
+		setFinishOrder([]);
 		setResults(null);
 		setMyPosition(null);
 		setRejected(null);
+		setDisconnected(false);
 	}, []);
 
 	const joinQueue = useCallback(() => {
 		teardown();
 		resetState();
 		raceStartClientRef.current = null;
+		finishedRef.current = false;
 
 		const token = getToken();
 		const socket: Socket = io("/game", {
@@ -95,8 +102,16 @@ export function useRaceSocket() {
 			console.error("Game socket connect_error:", err);
 		});
 
-		socket.on("disconnect", () => {
+		socket.on("disconnect", (reason: string) => {
 			setConnected(false);
+			if (reason === "io client disconnect") {
+				return;
+			}
+			if (phaseRef.current !== "racing" || finishedRef.current) {
+				return;
+			}
+			setDisconnected(true);
+			teardown();
 		});
 
 		socket.on("join_rejected", (payload: { reason: string }) => {
@@ -135,6 +150,7 @@ export function useRaceSocket() {
 		});
 
 		socket.on("you_finished", (payload: YouFinishedPayload) => {
+			finishedRef.current = true;
 			setMyPosition(payload.position);
 			setPlayerCount(payload.playerCount);
 		});
@@ -151,6 +167,9 @@ export function useRaceSocket() {
 					wpm: payload.wpm,
 				},
 			}));
+			if (payload.progress >= 1) {
+				setFinishOrder((prev) => prev.includes(payload.pid) ? prev : [...prev, payload.pid]);
+			}
 		});
 
 		socket.on("race_finished", (payload: RaceFinishedPayload) => {
@@ -175,6 +194,10 @@ export function useRaceSocket() {
 		s.emit("player_progress", { chars, accuracy, durationMs });
 	}, []);
 
+	useEffect(() => {
+		phaseRef.current = phase;
+	}, [phase]);
+
 	useEffect(() => () => { teardown(); }, [teardown]);
 
 	return {
@@ -186,9 +209,11 @@ export function useRaceSocket() {
 		startedAt,
 		playerCount,
 		racers,
+		finishOrder,
 		results,
 		myPosition,
 		rejected,
+		disconnected,
 		joinQueue,
 		leaveQueue,
 		sendProgress,
