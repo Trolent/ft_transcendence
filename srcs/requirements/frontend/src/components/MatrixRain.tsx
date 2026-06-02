@@ -5,7 +5,7 @@ function randomInt(min: number, max: number) {
 }
 
 const WORDS = [
-  'COMMON_CORE', 'TYPERUN', 'FT_TRANSCENDANCE',
+  'COMMON_CORE', 'TYPERUN', 'FT_TRANSCENDENCE',
   'JEROME', 'AKHMED', 'TIMOTHEE', 'AXEL', 'KEVIN', '42'
 ];
 
