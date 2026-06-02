@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Car, { CAR_COUNT } from "./Car";
 import type { Racer, RaceResult } from "@/hooks/useRaceSocket";
@@ -90,8 +90,18 @@ export default function RaceTrack(props: Props) {
 function MultiplayerTrack({ racers = [], youPid, finishOrder = [], results, passageLength, elapsed, playerWpm, playerProgress }: Props) {
   const { t } = useTranslation('pages');
   const ordinals = t('play.ordinals', { returnObjects: true }) as string[];
-  const [variants] = useState<number[]>(() => randomUniqueVariants(CAR_COUNT));
   const ordinal = (place: number): string => ordinals[place - 1] ?? `${place}th`;
+
+  // Derive each car's variant from the server-assigned pid (sorted) so every client maps the same
+  // car to the same player; unique up to CAR_COUNT, then wraps.
+  const variantByPid = useMemo(() => {
+    const map = new Map<string, number>();
+    [...racers]
+      .map((r) => r.pid)
+      .sort()
+      .forEach((pid, i) => map.set(pid, i % CAR_COUNT));
+    return map;
+  }, [racers]);
 
   // Three sources, in priority order: server results (authoritative once race ends),
   // local engine for own car (matches HUD exactly), derived from progress+clock for
@@ -118,7 +128,7 @@ function MultiplayerTrack({ racers = [], youPid, finishOrder = [], results, pass
 
   return (
     <div className="w-full">
-      {racers.map((r, idx) => {
+      {racers.map((r) => {
         const isYou = r.pid === youPid;
         const place = placeFor(r.pid);
         return (
@@ -134,7 +144,7 @@ function MultiplayerTrack({ racers = [], youPid, finishOrder = [], results, pass
 
             <div className="flex-1 relative">
               <div className="bg-black/30 h-10 rounded-md relative overflow-hidden">
-                <Car progress={isYou ? playerProgress : r.progress} variant={variants[idx % variants.length]} />
+                <Car progress={isYou ? playerProgress : r.progress} variant={variantByPid.get(r.pid) ?? 0} />
               </div>
             </div>
 
