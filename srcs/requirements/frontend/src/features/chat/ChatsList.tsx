@@ -32,13 +32,13 @@ interface ChatsListProps {
 export function ChatsList({ onSelectChat, selectedUsername, refreshKey }: ChatsListProps) {
   const { t, i18n } = useTranslation('pages');
   const [chats, setChats] = useState<ChatConversation[]>([]);
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    setLoading(true);
+    //setLoading(true);
     setError(null);
 
     chatApi
@@ -56,7 +56,7 @@ export function ChatsList({ onSelectChat, selectedUsername, refreshKey }: ChatsL
       })
       .finally(() => {
         if (cancelled) return;
-        setLoading(false);
+        //setLoading(false);
       });
 
     return () => {
@@ -70,9 +70,7 @@ export function ChatsList({ onSelectChat, selectedUsername, refreshKey }: ChatsL
         <Heading level={3}>{t('chat.title')}</Heading>
         <NewChat onSelectChat={onSelectChat} />
       </div>
-      {loading ? (
-        <Alert variant="info">{t('common:loading')}</Alert>
-      ) : error ? (
+      { error ? (
         <Alert variant="error">{error}</Alert>
       ) : chats.length === 0 ? (
         <Alert variant="info">{t('chat.no_chats')}</Alert>
