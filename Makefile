@@ -1,7 +1,9 @@
 NAME		= Typerun
 COMPOSE		= srcs/docker-compose.yml
 COMPOSE_DEV	= srcs/docker-compose.dev.yml
+COMPOSE_CLOUD	= srcs/docker-compose.cloud.yml
 DOMAIN		:= $(shell grep '^DOMAIN=' srcs/.env 2>/dev/null | cut -d= -f2)
+CLOUD_DOMAIN	:= $(shell grep '^CLOUDFLARE_DOMAIN=' srcs/.env 2>/dev/null | cut -d= -f2)
 DEV_DOMAIN	:= localhost
 
 all: check-env hosts up
@@ -31,16 +33,25 @@ dev: check-env
 	@printf "\033[1;36m  │\033[0m  Prisma.   ->  http://$(DEV_DOMAIN):5555  \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  └───────────────────────────────────────────┘\033[0m\n\n"
 
+invade-the-web: check-env
+	docker compose -f $(COMPOSE) -f $(COMPOSE_CLOUD) up --build -d
+	@printf "\n\033[1;35m  [CLOUD] $(NAME) is up via Cloudflare!\033[0m\n\n"
+	@printf "\033[1;36m  ┌────────────────────────────────────────────┐\033[0m\n"
+	@printf "\033[1;36m  │\033[0m  https://$(CLOUD_DOMAIN) \033[1;36m│\033[0m\n"
+	@printf "\033[1;36m  └────────────────────────────────────────────┘\033[0m\n\n"
+
 down:
-	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) down
+	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) -f $(COMPOSE_CLOUD) down
 
 re: down hosts up
 
 # make re for dev
-redev: down dev
+re-dev: down dev
+
+re-invade-the-web: down invade-the-web
 
 clean: down
-	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) down -v --rmi local
+	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) -f $(COMPOSE_CLOUD) down -v --rmi local
 
 fclean: clean
 	docker system prune -af --volumes
@@ -79,4 +90,4 @@ seedstress:
 seedclean:
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npx prisma migrate reset --force
 
-.PHONY: all up dev down re redev clean fclean logs ps hosts home trust-cert seed seedclean seedstress
+.PHONY: all up dev invade-the-web down re re-dev re-invade-the-web clean fclean logs ps hosts home trust-cert seed seedclean seedstress
