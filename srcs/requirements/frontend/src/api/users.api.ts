@@ -25,11 +25,14 @@ export type UserSearchResult = {
 export type MatchPlayer = {
   position: number | null;
   wpm: number | null;
+  kind: 'user' | 'guest' | 'bot';
+  displayName: string | null;
+  avatarUrl: string | null;
   user: {
     id: number;
     username: string;
     avatarUrl: string | null;
-  };
+  } | null;
 };
 
 export type HistoryEntry = {

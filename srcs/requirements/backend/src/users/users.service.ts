@@ -124,6 +124,7 @@ export class UsersService {
 
     const usersWithHigherWpm = await this.prisma.matchResult.groupBy({
       by: ['userId'],
+      where: { userId: { not: null } },
       _avg: { wpm: true },
       having: { wpm: { _avg: { gt: avgWpm } } },
     });
@@ -180,10 +181,14 @@ export class UsersService {
               select: {
                 position: true,
                 wpm: true,
+                kind: true,
+                displayName: true,
+                avatarUrl: true,
                 user: {
                   select: { id: true, username: true, avatarUrl: true }
                 },
               },
+              orderBy: { position: 'asc' },
             },
           },
         },

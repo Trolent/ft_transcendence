@@ -106,17 +106,29 @@ export default function History({ username, containerVariant }: HistoryProps) {
       >
         <div className="flex flex-col">
           {[...(players ?? [])].sort((a, b) => (a.position ?? 99) - (b.position ?? 99)).map((p, i) => {
-            const isMe = p.user.username === me?.username;
+            const isMe = p.kind === "user" && p.user?.username === me?.username;
+            const name = p.user?.username ?? p.displayName ?? "—";
+            const tag = p.kind === "bot" ? t('profile.history_bot') : p.kind === "guest" ? t('profile.history_guest') : null;
+            const inner = (
+              <div className="flex items-center gap-3">
+                <Text size="sm" variant="muted" as="span">#{p.position ?? "—"}</Text>
+                <Avatar username={name} src={p.user?.avatarUrl ?? p.avatarUrl} size="sm" />
+                <Text size="sm" as="span">{name}</Text>
+                {tag && <Text size="sm" variant="muted" as="span">({tag})</Text>}
+              </div>
+            );
             return (
               <div key={i} className={`flex items-center justify-between border-b border-dim/40 py-2 px-2 last:border-0 ${isMe ? "bg-muted/40 text-accent" : ""}`}>
-                <Link
-                  to={`/profile/${p.user.username}`}
-                  className="flex items-center gap-3 hover:opacity-75 transition-opacity"
-                >
-                  <Text size="sm" variant="muted" as="span">#{p.position ?? "—"}</Text>
-                  <Avatar username={p.user.username} src={p.user.avatarUrl} size="sm" />
-                  <Text size="sm" as="span">{p.user.username}</Text>
-                </Link>
+                {p.kind === "user" && p.user ? (
+                  <Link
+                    to={`/profile/${p.user.username}`}
+                    className="hover:opacity-75 transition-opacity"
+                  >
+                    {inner}
+                  </Link>
+                ) : (
+                  inner
+                )}
                 <Text size="sm" as="span">{p.wpm != null ? `${Math.round(p.wpm)} WPM` : "—"}</Text>
               </div>
             );

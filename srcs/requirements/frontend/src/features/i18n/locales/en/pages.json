@@ -73,6 +73,8 @@
     "history_wpm": "WPM",
     "wpm_long": "Words per minute",
     "history_players": "Players",
+    "history_bot": "bot",
+    "history_guest": "guest",
     "accuracy": "Accuracy",
     "accuracy_short": "Acc",
     "achievements": "Achievements",

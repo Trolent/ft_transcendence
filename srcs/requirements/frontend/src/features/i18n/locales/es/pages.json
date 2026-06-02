@@ -75,6 +75,8 @@
     "accuracy": "Precision",
     "accuracy_short": "Prec",
     "history_players": "Jugadores",
+    "history_bot": "bot",
+    "history_guest": "invitado",
     "achievements": "Logros",
     "no_achievements": "Aún no hay logros.",
     "achievements_show_all": "Ver bloqueados",

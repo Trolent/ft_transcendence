@@ -75,6 +75,8 @@
     "accuracy": "Précision",
     "accuracy_short": "Préc",
     "history_players": "Joueurs",
+    "history_bot": "bot",
+    "history_guest": "invité",
     "achievements": "Succès",
     "no_achievements": "Pas de succès débloqués.",
     "achievements_show_all": "Voir tous les succès",

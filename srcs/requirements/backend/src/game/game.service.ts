@@ -503,6 +503,9 @@ export class GameService {
 				create: {
 					matchId: room.matchId,
 					userId: p.userId,
+					kind: 'user',
+					displayName: p.username,
+					avatarUrl: p.avatarUrl,
 					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 					accuracy: p.accuracy,
 					position,
@@ -561,6 +564,31 @@ export class GameService {
 					where: { id: room.matchId },
 					data: { endedAt: new Date(), status: MatchStatus.FINISHED },
 				});
+
+				// Bots and guests have no User row, so completePlayer skips them; record their
+				// roster rows here (userId null) so the match history shows the full field.
+				const nbBots = sorted.filter((x) => x.kind === 'bot').length;
+				const nbPlayers = sorted.length - nbBots;
+				const nonUsers = sorted
+					.map((p, i) => ({ p, position: i + 1 }))
+					.filter(({ p }) => p.kind !== 'user');
+				if (nonUsers.length > 0) {
+					await this.prisma.matchResult.createMany({
+						data: nonUsers.map(({ p, position }) => ({
+							matchId: room.matchId,
+							userId: null,
+							kind: p.kind,
+							displayName: p.username,
+							avatarUrl: p.avatarUrl,
+							wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+							accuracy: p.accuracy,
+							position,
+							finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+							nbPlayers,
+							nbBots,
+						})),
+					});
+				}
 
 				// Backstop for any finisher whose per-finish write was lost (swallowed DB error).
 				const finishers = sorted
