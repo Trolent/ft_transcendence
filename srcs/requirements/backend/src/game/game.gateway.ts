@@ -110,7 +110,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const finish = this.gameService.handleFinish(client.id);
 		if (finish) {
 			client.emit('you_finished', { position: finish.position, playerCount: finish.playerCount });
-			await this.gameService.recordFinish(client.id, finish.position);
+			const rewards = await this.gameService.recordFinish(client.id, finish.position);
+			if (rewards && (rewards.newAchievements.length > 0 || rewards.newLevel !== null)) {
+				client.emit('race_rewards', rewards);
+			}
 			if (finish.allDone) {
 				await this.gameService.finalizeRace(finish.roomId);
 			}
