@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { pickRandomQuote } from "@/features/game/quotes";
+import { QUOTES } from "@backend/common/game.constant";
+
+function pickRandomQuote(): string {
+  return QUOTES[Math.floor(Math.random() * QUOTES.length)];
+}
 
 function correctPrefixLength(typed: string, word: string): number {
   let i = 0;

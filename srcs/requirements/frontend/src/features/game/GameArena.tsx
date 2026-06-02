@@ -23,6 +23,7 @@ type Props = {
   serverText?: string | null;
   racers?: Racer[];
   youPid?: string | null;
+  liveFinishOrder?: string[];
   results?: RaceResult[] | null;
   playerCount?: number;
   myPosition?: number | null;
@@ -33,7 +34,7 @@ type Props = {
 
 export default function GameArena({
   overlay, onReplay, practice = false,
-  multiplayer = false, serverText, racers = [], youPid,
+  multiplayer = false, serverText, racers = [], youPid, liveFinishOrder = [],
   results, playerCount = 0, myPosition = null, onProgress,
   started = true, status = null,
 }: Props) {
@@ -97,6 +98,7 @@ export default function GameArena({
                 multiplayer
                 racers={racers}
                 youPid={youPid}
+                finishOrder={liveFinishOrder}
                 results={results}
                 playerProgress={progress}
                 playerWpm={wpm}

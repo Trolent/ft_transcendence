@@ -26,7 +26,7 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-6">
-          <PillButton color="red" onClick={() => navigate('/play/multiplayer')}>
+          <PillButton color="red" onClick={() => navigate('/play/multiplayer', { state: { fromApp: true } })}>
             {t('play.enter_race')}
           </PillButton>
           <PillButton color="blue" onClick={() => navigate('/play/practice')}>

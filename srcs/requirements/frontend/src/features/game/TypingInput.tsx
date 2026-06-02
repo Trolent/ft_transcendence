@@ -27,11 +27,17 @@ export default function TypingInput({
   }, [active]);
 
   const handleKeyDown = (e: { key: string; preventDefault: () => void }) => {
-    if (e.key === " ") {
+    // Space only acts as a word delimiter once the current word is fully correct; otherwise it
+    // falls through and is typed as a (wrong) character, like any other mistake.
+    if (e.key === " " && typed === currentWord) {
       e.preventDefault();
-      if (typed === currentWord && !isLastWord) onCompleteWord?.();
+      if (!isLastWord) {
+        onCompleteWord?.();
+      }
     }
-    if (e.key === "Backspace" && typed === "") e.preventDefault();
+    if (e.key === "Backspace" && typed === "") {
+      e.preventDefault();
+    }
   };
 
   const nextWord = words[wordIndex + 1] ?? "";
