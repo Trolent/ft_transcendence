@@ -26,7 +26,7 @@ export default function Register() {
     setLoading(true);
     try {
       await register(username, email, password);
-      navigate("/settings");
+      navigate("/profile");
     } catch (e) {
       setError(e instanceof Error ? tError(e.message, t) : t('errors.register_failed'));
     } finally {

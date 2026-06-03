@@ -10,11 +10,11 @@ Multiplayer real-time typing game built for the 42 group project ft_transcendenc
 
 | Member | Role | Responsibilities |
 |--------|------|-----------------|
-| akdovlet | Full-stack developer | _TODO_ |
-| axbaudri | Frontend developer | _TODO_ |
+| akdovlet | Full-stack developer | UI/UX designer, Game Designer |
+| axbaudri | Developer | Settings page (profile form with email & password change, API integration), privacy & terms page content, footer, and UX testing |
 | jbergero | Full-stack developer, Product Owner (PO) | Establish priorities, validate work and features ; focus on frontend developement: build reusable components for the team, implement auth and features on the frontend |
 | kpires | Full-stack developer, Technical Lead / Architect | Backend architecture and security, authentication systems (JWT, OAuth 42), WebSocket infrastructure, shell deployment scripts, and internationalization |
-| trolland | Full-stack developer, Project Manager (PM) | _TODO_ |
+| trolland | Full-stack developer, Project Manager (PM) | Project coordination, DevOps (Docker dev/prod, deployment scripts, Cloudflare Tunnel), database seed, leaderboard with paginated search |
 
 ## Features
 
@@ -182,18 +182,19 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 * Footer
 * UX testing
 
-**Challenge**: _TODO_
+**Challenge**: I joined this project with less experience than the rest of the team, which meant I had to learn while doing. Staying in sync with teammates was sometimes difficult, especially when things moved fast and decisions were made while I was still catching up. Working on UX testing helped me understand the project better: it forced me to communicate clearly, ask questions, and make sure I understood what had been built before I could validate it.
 
 ### akdovlet
 
 * Game engine
+* Game UI/UX
 * Game component design
 * Bots with randomized WPM
 * Multiplayer matchmaking and game logic
 * Server-side anti-cheat
 * Set up virtual machine for evaluations
 
-**Challenge**: _TODO_
+**Challenge**: Absorbing a lot of new concepts in a short time period, synchronization of players using websockets, race conditions, optimizing database queries, game theory, time management
 
 ### jbergero
 
@@ -238,9 +239,9 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 * Database seed system
 * Reusable paginated search bar with filters
 * Miscellaneous fixes
-* Github: set push rules for main branch, PR and issues reviewing
+* Github: setup repo, push rules for main branch, PR and issues reviewing
 
-**Challenge**: _TODO_
+**Challenge**: The fast pace of this project was the main challenge. With everyone working simultaneously on different parts, it quickly became clear that without enforced code reviews, knowledge silos would form — especially since some of us, myself included, were new to web development. I set up mandatory PR reviews on main as a way to keep everyone in the loop and make sure beginners could learn from the code they were merging, not just the code they wrote. On top of that, personal issues pulled me away from the project at a critical moment, which required catching up quickly while others had moved forward.
 
 ## Resources
 
