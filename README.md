@@ -11,7 +11,7 @@ Multiplayer real-time typing game built for the 42 group project ft_transcendenc
 | Member | Role | Responsibilities |
 |--------|------|-----------------|
 | akdovlet | Full-stack developer | _TODO_ |
-| axbaudri | Frontend developer | _TODO_ |
+| axbaudri | Developer | Settings page (profile form with email & password change, API integration), privacy & terms page content, footer, and UX testing |
 | jbergero | Full-stack developer, Product Owner (PO) | Establish priorities, validate work and features ; focus on frontend developement: build reusable components for the team, implement auth and features on the frontend |
 | kpires | Full-stack developer, Technical Lead / Architect | Backend architecture and security, authentication systems (JWT, OAuth 42), WebSocket infrastructure, shell deployment scripts, and internationalization |
 | trolland | Full-stack developer, Project Manager (PM) | Project coordination, DevOps (Docker dev/prod, deployment scripts, Cloudflare Tunnel), database seed, leaderboard with paginated search |
@@ -182,7 +182,7 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 * Footer
 * UX testing
 
-**Challenge**: _TODO_
+**Challenge**: I joined this project with less experience than the rest of the team, which meant I had to learn while doing. Staying in sync with teammates was sometimes difficult, especially when things moved fast and decisions were made while I was still catching up. Working on UX testing helped me understand the project better: it forced me to communicate clearly, ask questions, and make sure I understood what had been built before I could validate it.
 
 ### akdovlet
 
