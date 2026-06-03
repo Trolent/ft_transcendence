@@ -38,7 +38,7 @@ export type RaceRewards = {
 
 export function useRaceSocket() {
 	const socketRef = useRef<Socket | null>(null);
-	const raceStartClientRef = useRef<number | null>(null); // client-side start time for latency-free finish timing
+	const raceStartClientRef = useRef<number | null>(null);
 	const phaseRef = useRef<RacePhase>("idle");
 	const finishedRef = useRef(false);
 
@@ -127,7 +127,6 @@ export function useRaceSocket() {
 		});
 
 		socket.on("lobby_update", (payload: LobbyUpdatePayload) => {
-			setYou(payload.you);
 			setMatchText(payload.text);
 			setCountdownEndsAt(payload.phase === "countdown" ? payload.countdownEndsAt : null);
 			setPhase(payload.phase === "countdown" ? "countdown" : "waiting");
@@ -145,6 +144,10 @@ export function useRaceSocket() {
 				}
 				return next;
 			});
+		});
+
+		socket.on("assigned_pid", (payload: { pid: string }) => {
+			setYou(payload.pid);
 		});
 
 		socket.on("race_start", (payload: RaceStartPayload) => {

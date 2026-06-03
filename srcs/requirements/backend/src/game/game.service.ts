@@ -68,6 +68,12 @@ export class GameService {
 		return this.socketToRoom.has(socketId);
 	}
 
+	getPidForSocket(socketId: string): string | null {
+		const room = this.roomOf(socketId);
+		const participant = room ? this.participantOf(room, socketId) : undefined;
+		return participant?.pid ?? null;
+	}
+
 	private roomOf(socketId: string): RoomState | undefined {
 		const id = this.socketToRoom.get(socketId);
 		return id ? this.rooms.get(id) : undefined;
@@ -565,8 +571,6 @@ export class GameService {
 					data: { endedAt: new Date(), status: MatchStatus.FINISHED },
 				});
 
-				// Bots and guests have no User row, so completePlayer skips them; record their
-				// roster rows here (userId null) so the match history shows the full field.
 				const nbBots = sorted.filter((x) => x.kind === 'bot').length;
 				const nbPlayers = sorted.length - nbBots;
 				const nonUsers = sorted
@@ -590,7 +594,6 @@ export class GameService {
 					});
 				}
 
-				// Backstop for any finisher whose per-finish write was lost (swallowed DB error).
 				const finishers = sorted
 					.map((p, i) => ({ p, position: i + 1 }))
 					.filter(({ p }) => p.kind === 'user' && p.userId != null && !p.left);
@@ -612,7 +615,6 @@ export class GameService {
 			console.error(`[Race][${room.id}] finalize failed`, err);
 			await this.releaseUsers(room);
 		} finally {
-			// Guaranteed: clients always receive standings and the room is always torn down.
 			this.server.to(room.id).emit('race_finished', {
 				results,
 				playerCount: room.playerCount,
@@ -658,9 +660,6 @@ export class GameService {
 		}
 
 		if (this.connectedHumanCount(room) === 0) {
-			// Last human left mid-race. If anyone already crossed the line, finalize so the
-			// bots' standings — ranked by progress for those that never finished — are saved
-			// alongside the finisher. Otherwise the race was abandoned with no result: cancel it.
 			const anyHumanFinished = [...room.players.values()].some(
 				(x) => x.kind === 'user' && x.finishedAt != null,
 			);
@@ -730,17 +729,14 @@ export class GameService {
 			avatarUrl: p.avatarUrl,
 		}));
 		const phase = room.phase === 'countdown' ? 'countdown' : 'waiting';
-		for (const p of room.players.values()) {
-			if (!p.socketId) continue;
-			this.server.sockets.get(p.socketId)?.emit('lobby_update', {
-				lobbyId: room.id,
-				phase,
-				players,
-				you: p.pid,
-				hostPid: room.hostPid,
-				text: room.text,
-				countdownEndsAt: room.countdownEndsAt,
-			});
-		}
+		
+		this.server.to(room.id).emit('lobby_update', {
+			lobbyId: room.id,
+			phase,
+			players,
+			hostPid: room.hostPid,
+			text: room.text,
+			countdownEndsAt: room.countdownEndsAt,
+		});
 	}
 }

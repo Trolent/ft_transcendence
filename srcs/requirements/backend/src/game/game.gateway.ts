@@ -72,9 +72,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	if (!input)
 		return;
 	const result = this.gameService.assign(input);
-	if (result.status === 'joined')
+	if (result.status === 'joined') {
 		client.join(result.room.id);
-	else if (result.status === 'duplicate_session')
+		client.emit('assigned_pid', { pid: this.gameService.getPidForSocket(client.id) });
+	} else if (result.status === 'duplicate_session')
 		client.emit('join_rejected', { reason: 'duplicate_session' });
   }
 
