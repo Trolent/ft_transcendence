@@ -10,7 +10,7 @@ Multiplayer real-time typing game built for the 42 group project ft_transcendenc
 
 | Member | Role | Responsibilities |
 |--------|------|-----------------|
-| akdovlet | Full-stack developer | _TODO_ |
+| akdovlet | Full-stack developer | UI/UX designer, Game Designer |
 | axbaudri | Developer | Settings page (profile form with email & password change, API integration), privacy & terms page content, footer, and UX testing |
 | jbergero | Full-stack developer, Product Owner (PO) | Establish priorities, validate work and features ; focus on frontend developement: build reusable components for the team, implement auth and features on the frontend |
 | kpires | Full-stack developer, Technical Lead / Architect | Backend architecture and security, authentication systems (JWT, OAuth 42), WebSocket infrastructure, shell deployment scripts, and internationalization |
@@ -187,13 +187,14 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 ### akdovlet
 
 * Game engine
+* Game UI/UX
 * Game component design
 * Bots with randomized WPM
 * Multiplayer matchmaking and game logic
 * Server-side anti-cheat
 * Set up virtual machine for evaluations
 
-**Challenge**: _TODO_
+**Challenge**: Absorbing a lot of new concepts in a short time period, synchronization of players using websockets, race conditions, optimizing database queries, game theory, time management
 
 ### jbergero
 
