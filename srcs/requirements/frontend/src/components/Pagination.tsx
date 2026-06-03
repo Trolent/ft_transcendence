@@ -1,4 +1,3 @@
-import { type HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
 import { Btn } from "@/components";
 
@@ -19,7 +18,7 @@ function buildPageRange(current: number, total: number, delta: number): (number 
   return items;
 }
 
-interface PaginationProps extends HTMLAttributes<HTMLDivElement> {
+interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -30,7 +29,6 @@ export function Pagination({
   totalPages,
   onPageChange,
   className = "",
-  ...props
 }: PaginationProps) {
   const { t } = useTranslation('common');
   const canGoPrev = currentPage > 1;
@@ -40,7 +38,6 @@ export function Pagination({
   return (
     <div
       className={["flex items-center justify-center gap-1", className].join(" ")}
-      {...props}
     >
       <Btn
         variant="secondary"
