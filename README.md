@@ -182,6 +182,8 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 * Footer
 * UX testing
 
+**Challenge**: _TODO_
+
 ### akdovlet
 
 * Game engine
@@ -191,21 +193,22 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 * Server-side anti-cheat
 * Set up virtual machine for evaluations
 
-**Challenge**: à completer
+**Challenge**: _TODO_
 
 ### jbergero
 
-* Bootstrap frontend (React, Vite, Tailwind), set up router
-* Design system: reusable components (Alert, Avatar, Btn, Container, Heading, Label, Input, TextArea, Text, List, Modal, Pagination, AuthForm...), color palette and layout components
+* Bootstrap frontend (React, Vite, Tailwind), set up routing
+* Design system: reusable components (Alert, Avatar, Btn, Container, Heading, Label, Input, TextArea, Text, List, Modal, Pagination...), color palette and layout components
 * Auth: implement auth (context, forms, hook, api calls) on the frontend
-* Profile, friends system: implement both features on the frontend (api calls, buttons, pages, components...)
-* Achievements: full frontend implementation, backend fixes
+* Profile, friends system: implement both features on the frontend (API calls, pages, components...)
+* Achievements: frontend implementation, backend fixes
 * Status system: WebSocket frontend, backend fixes, context and hook
 * Chat: WebSocket frontend implementation, UI/UX, basic notification system for new messages using WebSocket
 * Github: CI actions setup, PR reviews, merges, conflict resolution
 * Internationalization (i18n): create and edit some translation keys
 * Database: made 2 migrations and small schema edits
 * Various backend fixes and small features
+* Wrote meeting summaries after each team call
 
 **Challenge**: planning and structuring the project architecture to avoid conflicts, redundancy, and disorganization. I decomposed features into several components, wrote internal documentation, and restructured the frontend for clarity and maintainability.
 
@@ -236,6 +239,8 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 * Reusable paginated search bar with filters
 * Miscellaneous fixes
 * Github: set push rules for main branch, PR and issues reviewing
+
+**Challenge**: _TODO_
 
 ## Resources
 
