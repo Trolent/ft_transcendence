@@ -28,7 +28,6 @@ export const LOBBY_WAIT_MS = 5_000;
 export const LOBBY_COUNTDOWN_MS = 10_000;
 export const LOBBY_JOIN_LOCK_MS = 2_000;
 
-export const MIN_BOTS_PAD = 1;
 export const BOT_FILL_INTERVAL_MS = 1_200;
 
 export const BOT_WPM_JITTER = 0.35;

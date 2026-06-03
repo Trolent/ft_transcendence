@@ -7,6 +7,5 @@ export const ACHIEVEMENTS = [
     { key: 'veteran_10',  label: 'Regular',       description: 'Complete 10 races',               icon: '🎮' },
     { key: 'veteran_50',  label: 'Veteran',       description: 'Complete 50 races',               icon: '🎖️' },
     { key: 'podium_3',    label: 'Podium Hunter', description: 'Finish 1st in 3 different races', icon: '🥇' },
-    { key: 'social_1',    label: 'Social',        description: 'Add your first friend',           icon: '🤝' },
     { key: 'speed_150',   label: 'Type Master',   description: 'Reach 150 WPM in a race',         icon: '🚀' },
 ];

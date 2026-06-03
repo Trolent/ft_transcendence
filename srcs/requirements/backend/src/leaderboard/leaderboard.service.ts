@@ -28,7 +28,9 @@ export class LeaderBoardService {
       }
     }
 
-    const groupByWhere = filteredUserIds ? { userId: { in: filteredUserIds } } : undefined;
+    const groupByWhere = filteredUserIds
+      ? { userId: { in: filteredUserIds } }
+      : { userId: { not: null } };
 
     const [grouped, total] = await Promise.all([
       this.prisma.matchResult.groupBy({
@@ -50,7 +52,9 @@ export class LeaderBoardService {
       }).then((results) => results.length),
     ]);
 
-    const userIds = grouped.map((r: typeof grouped[number]) => r.userId);
+    const userIds = grouped
+      .map((r: typeof grouped[number]) => r.userId)
+      .filter((id): id is number => id !== null);
     const users   = await this.prisma.user.findMany({
       where: { id: { in: userIds } },
       select: { id: true, username: true, avatarUrl: true, language: true },
@@ -60,7 +64,7 @@ export class LeaderBoardService {
     const userMap = new Map<number, UserRow>(users.map((u: UserRow) => [u.id, u]));
 
     const data = grouped.map((r: typeof grouped[number], i: number) => {
-      const user       = userMap.get(r.userId);
+      const user       = r.userId != null ? userMap.get(r.userId) : undefined;
       const gamesPlayed = (r as unknown as { _count: { id: number } })._count.id;
       const avgWpm     = r._avg.wpm ? Math.round(r._avg.wpm) : 0;
       const avgAccuracy = r._avg.accuracy ? Math.round(r._avg.accuracy) : 0;

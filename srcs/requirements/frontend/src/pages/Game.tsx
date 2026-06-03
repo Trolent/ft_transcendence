@@ -7,6 +7,7 @@ import { GameArena } from "@/features/game";
 import { RaceRewardsModal } from "@/features/game";
 import { useRaceSocket } from "@/hooks/useRaceSocket";
 import { useAuth } from "@/features/auth";
+import { LOBBY_COUNTDOWN_MS } from "@backend/common/game.constant";
 
 type Mode = "practice" | "multiplayer";
 type PracticePhase = "countdown" | "go" | "racing";
@@ -66,6 +67,7 @@ export default function Game() {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (race.phase !== "countdown" || race.countdownEndsAt == null) return;
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 200);
     return () => clearInterval(id);
   }, [race.phase, race.countdownEndsAt]);
@@ -101,17 +103,17 @@ export default function Game() {
 
     return (
       <div className="w-full flex flex-col items-center gap-3">
-        <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start">
-          <Btn size="sm" variant="ghost" onClick={backToMenu}>{t('play.main_menu')}</Btn>
+        <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start" style={{ zoom: 1.25 }}>
+          <Btn size="sm" variant="terminal" onClick={backToMenu}>{`[ ${t('play.main_menu')} ]`}</Btn>
         </div>
         <GameArena key={gameKey} overlay={overlay} onReplay={replay} practice />
       </div>
     );
   }
 
-  const topBar = (label: string, onClick: () => void) => (
-    <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start">
-      <Btn size="sm" variant="ghost" onClick={onClick}>{label}</Btn>
+  const topBar = (label: string, onClick: () => void, scaled = false) => (
+    <div className="w-full max-w-3xl px-2 sm:px-4 flex justify-start" style={scaled ? { zoom: 1.25 } : undefined}>
+      <Btn size="sm" variant="terminal" onClick={onClick}>{`[ ${label} ]`}</Btn>
     </div>
   );
 
@@ -149,8 +151,7 @@ export default function Game() {
   if (race.phase === "idle" || race.matchText == null) {
     return (
       <div className="w-full flex flex-col items-center gap-3">
-        {topBar(t('play.cancel'), backToMenu)}
-          <PageLayout centerY>
+        <PageLayout centerY>
           <p className="text-dim font-mono text-sm">{t('play.connecting')}</p>
         </PageLayout>
       </div>
@@ -159,7 +160,10 @@ export default function Game() {
 
   const secondsLeft =
     race.phase === "countdown" && race.countdownEndsAt != null
-      ? Math.max(0, Math.ceil((race.countdownEndsAt - now) / 1000))
+      ? Math.min(
+          Math.ceil(LOBBY_COUNTDOWN_MS / 1000),
+          Math.max(0, Math.ceil((race.countdownEndsAt - now) / 1000)),
+        )
       : null;
 
   const status =
@@ -178,7 +182,7 @@ export default function Game() {
       {race.rewards && (
         <RaceRewardsModal rewards={race.rewards} onClose={race.clearRewards} />
       )}
-      {topBar(preRace ? t('play.cancel') : t('play.main_menu'), backToMenu)}
+      {topBar(preRace ? t('play.cancel') : t('play.main_menu'), backToMenu, true)}
       <GameArena
         key={gameKey}
         multiplayer

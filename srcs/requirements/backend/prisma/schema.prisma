@@ -112,8 +112,11 @@ model MatchResult {
     id                  Int                 @id @default(autoincrement())
     matchId             Int
     match               Match               @relation(fields: [matchId], references: [id], onDelete: Cascade)
-    userId              Int
-    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId              Int?
+    user                User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+    kind                String              @default("user")
+    displayName         String?
+    avatarUrl           String?
     wpm                 Float?
     position            Int?
     nbPlayers           Int?

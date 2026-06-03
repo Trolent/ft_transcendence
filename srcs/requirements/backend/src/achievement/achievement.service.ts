@@ -63,14 +63,6 @@ export class AchievementService implements OnModuleInit {
             toUnlock.push('speed_150');
         }
 
-        const friendCount = await this.prisma.friendship.count({
-            where: { OR: [{ initiatorId: userId }, { receiverId: userId }], status: 'ACCEPTED' }
-        });
-
-        if (friendCount >= 1) {
-            toUnlock.push('social_1');
-        }
-
         const newAchievements = await this.unlockAchievements(userId, toUnlock);
 
         const prevLevel = Math.floor((allResults.length - 1) / 3) + 1;

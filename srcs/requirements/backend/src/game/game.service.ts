@@ -11,7 +11,6 @@ import {
 	LOBBY_WAIT_MS,
 	LOBBY_COUNTDOWN_MS,
 	LOBBY_JOIN_LOCK_MS,
-	MIN_BOTS_PAD,
 	BOT_FILL_INTERVAL_MS,
 	BOT_TICK_MS,
 	PROGRESS_MIN_INTERVAL_MS,
@@ -63,10 +62,6 @@ export class GameService {
 
 	setServer(server: Namespace): void {
 		this.server = server;
-	}
-
-	getRoom(roomId: string): RoomState | undefined {
-		return this.rooms.get(roomId);
 	}
 
 	isInRoom(socketId: string): boolean {
@@ -191,7 +186,7 @@ export class GameService {
 		this.rooms.set(room.id, room);
 		if (host.socketId) this.socketToRoom.set(host.socketId, room.id);
 
-		room.botTarget = this.rollBotTarget(this.humanCount(room));
+		room.botTarget = this.botTargetFor(this.humanCount(room));
 		room.waitTimer = setTimeout(() => this.onWaitTimeout(room.id), LOBBY_WAIT_MS);
 		this.scheduleBotFill(room);
 		console.log(`[Lobby][${room.id}] created by ${host.username}`);
@@ -216,18 +211,22 @@ export class GameService {
 		return false;
 	}
 
-	private rollBotTarget(humanCount: number): number {
-		const slots = MAX_PLAYERS - humanCount;
-		if (slots <= 0) return 0;
-		return MIN_BOTS_PAD + Math.floor(Math.random() * (slots - MIN_BOTS_PAD + 1));
+	private botTargetFor(humanCount: number): number {
+		return Math.max(0, MAX_PLAYERS - humanCount);
 	}
 
 	private repadBots(room: RoomState): void {
-		room.botTarget = this.rollBotTarget(this.humanCount(room));
+		room.botTarget = this.botTargetFor(this.humanCount(room));
 		while (
 			(this.botCount(room) > room.botTarget || room.players.size > MAX_PLAYERS) &&
 			this.evictBot(room)
 		);
+	}
+
+	private fillBotsNow(room: RoomState): void {
+		while (this.botCount(room) < room.botTarget && room.players.size < MAX_PLAYERS) {
+			this.addBot(room);
+		}
 	}
 
 	private addBot(room: RoomState): void {
@@ -503,6 +502,9 @@ export class GameService {
 				create: {
 					matchId: room.matchId,
 					userId: p.userId,
+					kind: 'user',
+					displayName: p.username,
+					avatarUrl: p.avatarUrl,
 					wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
 					accuracy: p.accuracy,
 					position,
@@ -563,6 +565,31 @@ export class GameService {
 					data: { endedAt: new Date(), status: MatchStatus.FINISHED },
 				});
 
+				// Bots and guests have no User row, so completePlayer skips them; record their
+				// roster rows here (userId null) so the match history shows the full field.
+				const nbBots = sorted.filter((x) => x.kind === 'bot').length;
+				const nbPlayers = sorted.length - nbBots;
+				const nonUsers = sorted
+					.map((p, i) => ({ p, position: i + 1 }))
+					.filter(({ p }) => p.kind !== 'user');
+				if (nonUsers.length > 0) {
+					await this.prisma.matchResult.createMany({
+						data: nonUsers.map(({ p, position }) => ({
+							matchId: room.matchId,
+							userId: null,
+							kind: p.kind,
+							displayName: p.username,
+							avatarUrl: p.avatarUrl,
+							wpm: p.wpm > MAX_WPM ? 0 : p.wpm,
+							accuracy: p.accuracy,
+							position,
+							finishedAt: p.finishedAt ? new Date(p.finishedAt) : null,
+							nbPlayers,
+							nbBots,
+						})),
+					});
+				}
+
 				// Backstop for any finisher whose per-finish write was lost (swallowed DB error).
 				const finishers = sorted
 					.map((p, i) => ({ p, position: i + 1 }))
@@ -611,6 +638,7 @@ export class GameService {
 				return { roomId: room.id };
 			}
 			this.repadBots(room);
+			this.fillBotsNow(room);
 			this.emitLobbyUpdate(room);
 			return { roomId: room.id };
 		}
@@ -630,7 +658,15 @@ export class GameService {
 		}
 
 		if (this.connectedHumanCount(room) === 0) {
-			if (!this.finalizing.has(room.id)) {
+			// Last human left mid-race. If anyone already crossed the line, finalize so the
+			// bots' standings — ranked by progress for those that never finished — are saved
+			// alongside the finisher. Otherwise the race was abandoned with no result: cancel it.
+			const anyHumanFinished = [...room.players.values()].some(
+				(x) => x.kind === 'user' && x.finishedAt != null,
+			);
+			if (anyHumanFinished) {
+				await this.finalizeRace(room.id);
+			} else if (!this.finalizing.has(room.id)) {
 				this.finalizing.add(room.id);
 				if (room.botTicker) {
 					clearInterval(room.botTicker);
