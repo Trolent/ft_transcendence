@@ -132,7 +132,7 @@ function MultiplayerTrack({ racers = [], youPid, finishOrder = [], results, pass
         const isYou = r.pid === youPid;
         const place = placeFor(r.pid);
         return (
-          <div key={r.pid} className="flex items-center h-14 mb-3">
+          <div key={r.pid} className="flex items-center h-12 mb-1.5">
             <div className="w-20 sm:w-32 text-right pr-3 sm:pr-4 text-sm truncate flex flex-col items-end justify-center">
               <span className={isYou ? "text-default font-bold" : "text-dim"}>
                 {r.kind === 'user' ? r.username : r.kind === 'bot' ? t('play.bot') : t('play.guest')}
@@ -212,7 +212,7 @@ function CosmeticTrack({
   return (
     <div className="w-full">
       {lanes.map(idx => (
-        <div key={idx} className="flex items-center h-14 mb-3">
+        <div key={idx} className="flex items-center h-12 mb-1.5">
           <div className="w-16 sm:w-28 text-right pr-3 sm:pr-4 text-sm text-dim truncate">
             {label(idx)}
           </div>

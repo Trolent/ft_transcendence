@@ -84,15 +84,17 @@ export default function GameArena({
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full max-w-3xl px-2 sm:px-4">
+      <div className="w-full max-w-3xl px-2 sm:px-4" style={{ zoom: 1.25 }}>
         <Container variant="panel" className="mx-auto">
-          <div className="flex flex-col gap-6">
-            <HUD timeLeft={timeLeft} wpm={wpm} practice={practice} />
-            {status && (
-              <div className="text-center font-mono text-lg sm:text-xl font-bold uppercase tracking-widest text-default tabular-nums">
-                {status}
-              </div>
-            )}
+          <div className="flex flex-col gap-4">
+            <div className="relative">
+              <HUD timeLeft={timeLeft} wpm={wpm} practice={practice} />
+              {status && (
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-center font-mono text-lg sm:text-xl font-bold uppercase tracking-widest text-default tabular-nums">
+                  {status}
+                </div>
+              )}
+            </div>
             {multiplayer ? (
               <RaceTrack
                 multiplayer

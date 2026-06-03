@@ -22,7 +22,7 @@ Examples:
 
 */
 
-type BtnVariant = "primary" | "secondary" | "ghost" | "danger";
+type BtnVariant = "primary" | "secondary" | "ghost" | "danger" | "terminal";
 type BtnSize    = "sm" | "md" | "lg";
 
 type BtnOwnProps<E extends ElementType> = {
@@ -57,6 +57,13 @@ const variantClasses: Record<BtnVariant, string> = {
   danger:
     "bg-transparent text-danger border border-danger " +
     "hover:bg-danger hover:text-black " +
+    "active:opacity-80 " +
+    "disabled:opacity-30 disabled:cursor-not-allowed",
+
+  // Terminal command: bracketed dim label that lights up green on hover (matches nav [*] style).
+  terminal:
+    "bg-transparent text-dim border-0 " +
+    "hover:text-default " +
     "active:opacity-80 " +
     "disabled:opacity-30 disabled:cursor-not-allowed",
 };
