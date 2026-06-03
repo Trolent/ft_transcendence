@@ -66,22 +66,24 @@ export default function TypingInput({
 
   const charNodes: React.ReactNode[] = passage.split("").map((char, i) => {
     let cls: string;
-    if (i < charOffset) {
-      cls = "text-dim";
-    } else if (!finished && i === absoluteCursor) {
-      cls = `text underline ${cursorIsError ? "decoration-red-400" : "decoration-default text-accent"}`;
-    } else if (i < absoluteCursor) {
-      cls = i >= redStart ? "bg-red-500/40 text" : "text-dim";
+    if (!finished && i === absoluteCursor) {
+      // Bar caret: a left border on the next character (negative margin cancels its width, no jitter).
+      cls = `text-dim border-l-2 -ml-0.5 ${cursorIsError ? "border-red-400" : "border-default"}`;
+    } else if (i < charOffset || i < absoluteCursor) {
+      // Already typed: correct characters light up matrix green, mistakes get a red mark.
+      cls = i >= charOffset && i >= redStart ? "bg-red-500/40 text-default" : "text-default";
     } else {
-      cls = "text";
+      // Not yet typed: dim green (in-theme, still readable), brightening to full
+      // matrix green as each character is typed.
+      cls = "text-dim";
     }
     return <span key={i} className={cls}>{char}</span>;
   });
 
-  // Trailing cursor when absoluteCursor is past the end of the passage
+  // Trailing cursor when the cursor is past the end of the passage.
   if (!finished && absoluteCursor >= passage.length) {
     charNodes.push(
-      <span key="trail" className={`text-dim underline ${cursorIsError ? "decoration-red-400" : "decoration-default"}`}>&nbsp;</span>
+      <span key="trail" className={cursorIsError ? "text-red-400" : "text-default"}>|</span>
     );
   }
 
