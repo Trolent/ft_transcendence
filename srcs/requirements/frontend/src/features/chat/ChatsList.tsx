@@ -71,7 +71,7 @@ export function ChatsList({ onSelectChat, selectedUsername, refreshKey }: ChatsL
         <NewChat onSelectChat={onSelectChat} />
       </div>
       {loading ? (
-        <Alert variant="info">{t('common:loading')}</Alert>
+        <Text variant="muted">{t('common:loading')}</Text>
       ) : error ? (
         <Alert variant="error">{error}</Alert>
       ) : chats.length === 0 ? (

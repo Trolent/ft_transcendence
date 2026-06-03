@@ -120,7 +120,7 @@ export function ChatBox({ targetUsername, onMessageSent }: ChatBoxProps) {
           {isLoading ? (
             <div><Text variant="dim">{t('common:loading')}</Text></div>
           ) : (
-            <Container className="flex flex-col h-[62dvh] sm:h-[65dvh] !p-2 sm:!p-4">
+            <Container variant="terminal" className="flex flex-col h-[62dvh] sm:h-[65dvh] !p-2 sm:!p-4">
               <Messages messages={messages} currentUserId={user?.id} />
               <ChatForm onSendMessage={handleSendMessage} />
             </Container>

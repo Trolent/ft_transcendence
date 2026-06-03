@@ -190,7 +190,7 @@ export default function Leaderboard() {
                 <span className="font-bold">{item.level}</span>
               </Text>
 
-              <Text size="xs" variant="muted" className="text-center hidden sm:block">
+              <Text className="text-center hidden sm:block">
                 {item.gamesPlayed}
               </Text>
             </Link>
