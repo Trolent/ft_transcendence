@@ -7,6 +7,8 @@
     "search_empty": "Ningún jugador coincide con tu búsqueda.",
     "error": "No se pudo cargar la clasificación.",
     "wpm": "{{wpm}} PPM",
+    "wpm_down": "↓ PPM",
+    "wpm_up": "↑ PPM",
     "level": "nivel: {{level}}",
     "games": "partidas: {{count}}",
     "sort_desc": "Mayor PPM primero",

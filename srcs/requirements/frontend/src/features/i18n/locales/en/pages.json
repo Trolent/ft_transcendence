@@ -7,6 +7,8 @@
     "search_empty": "No players match your search.",
     "error": "Failed to load leaderboard.",
     "wpm": "{{wpm}} WPM",
+    "wpm_down": "↓ WPM",
+    "wpm_up": "↑ WPM",
     "level": "level: {{level}}",
     "games": "games: {{count}}",
     "sort_desc": "Highest WPM first",

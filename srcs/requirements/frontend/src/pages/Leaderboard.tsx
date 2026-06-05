@@ -92,14 +92,14 @@ export default function Leaderboard() {
               variant={sortOrder === 'desc' ? 'primary' : 'secondary'}
               onClick={() => { setSortOrder('desc'); setCurrentPage(1); }}
             >
-              ↓ WPM
+              {t('leaderboard.wpm_down')}
             </Btn>
             <Btn
               size="sm"
               variant={sortOrder === 'asc' ? 'primary' : 'secondary'}
               onClick={() => { setSortOrder('asc'); setCurrentPage(1); }}
             >
-              ↑ WPM
+              {t('leaderboard.wpm_up')}
             </Btn>
           </div>
         </div>

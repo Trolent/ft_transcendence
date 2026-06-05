@@ -7,6 +7,8 @@
     "search_empty": "Aucun joueur ne correspond à votre recherche.",
     "error": "Impossible de charger le classement.",
     "wpm": "{{wpm}} MPM",
+    "wpm_down": "↓ MPM",
+    "wpm_up": "↑ MPM",
     "level": "niveau : {{level}}",
     "games": "parties : {{count}}",
     "sort_desc": "MPM décroissant",
