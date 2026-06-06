@@ -43,6 +43,7 @@ export default function Leaderboard() {
     let cancelled = false;
     setLoading(true);
     setError(null);
+    setTotalPages(1);
 
     getLeaderboard(currentPage, LIMIT, debouncedQuery, sortOrder, minLevel)
       .then((response) => {
