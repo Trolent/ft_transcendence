@@ -58,6 +58,7 @@ export class UsersService {
       where: { id },
       select: {
         id: true, username: true, email: true,
+        role: true,
         avatarUrl: true, bio: true, language: true,
         status: true, createdAt: true, updatedAt: true,
         passwordHash: true,
@@ -90,6 +91,7 @@ export class UsersService {
       where: { email },
       select: {
         id: true, username: true, email: true,
+        role: true,
         passwordHash: true, avatarUrl: true, bio: true,
         language: true, status: true, createdAt: true, updatedAt: true,
       },
@@ -101,6 +103,7 @@ export class UsersService {
       where: { username },
       select: {
         id: true, username: true, email: true,
+        role: true,
         passwordHash: true, avatarUrl: true, bio: true, language: true,
         status: true, createdAt: true, updatedAt: true,
       },
@@ -176,7 +179,14 @@ export class UsersService {
         wpm: true, position: true, accuracy: true, finishedAt: true, nbPlayers: true, nbBots: true,
         match: {
           select: {
-            id: true, startedAt: true, textSnippet: true,
+            id: true,
+            startedAt: true,
+            quote: {
+              select: {
+                id: true,
+                text: true,
+              },
+            },
             matchResult: {
               select: {
                 position: true,
