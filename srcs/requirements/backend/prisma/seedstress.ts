@@ -1,5 +1,6 @@
 import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { QUOTES } from '../src/common/game.constant';
 
 const CORE_COUNT = 48;
 const PASSWORD   = 'Password123!';
@@ -12,8 +13,6 @@ const PHRASES = [
   'comment tu fais pour aller aussi vite', 'practice makes perfect',
   'je suis chaud', 'trop fort', 'la prochaine fois c\'est moi',
 ];
-
-const TEXT_SNIPPET = 'size_t ft_strlen(const char *s) returns the number of characters before the null terminator.';
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -80,8 +79,15 @@ async function main() {
     const playerCount = 2 + Math.floor(Math.random() * Math.min(5, core.length - 2));
     const players    = [...core].sort(() => Math.random() - 0.5).slice(0, playerCount);
 
+    const quote = await prisma.quote.create({
+      data: {
+        active: true,
+        text: pick(QUOTES),
+      },
+    });
+
     const match = await prisma.match.create({
-      data: { textSnippet: TEXT_SNIPPET, startedAt, endedAt, status: MatchStatus.FINISHED },
+      data: { quoteId: quote.id, startedAt, endedAt, status: MatchStatus.FINISHED },
     });
 
     const results = players

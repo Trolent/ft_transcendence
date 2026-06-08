@@ -2,6 +2,7 @@ import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } fro
 import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
 import { ACHIEVEMENTS } from '../src/common/achievements.constants';
+import { QUOTES } from '../src/common/game.constant';
 
 const SEED_USERS       = 999;
 const SEED_MATCHES     = 40;
@@ -9,15 +10,6 @@ const SEED_FRIENDSHIPS = 30;
 const DEFAULT_PASSWORD = 'Password123!';
 
 const prisma = new PrismaClient();
-
-const textSnippets = [
-  'size_t ft_strlen(const char *s) returns the number of characters before the null terminator.',
-  'char *ft_strdup(const char *s1) allocates a new string and copies the full source buffer into it.',
-  'void *ft_memset(void *b, int c, size_t len) fills the memory area with the same byte value.',
-  'void *ft_memcpy(void *dest, const void *src, size_t n) copies n bytes from src to dest without overlap checks.',
-  'int ft_strncmp(const char *s1, const char *s2, size_t n) compares two strings up to the requested length.',
-  'char *ft_strjoin(const char *s1, const char *s2) allocates a fresh string containing both inputs end to end.',
-];
 
 function randFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -61,6 +53,7 @@ async function main() {
         create: {
           username:     u.username,
           email:        u.email,
+          role:         "MOD",
           bio:          faker.lorem.sentence(),
           passwordHash,
           avatarUrl:    `https://api.dicebear.com/7.x/pixel-art/svg?seed=default${i + 1}`,
@@ -126,9 +119,16 @@ async function main() {
     const startedAt = daysAgo(faker.number.int({ min: 0, max: 30 }));
     const endedAt   = new Date(startedAt.getTime() + faker.number.int({ min: 30, max: 300 }) * 1000);
 
+    const quote = await prisma.quote.create({
+      data: {
+        active: true,
+        text: randFrom(QUOTES),
+      },
+    });
+
     const match = await prisma.match.create({
       data: {
-        textSnippet: randFrom(textSnippets),
+        quoteId: quote.id,
         startedAt,
         endedAt,
         status: MatchStatus.FINISHED,
