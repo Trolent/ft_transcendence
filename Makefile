@@ -26,12 +26,12 @@ dev: check-env
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) up --build -d
 	@$(MAKE) prisma
 	@printf "\n\033[1;33m  [DEV] $(NAME) is up in dev mode!\033[0m\n\n"
-	@printf "\033[1;36m  ┌───────────────────────────────────────────┐\033[0m\n"
+	@printf "\033[1;36m  ┌───────────────────────────────────────┐\033[0m\n"
 	@printf "\033[1;36m  │\033[0m  Frontend  ->  http://$(DEV_DOMAIN):5173  \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  │\033[0m  Backend   ->  http://$(DEV_DOMAIN):3000  \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  │\033[0m  Database  ->  http://$(DEV_DOMAIN):5432  \033[1;36m│\033[0m\n"
 	@printf "\033[1;36m  │\033[0m  Prisma.   ->  http://$(DEV_DOMAIN):5555  \033[1;36m│\033[0m\n"
-	@printf "\033[1;36m  └───────────────────────────────────────────┘\033[0m\n\n"
+	@printf "\033[1;36m  └───────────────────────────────────────┘\033[0m\n\n"
 
 invade-the-web: check-env
 	docker compose -f $(COMPOSE) -f $(COMPOSE_CLOUD) up --build -d
