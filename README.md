@@ -161,6 +161,16 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 
 **TOTAL: 23 points**
 
+## Team Information
+
+| Member | Role | Responsibilities |
+|--------|------|-----------------|
+| akdovlet | Full-stack developer | UI/UX designer, Game Designer |
+| axbaudri | Developer | Settings page (profile form with email & password change, API integration), privacy & terms page content, footer, and UX testing |
+| jbergero | Full-stack developer, Product Owner (PO) | Establish priorities, validate work and features ; focus on frontend developement: build reusable components for the team, implement auth and features on the frontend |
+| kpires | Full-stack developer, Technical Lead / Architect | Backend architecture and security, authentication systems (JWT, OAuth 42), WebSocket infrastructure, shell deployment scripts, and internationalization |
+| trolland | Full-stack developer, Project Manager (PM) | Project coordination, DevOps (Docker dev/prod, deployment scripts, Cloudflare Tunnel), database seed, leaderboard with paginated search |
+
 ## Project Management
 
 The team worked remotely with weekly to bi-weekly calls, daily communication on Discord and used multiple tools to organize and distribute work.
@@ -171,16 +181,6 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 - Trello board for features planning (Backlog → To Do → Doing → Review → Done)
 - Github Issues: for bugs and code-related tasks
 - Github Wiki: internal documentation for component usage, API routes and development guidelines
-
-## Team Information
-
-| Member | Role | Responsibilities |
-|--------|------|-----------------|
-| akdovlet | Full-stack developer | UI/UX designer, Game Designer |
-| axbaudri | Developer | Settings page (profile form with email & password change, API integration), privacy & terms page content, footer, and UX testing |
-| jbergero | Full-stack developer, Product Owner (PO) | Establish priorities, validate work and features ; focus on frontend developement: build reusable components for the team, implement auth and features on the frontend |
-| kpires | Full-stack developer, Technical Lead / Architect | Backend architecture and security, authentication systems (JWT, OAuth 42), WebSocket infrastructure, shell deployment scripts, and internationalization |
-| trolland | Full-stack developer, Project Manager (PM) | Project coordination, DevOps (Docker dev/prod, deployment scripts, Cloudflare Tunnel), database seed, leaderboard with paginated search |
 
 ## Individual Contributions
 
