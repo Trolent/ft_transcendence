@@ -6,3 +6,4 @@ export { GuestRoute } from './GuestRoute';
 export { getToken } from './AuthContext';
 export { useIsOwnProfile } from './useIsOwnProfile';
 export { AdminRoute } from './AdminRoute';
+export { useIsMod } from './useIsMod';
