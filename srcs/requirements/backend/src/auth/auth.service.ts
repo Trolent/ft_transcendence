@@ -36,7 +36,9 @@ export class AuthService {
     //     data: { status: UserStatus.ONLINE }
     // });
 
-    return { access_token: this.jwtService.sign(payload) };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
   async validateUser(userId: number) {
@@ -158,6 +160,8 @@ export class AuthService {
         });
     }
 
-    return { access_token: this.jwtService.sign({ sub: user.id }) };
+    return {
+      access_token: this.jwtService.sign({ sub: user.id }),
+    };
   }
 }
