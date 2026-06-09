@@ -2,19 +2,11 @@
 
 # Typerun
 
+> Grade: 125/100
+
 ## Description
 
 Multiplayer real-time typing game built for the 42 group project ft_transcendence: full-stack web application using React, NestJS, PostgreSQL, Tailwind CSS, and Docker.
-
-## Team Information
-
-| Member | Role | Responsibilities |
-|--------|------|-----------------|
-| akdovlet | Full-stack developer | UI/UX designer, Game Designer |
-| axbaudri | Developer | Settings page (profile form with email & password change, API integration), privacy & terms page content, footer, and UX testing |
-| jbergero | Full-stack developer, Product Owner (PO) | Establish priorities, validate work and features ; focus on frontend developement: build reusable components for the team, implement auth and features on the frontend |
-| kpires | Full-stack developer, Technical Lead / Architect | Backend architecture and security, authentication systems (JWT, OAuth 42), WebSocket infrastructure, shell deployment scripts, and internationalization |
-| trolland | Full-stack developer, Project Manager (PM) | Project coordination, DevOps (Docker dev/prod, deployment scripts, Cloudflare Tunnel), database seed, leaderboard with paginated search |
 
 ## Features
 
@@ -26,6 +18,13 @@ Multiplayer real-time typing game built for the 42 group project ft_transcendenc
 * **Settings**: change password, email, and default language *(axbaudri)*
 * **Status**: real-time status for users *(jbergero, kpires)*
 * **Internationalization**: full English, French and Spanish translation using i18n *(kpires)*
+* **Admin page**: user roles and basic administration page to manage quotes *(jbergero)*
+
+## Screenshots
+
+<img src="./assets/game.png" width="500px">
+
+<img src="./assets/profile.png" width="500px">
 
 ## Technical Stack
 
@@ -173,6 +172,16 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 - Github Issues: for bugs and code-related tasks
 - Github Wiki: internal documentation for component usage, API routes and development guidelines
 
+## Team Information
+
+| Member | Role | Responsibilities |
+|--------|------|-----------------|
+| akdovlet | Full-stack developer | UI/UX designer, Game Designer |
+| axbaudri | Developer | Settings page (profile form with email & password change, API integration), privacy & terms page content, footer, and UX testing |
+| jbergero | Full-stack developer, Product Owner (PO) | Establish priorities, validate work and features ; focus on frontend developement: build reusable components for the team, implement auth and features on the frontend |
+| kpires | Full-stack developer, Technical Lead / Architect | Backend architecture and security, authentication systems (JWT, OAuth 42), WebSocket infrastructure, shell deployment scripts, and internationalization |
+| trolland | Full-stack developer, Project Manager (PM) | Project coordination, DevOps (Docker dev/prod, deployment scripts, Cloudflare Tunnel), database seed, leaderboard with paginated search |
+
 ## Individual Contributions
 
 ### axbaudri
@@ -268,7 +277,7 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 
 ## Database Schema
 
-**PK**: Primary Key – **FK**: Foreign Key – **Cascade delete**: record is automatically deleted when the referenced record is deleted.
+**PK**: Primary Key – **FK**: Foreign Key – **Cascade delete**: record is automatically deleted when the referenced record is deleted — **?**: Optional
 
 ### User
 
@@ -280,6 +289,7 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 | passwordHash          | String?                         |
 | avatarUrl             | String?                         |
 | bio                   | String?                         |
+| role                  | Enum (USER, MOD)                |
 | language              | Enum (EN, FR, ES)               |
 | status                | Enum (ONLINE, IN_GAME, OFFLINE) |
 | createdAt / updatedAt | DateTime                        |
@@ -337,7 +347,7 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 | **Field**   | **Type**                                         |
 |-------------|--------------------------------------------------|
 | id          | Integer PK                                       |
-| textSnippet | String                                           |
+| quoteId     | FK → Quote                                       |
 | startedAt   | DateTime                                         |
 | endedAt     | DateTime?                                        |
 | status      | Enum (WAITING, IN_PROGRESS, FINISHED, CANCELLED) |
@@ -355,3 +365,14 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 | nbBots     | Int?                        |
 | position   | Int?                        |
 | finishedAt | DateTime?                   |
+
+### Quote
+
+| **Field**  | **Type**    |
+|------------|-------------|
+| id         | Integer PK  |
+| active     | Boolean     |
+| text       | String      |
+| creatorId  | FK → User?  |
+| type       | String?     |
+| createdAt  | DateTime?   |
