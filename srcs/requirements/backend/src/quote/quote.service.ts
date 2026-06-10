@@ -9,6 +9,7 @@ export class QuoteService {
 
   async getAllQuotes() {
     return this.prisma.quote.findMany({
+      where: { active: true },
       select: {
         id: true,
         text: true,

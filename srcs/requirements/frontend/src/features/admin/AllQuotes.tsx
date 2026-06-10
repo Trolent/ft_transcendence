@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { TextArea, Btn, Input, List, Text } from "@/components";
-import { editQuote } from '@/api/quote.api';
+import { deleteQuote, editQuote } from '@/api/quote.api';
 import type { Quote } from '@/types/api';
 
 interface AllQuotesProps {
@@ -14,13 +14,13 @@ export function AllQuotes({ quotes, loading, onQuotesUpdated, onError }: AllQuot
   const [editing, setEditing] = useState<{ id: number; text: string; type: string } | null>(null);
   const [processing, setProcessing] = useState<number | null>(null);
 
-  const handleToggleActive = async (quoteId: number, isActive: boolean) => {
+  const handleDelete = async (quoteId: number) => {
     try {
       setProcessing(quoteId);
-      await editQuote(quoteId, { active: !isActive });
+      await deleteQuote(quoteId);
       onQuotesUpdated();
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Failed to update quote');
+      onError(err instanceof Error ? err.message : 'Failed to delete quote');
     } finally {
       setProcessing(null);
     }
@@ -34,7 +34,7 @@ export function AllQuotes({ quotes, loading, onQuotesUpdated, onError }: AllQuot
 
     try {
       setProcessing(quoteId);
-      await editQuote(quoteId, { text: editing.text, type: editing.type || null });
+      await editQuote(quoteId, { text: editing.text, type: editing.type || undefined });
       setEditing(null);
       onQuotesUpdated();
     } catch (err) {
@@ -56,7 +56,7 @@ export function AllQuotes({ quotes, loading, onQuotesUpdated, onError }: AllQuot
     <List
       items={quotes}
       renderItem={(quote) => (
-        <div className={`space-y-3 ${!quote.active ? 'opacity-50' : ''}`}>
+        <div className="space-y-3">
           <div className="flex justify-between items-center gap-2">
             <div>
               {quote.type && <Text variant="dim" size="xs">{quote.type}</Text>}
@@ -101,12 +101,12 @@ export function AllQuotes({ quotes, loading, onQuotesUpdated, onError }: AllQuot
                   Edit
                 </Btn>
                 <Btn 
-                  variant={quote.active ? "danger" : "secondary"} 
+                  variant="danger"
                   size="sm" 
                   disabled={processing === quote.id} 
-                  onClick={() => handleToggleActive(quote.id, quote.active)}
+                  onClick={() => handleDelete(quote.id)}
                 >
-                  {processing === quote.id ? (quote.active ? 'Deactivating...' : 'Activating...') : (quote.active ? 'Deactivate' : 'Activate')}
+                  {processing === quote.id ? 'Deleting...' : 'Delete'}
                 </Btn>
               </>
             )}

@@ -20,14 +20,10 @@ export async function createQuote(text: string, type?: string): Promise<Quote> {
   return handleResponse<Quote>(res);
 }
 
-export async function deactivateQuote(id: number): Promise<Quote> {
+export async function deleteQuote(id: number): Promise<Quote> {
   const res = await fetch(`${API_QUOTES}/${id}`, {
-    method: 'PATCH',
-    headers: {
-      ...authHeaders(),
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ active: false }),
+    method: 'DELETE',
+    headers: authHeaders(),
   });
   return handleResponse<Quote>(res);
 }

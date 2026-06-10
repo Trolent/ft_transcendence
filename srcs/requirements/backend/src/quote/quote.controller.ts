@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Param,
   Body,
   Query,
@@ -83,5 +84,23 @@ export class QuoteController {
       throw new ForbiddenException('Only mods can edit quotes');
     }
     return this.quoteService.editQuote(id, dto);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Soft delete a quote' })
+  @ApiResponse({ status: 200, description: 'Quote deleted' })
+  @ApiResponse({ status: 403, description: 'Only mods can delete quotes' })
+  @ApiResponse({ status: 404, description: 'Quote not found' })
+  @Throttle({ default: THROTTLE_LIMIT_AUTH_GLOBAL })
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  deleteQuote(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: SafeUser,
+  ) {
+    if (user.role !== 'MOD') {
+      throw new ForbiddenException('Only mods can delete quotes');
+    }
+    return this.quoteService.deactivateQuote(id);
   }
 }
