@@ -2,11 +2,20 @@
 
 # Typerun
 
-> Grade: 125/100
+![42](https://img.shields.io/badge/42-000000?style=for-the-badge&logo=42&logoColor=white)
+![Grade: 125%](https://img.shields.io/badge/Grade-125%25-brightgreen?style=for-the-badge)
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat&logo=nestjs&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
 
 ## Description
 
-Multiplayer real-time typing game built for the 42 group project ft_transcendence: full-stack web application using React, NestJS, PostgreSQL, Tailwind CSS, and Docker.
+Multiplayer real-time typing game built for the 42 group project ft_transcendence: full-stack web application using React, NestJS, WebSockets, PostgreSQL, Tailwind CSS, and Docker.
 
 ## Features
 
@@ -86,8 +95,9 @@ The URL is set via `CLOUDFLARE_DOMAIN` in `srcs/.env`. Go to `https://$CLOUDFLAR
 | make re                | Rebuild in production mode             |
 | make re-dev            | Rebuild in development mode            |
 | make re-invade-the-web | Rebuild in cloud mode                  |
+| make quotes            | Add default quotes                     |
 | make seed              | Seed the database with sample data     |
-| make seedstress        | Seed with a large data sample          |
+| make stress            | Seed with a large data sample          |
 | make seedclean         | Remove seed data                       |
 | make clean             | Clean build artifacts                  |
 | make fclean            | Full clean                             |
@@ -212,11 +222,12 @@ The team worked remotely with weekly to bi-weekly calls, daily communication on 
 * Auth: implement auth (context, forms, hook, api calls) on the frontend
 * Profile, friends system: implement both features on the frontend (API calls, pages, components...)
 * Achievements: frontend implementation, backend fixes
+* Implement user roles and quotes system in backend and frontend
 * Status system: WebSocket frontend, backend fixes, context and hook
 * Chat: WebSocket frontend implementation, UI/UX, basic notification system for new messages using WebSocket
 * Github: CI actions setup, PR reviews, merges, conflict resolution
 * Internationalization (i18n): create and edit some translation keys
-* Database: made 2 migrations and small schema edits
+* Database: made migrations and schema edits
 * Various backend fixes and small features
 * Wrote meeting summaries after each team call
 
