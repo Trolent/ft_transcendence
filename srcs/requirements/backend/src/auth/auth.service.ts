@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserStatus } from '@prisma/client'
+import { UserStatus, Role } from '@prisma/client'
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Socket } from 'socket.io';
@@ -148,16 +148,20 @@ export class AuthService {
       if (existingEmail)
         throw new BadRequestException('EMAIL_ALREADY_IN_USE');
       
-      user = await this.prisma.user.create({
-            data: {
-                username:  username,
-                email:     me.email,
-                avatarUrl: me.image?.versions?.small ?? null,
-                oauthAccounts: {
-                    create: { provider: 'QuaranteDeux', providerId: String(me.id) }
-                }
-            }
+      user = await this.prisma.$transaction(async (tx) => {
+        const usersCount = await tx.user.count();
+        return tx.user.create({
+          data: {
+            username,
+            email: me.email,
+            avatarUrl: me.image?.versions?.small ?? null,
+            role: usersCount === 0 ? Role.MOD : Role.USER,
+            oauthAccounts: {
+              create: { provider: 'QuaranteDeux', providerId: String(me.id) },
+            },
+          },
         });
+      });
     }
 
     return {

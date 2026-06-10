@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, NotFoundException, UnauthorizedException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UpdateProfileDto, UpdateSettingsDto } from './dto'
 import { AchievementService } from '../achievement/achievement.service';
@@ -32,13 +32,21 @@ export class UsersService {
       throw new ConflictException('USER_ALREADY_EXISTS');
 
     const passwordHash = await this.HashThePass(password);
-    return this.prisma.user.create({
-      data: { username, email, passwordHash },
-      select: {
-        id: true, username: true, email: true,
-        avatarUrl: true, bio: true, language: true,
-        status: true, createdAt: true, updatedAt: true,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const usersCount = await tx.user.count();
+      return tx.user.create({
+        data: {
+          username,
+          email,
+          passwordHash,
+          role: usersCount === 0 ? Role.MOD : Role.USER,
+        },
+        select: {
+          id: true, username: true, email: true,
+          avatarUrl: true, bio: true, language: true,
+          status: true, createdAt: true, updatedAt: true,
+        },
+      });
     });
   }
 
