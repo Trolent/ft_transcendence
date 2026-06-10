@@ -1,6 +1,5 @@
 import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { QUOTES } from '../src/common/game.constant';
 
 const CORE_COUNT = 48;
 const PASSWORD   = 'Password123!';
@@ -56,6 +55,16 @@ async function main() {
   const sender  = users[CORE_COUNT];
   const receiver = users[CORE_COUNT + 1];
 
+  const seededQuotes = await prisma.quote.findMany({
+    where: { active: true },
+    select: { id: true },
+  });
+  const quoteIds = seededQuotes.map((q) => q.id);
+
+  if (quoteIds.length === 0) {
+    throw new Error('No quotes available. Run `npm run quotes` first.');
+  }
+
   const friendships: { initiatorId: number; receiverId: number; status: FriendshipStatus }[] = [];
 
   for (let i = 0; i < core.length; i++) {
@@ -79,15 +88,8 @@ async function main() {
     const playerCount = 2 + Math.floor(Math.random() * Math.min(5, core.length - 2));
     const players    = [...core].sort(() => Math.random() - 0.5).slice(0, playerCount);
 
-    const quote = await prisma.quote.create({
-      data: {
-        active: true,
-        text: pick(QUOTES),
-      },
-    });
-
     const match = await prisma.match.create({
-      data: { quoteId: quote.id, startedAt, endedAt, status: MatchStatus.FINISHED },
+      data: { quoteId: pick(quoteIds), startedAt, endedAt, status: MatchStatus.FINISHED },
     });
 
     const results = players

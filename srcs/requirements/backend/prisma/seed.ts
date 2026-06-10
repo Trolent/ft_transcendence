@@ -2,7 +2,6 @@ import { PrismaClient, Language, UserStatus, FriendshipStatus, MatchStatus } fro
 import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
 import { ACHIEVEMENTS } from '../src/common/achievements.constants';
-import { QUOTES } from '../src/common/game.constant';
 
 const SEED_USERS       = 999;
 const SEED_MATCHES     = 40;
@@ -93,6 +92,16 @@ async function main() {
 
   const users = [...defaultUsers, ...randomUsers];
 
+  const seededQuotes = await prisma.quote.findMany({
+    where: { active: true },
+    select: { id: true },
+  });
+  const quoteIds = seededQuotes.map((q) => q.id);
+
+  if (quoteIds.length === 0) {
+    throw new Error('No quotes available. Run `npm run quotes` first.');
+  }
+
   const friendshipPairs = new Set<string>();
   let attempts = 0;
   while (friendshipPairs.size < SEED_FRIENDSHIPS && attempts < SEED_FRIENDSHIPS * 5) {
@@ -119,16 +128,9 @@ async function main() {
     const startedAt = daysAgo(faker.number.int({ min: 0, max: 30 }));
     const endedAt   = new Date(startedAt.getTime() + faker.number.int({ min: 30, max: 300 }) * 1000);
 
-    const quote = await prisma.quote.create({
-      data: {
-        active: true,
-        text: randFrom(QUOTES),
-      },
-    });
-
     const match = await prisma.match.create({
       data: {
-        quoteId: quote.id,
+        quoteId: randFrom(quoteIds),
         startedAt,
         endedAt,
         status: MatchStatus.FINISHED,

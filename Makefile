@@ -76,10 +76,13 @@ prisma:
 seed:
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run seed
 
-seedstress:
-	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run seedstress
+stress:
+	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run stress
 
 seedclean:
 	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npx prisma migrate reset --force
 
-.PHONY: all up dev invade-the-web down re re-dev re-invade-the-web clean fclean logs ps hosts home trust-cert seed seedclean seedstress
+quotes:
+	docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) exec backend npm run quotes
+
+.PHONY: all up dev invade-the-web down re re-dev re-invade-the-web clean fclean logs ps hosts home trust-cert seed seedclean stress quotes
